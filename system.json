@@ -1,21 +1,21 @@
 {
-  "id": "sw25",
-  "title": "Sword World 2.5",
+  "id": "sw25-lunachil-maintained",
+  "title": "Sword World 2.5 — Lunachil Maintained",
   "description": "ソード・ワールド 2.5 システム",
   "authors": [
     {
       "name": "Jean.N"
     }
   ],
-  "url": "https://github.com/jeannjeann/sw25-fvtt",
+  "url": "https://github.com/lunachil32/sw25-fvtt",
   "license": "LICENSE.txt",
   "readme": "README.md",
   "changelog": "CHANGELOG.md",
   "media": [
     {
       "type": "setup",
-      "url": "systems/sw25/assets/sw25fvtt.png",
-      "thumbnail": "systems/sw25/assets/sw25fvtt.png"
+      "url": "systems/sw25-lunachil-maintained/assets/sw25fvtt.png",
+      "thumbnail": "systems/sw25-lunachil-maintained/assets/sw25fvtt.png"
     }
   ],
   "version": "2.4.1",
@@ -47,21 +47,21 @@
     {
       "name": "manual",
       "label": "Manual",
-      "system": "SW25",
+      "system": "sw25-lunachil-maintained",
       "type": "JournalEntry",
       "path": "packs/manual"
     },
     {
       "name": "reference",
       "label": "Reference",
-      "system": "SW25",
+      "system": "sw25-lunachil-maintained",
       "type": "JournalEntry",
       "path": "packs/reference"
     },
     {
       "name": "macro",
       "label": "Macros",
-      "system": "SW25",
+      "system": "sw25-lunachil-maintained",
       "type": "Macro",
       "path": "packs/macro"
     }
@@ -85,9 +85,7 @@
     }
   ],
   "socket": true,
-  "manifest": "https://github.com/jeannjeann/sw25-fvtt/releases/download/2.4.1/system.json",
-  "download": "https://github.com/jeannjeann/sw25-fvtt/releases/download/2.4.1/system.zip",
-  "background": "systems/sw25/assets/sw25fvtt.png",
+  "background": "systems/sw25-lunachil-maintained/assets/sw25fvtt.png",
   "grid": {
     "distance": 1,
     "units": "m"
