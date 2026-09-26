@@ -217,7 +217,7 @@ Hooks.on("updateCombat", async (combat, changes, options, userId) => {
       };
 
       chatData.content = await renderTemplate(
-        "systems/sw25/templates/roll/hpmp-apply.hbs",
+        "systems/sw25-lunachil-maintained/templates/roll/hpmp-apply.hbs",
         {
           targetHP: targetHP,
           resultHP: resultHP,

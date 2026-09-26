@@ -98,7 +98,7 @@ export async function chatButton(chatMessage, buttonType) {
           },
         };
         chatData.content = await renderTemplate(
-          "systems/sw25/templates/roll/roll-applyall.hbs",
+          "systems/sw25-lunachil-maintained/templates/roll/roll-applyall.hbs",
           {
             apply: chatapply,
             checktype: checktype,
@@ -366,7 +366,7 @@ export async function chatButton(chatMessage, buttonType) {
       };
 
       chatData.content = await renderTemplate(
-        "systems/sw25/templates/roll/roll-check.hbs",
+        "systems/sw25-lunachil-maintained/templates/roll/roll-check.hbs",
         {
           formula: chatFormula,
           tooltip: await roll.getTooltip(),
@@ -511,7 +511,7 @@ export async function chatButton(chatMessage, buttonType) {
       };
 
       chatData.content = await renderTemplate(
-        "systems/sw25/templates/roll/roll-power.hbs",
+        "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
         {
           formula: chatFormula,
           tooltip: await roll.fakeResult.getTooltip(),
@@ -578,7 +578,7 @@ export async function chatButton(chatMessage, buttonType) {
           },
         },
         content: await renderTemplate(
-          "systems/sw25/templates/roll/roll-power.hbs",
+          "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
           {
             formula: chatMessage.flags.sw25.formula,
             tooltip: chatMessage.flags.sw25.tooltip,
@@ -638,7 +638,7 @@ export async function chatButton(chatMessage, buttonType) {
           },
         },
         content: await renderTemplate(
-          "systems/sw25/templates/roll/roll-power.hbs",
+          "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
           {
             formula: chatMessage.flags.sw25.formula,
             tooltip: chatMessage.flags.sw25.tooltip,
@@ -710,7 +710,7 @@ export async function chatButton(chatMessage, buttonType) {
           },
         },
         content: await renderTemplate(
-          "systems/sw25/templates/roll/roll-power.hbs",
+          "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
           {
             formula: chatMessage.flags.sw25.formula,
             tooltip: chatMessage.flags.sw25.tooltip,
@@ -766,7 +766,7 @@ export async function chatButton(chatMessage, buttonType) {
           },
         },
         content: await renderTemplate(
-          "systems/sw25/templates/roll/roll-power.hbs",
+          "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
           {
             formula: chatMessage.flags.sw25.formula,
             tooltip: chatMessage.flags.sw25.tooltip,
@@ -832,7 +832,7 @@ export async function chatButton(chatMessage, buttonType) {
           },
         },
         content: await renderTemplate(
-          "systems/sw25/templates/roll/roll-power.hbs",
+          "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
           {
             formula: chatMessage.flags.sw25.formula,
             tooltip: chatMessage.flags.sw25.tooltip,
@@ -887,7 +887,7 @@ export async function chatButton(chatMessage, buttonType) {
           },
         },
         content: await renderTemplate(
-          "systems/sw25/templates/roll/roll-power.hbs",
+          "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
           {
             formula: chatMessage.flags.sw25.formula,
             tooltip: chatMessage.flags.sw25.tooltip,
@@ -972,7 +972,7 @@ export async function chatButton(chatMessage, buttonType) {
         },
       },
       content: await renderTemplate(
-        "systems/sw25/templates/roll/roll-power.hbs",
+        "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
         {
           formula: chatMessage.flags.sw25.formula,
           tooltip: chatMessage.flags.sw25.tooltip,
@@ -1062,7 +1062,7 @@ export async function chatButton(chatMessage, buttonType) {
         },
       },
       content: await renderTemplate(
-        "systems/sw25/templates/roll/roll-power.hbs",
+        "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
         {
           formula: chatMessage.flags.sw25.formula,
           tooltip: chatMessage.flags.sw25.tooltip,
@@ -1137,7 +1137,7 @@ export async function chatButton(chatMessage, buttonType) {
           },
         },
         content: await renderTemplate(
-          "systems/sw25/templates/roll/roll-check.hbs",
+          "systems/sw25-lunachil-maintained/templates/roll/roll-check.hbs",
           {
             formula: chatMessage.flags.sw25.formula,
             tooltip: chatMessage.flags.sw25.tooltip,
@@ -1188,7 +1188,7 @@ export async function chatButton(chatMessage, buttonType) {
           },
         },
         content: await renderTemplate(
-          "systems/sw25/templates/roll/roll-check.hbs",
+          "systems/sw25-lunachil-maintained/templates/roll/roll-check.hbs",
           {
             formula: chatMessage.flags.sw25.formula,
             tooltip: chatMessage.flags.sw25.tooltip,
@@ -1242,7 +1242,7 @@ export async function chatButton(chatMessage, buttonType) {
     }
 
     let content = await renderTemplate(
-      "systems/sw25/templates/roll/roll-apply.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/roll-apply.hbs",
       {
         target: targetToken.document.name,
         type: buttonType,
@@ -1307,7 +1307,7 @@ export async function chatButton(chatMessage, buttonType) {
         },
       },
       content: await renderTemplate(
-        "systems/sw25/templates/roll/roll-check.hbs",
+        "systems/sw25-lunachil-maintained/templates/roll/roll-check.hbs",
         {
           formula: chatMessage.flags.sw25.formula,
           tooltip: chatMessage.flags.sw25.tooltip,
@@ -1507,7 +1507,7 @@ export async function chatButton(chatMessage, buttonType) {
       };
 
       chatData.content = await renderTemplate(
-        "systems/sw25/templates/roll/roll-apply.hbs",
+        "systems/sw25-lunachil-maintained/templates/roll/roll-apply.hbs",
         {
           value: differenceValue,
           target: targetToken.document.name,
@@ -1605,7 +1605,7 @@ export async function chatButton(chatMessage, buttonType) {
       flavor: label,
     };
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/effect-apply.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/effect-apply.hbs",
       {
         targetActorName: chatActorName,
         transferEffectName: chatEffectName,
@@ -1788,7 +1788,7 @@ export async function chatButton(chatMessage, buttonType) {
     };
 
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/hp-apply.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/hp-apply.hbs",
       {
         targetHP: base,
         resultHP: base,
@@ -1840,7 +1840,7 @@ export async function chatButton(chatMessage, buttonType) {
       },
     };
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/mp-apply.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/mp-apply.hbs",
       {
         targetMP: base,
         resultMP: base,
@@ -1898,7 +1898,7 @@ export async function chatButton(chatMessage, buttonType) {
     }
 
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/roll-check.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/roll-check.hbs",
       {
         formula: chatFormula,
         tooltip: await roll.getTooltip(),
@@ -1916,7 +1916,7 @@ export async function chatButton(chatMessage, buttonType) {
     lootFlag.sw25.lootCount = lootCount;
 
     const lootContent = await renderTemplate(
-      "systems/sw25/templates/roll/lootlist.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/lootlist.hbs",
       {
         flavor: chatMessage.flags.sw25.name,
         lootlist: chatMessage.flags.sw25.lootlist,
@@ -2180,7 +2180,7 @@ export async function chatButton(chatMessage, buttonType) {
         )} <span style="font-size:0.7em;"> ( ${roll.total} + 5 )</span>`;
 
       chatData.content = await renderTemplate(
-        "systems/sw25/templates/roll/roll-check.hbs",
+        "systems/sw25-lunachil-maintained/templates/roll/roll-check.hbs",
         {
           name: name,
           formula: chatFormula,

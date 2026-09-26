@@ -27,7 +27,7 @@ export class SW25ItemSheet extends ItemSheet {
 
   /** @override */
   get template() {
-    const path = "systems/sw25/templates/item";
+    const path = "systems/sw25-lunachil-maintained/templates/item";
     // Return a single sheet for all item types.
     // return `${path}/item-sheet.hbs`;
 
@@ -621,7 +621,7 @@ export class SW25ItemSheet extends ItemSheet {
     const isAbyss = 0 < getAbyss || 0 < keepAbyss;
 
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/session-info.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/session-info.hbs",
       {
         title: title,
         isGamel: isGamel,

@@ -9,7 +9,7 @@
         {{#if system.isEdit}}
           <input name="name" type="text" value="{{item.name}}" placeholder="Name"/>
         {{else}}
-          {{> "systems/sw25/templates/helper/action-marks.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/helper/action-marks.hbs"}}
           {{item.name}}
         {{/if}}
       </h1>
@@ -223,7 +223,7 @@
 
         {{!-- Elements Category --}}
         <div class="grid-span-10">
-          {{> "systems/sw25/templates/item/parts/item-elements.hbs" isMagic=true isPhysical=true}}
+          {{> "systems/sw25-lunachil-maintained/templates/item/parts/item-elements.hbs" isMagic=true isPhysical=true}}
         </div>
 
         {{!-- Timing Category --}}
@@ -558,7 +558,7 @@
 
     {{!-- Effects Tab --}}
     <section class="tab effects" data-group="primary" data-tab="effects">
-      {{> "systems/sw25/templates/item/parts/item-effects.hbs"}}
+      {{> "systems/sw25-lunachil-maintained/templates/item/parts/item-effects.hbs"}}
     </section>
   </main>
 </section>

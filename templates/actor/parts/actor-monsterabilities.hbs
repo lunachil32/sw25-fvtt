@@ -24,7 +24,7 @@
               <img class="roll-icon" src='{{item.img}}' title='{{item.name}}'/>
             </a>
           </div>
-          {{> "systems/sw25/templates/helper/action-marks.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/helper/action-marks.hbs"}}
           <h4 class="item-label">{{item.name}}</h4>
         </div>
         <div class="rollable" style="flex: 0 0 auto; margin-left: 10px; display: {{#if system.usedice1}}block{{else}}none{{/if}};" data-roll="{{item.system.checkformula1}}+{{item.system.checkbase1}}" data-label="{{item.name}} ({{item.system.label1}})" data-pt="{{item.system.powertable}}" data-apply="{{system.applycheck1}}" data-checktype="{{system.checkTypesButton}}" {{resistAttributes type system.dice1.resist}}>

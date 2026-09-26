@@ -40,7 +40,7 @@ export class SW25ActorSheet extends ActorSheet {
 
   /** @override */
   get template() {
-    return `systems/sw25/templates/actor/actor-${this.actor.type}-sheet.hbs`;
+    return `systems/sw25-lunachil-maintained/templates/actor/actor-${this.actor.type}-sheet.hbs`;
   }
 
   /* -------------------------------------------- */
@@ -953,7 +953,7 @@ export class SW25ActorSheet extends ActorSheet {
           },
         };
         chatData.content = await renderTemplate(
-          "systems/sw25/templates/roll/roll-applyall.hbs",
+          "systems/sw25-lunachil-maintained/templates/roll/roll-applyall.hbs",
           {
             apply: dataset.apply,
             checktype: checktype,
@@ -1089,7 +1089,7 @@ export class SW25ActorSheet extends ActorSheet {
       };
 
       chatData.content = await renderTemplate(
-        "systems/sw25/templates/roll/roll-check.hbs",
+        "systems/sw25-lunachil-maintained/templates/roll/roll-check.hbs",
         {
           formula: roll.formula,
           tooltip: await roll.getTooltip(),
@@ -1157,7 +1157,7 @@ export class SW25ActorSheet extends ActorSheet {
           },
         };
         chatData.content = await renderTemplate(
-          "systems/sw25/templates/roll/roll-applyall.hbs",
+          "systems/sw25-lunachil-maintained/templates/roll/roll-applyall.hbs",
           {
             apply: dataset.apply,
             powertype: powertype,
@@ -1308,7 +1308,7 @@ export class SW25ActorSheet extends ActorSheet {
     };
     
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/roll-power.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
       {
         formula: chatFormula,
         tooltip: await roll.fakeResult.getTooltip(),
@@ -1445,7 +1445,7 @@ export class SW25ActorSheet extends ActorSheet {
       flavor: label,
     };
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/effect-apply.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/effect-apply.hbs",
       {
         targetActorName: chatActorName,
         transferEffectName: chatEffectName,
@@ -1582,7 +1582,7 @@ export class SW25ActorSheet extends ActorSheet {
       },
     };
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/rollreq-card.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/rollreq-card.hbs",
       {
         checkName: checkName,
         message: message,
@@ -1659,7 +1659,7 @@ export class SW25ActorSheet extends ActorSheet {
       },
     };
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/rollreq-card.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/rollreq-card.hbs",
       {
         checkName: checkName,
         message: message,
@@ -1731,7 +1731,7 @@ export class SW25ActorSheet extends ActorSheet {
       },
     };
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/rollreq-card.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/rollreq-card.hbs",
       {
         checkName: checkName,
         message: message,
@@ -2455,7 +2455,7 @@ export class SW25ActorSheet extends ActorSheet {
       flavor: label,
     };
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/effect-apply.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/effect-apply.hbs",
       {
         targetActorName: chatActorName,
         transferEffectName: chatEffectName,
@@ -2618,7 +2618,7 @@ export class SW25ActorSheet extends ActorSheet {
       flavor: label,
     };
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/card-apply.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/card-apply.hbs",
       {
         name: name,
         materialcards: materialcards,

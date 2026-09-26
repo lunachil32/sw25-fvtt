@@ -66,10 +66,10 @@
               <img class="roll-icon" src='{{item.img}}' title='{{item.name}}'/>
             </a>
           </div>
-          {{> "systems/sw25/templates/helper/action-marks.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/helper/action-marks.hbs"}}
           <{{system.typename}}><h4 class="item-label">{{item.name}}</h4>
         </div>
-        {{> "systems/sw25/templates/actor/parts/actor-useitems.hbs" item=item}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-useitems.hbs" item=item}}
         <div class='item-prop flexrow flex-group-center' style="flex: 0 0 50px;">
           {{#if (eq system.type "song")}}<div class="notesget">{{#unless (eq system.upget 0)}}<i class="fa-solid fa-arrow-turn-up"></i>{{system.upget}}{{/unless}}{{#unless (eq system.downget 0)}}<i class="fa-solid fa-arrow-turn-down"></i>{{system.downget}}{{/unless}}{{#unless (eq system.charmget 0)}}<i class="fa-regular fa-heart"></i>{{system.charmget}}{{/unless}}</div>{{/if}}
           {{#if (eq system.type "final")}}<div class="notescost">{{#unless (eq system.upcost 0)}}<i class="fa-solid fa-arrow-turn-up"></i>{{system.upcost}}{{/unless}}{{#unless (eq system.downcost 0)}}<i class="fa-solid fa-arrow-turn-down"></i>{{system.downcost}}{{/unless}}{{#unless (eq system.charmcost 0)}}<i class="fa-regular fa-heart"></i>{{system.charmcost}}{{/unless}}</div>{{/if}}

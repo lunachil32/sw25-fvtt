@@ -2666,7 +2666,7 @@ export class SW25Item extends Item {
             },
           };
           chatData.content = await renderTemplate(
-            "systems/sw25/templates/roll/roll-applyall.hbs",
+            "systems/sw25-lunachil-maintained/templates/roll/roll-applyall.hbs",
             {
               apply: chatapply,
               checktype: checktype,
@@ -2756,7 +2756,7 @@ export class SW25Item extends Item {
       }
 
       chatData.content = await renderTemplate(
-        "systems/sw25/templates/roll/roll-item.hbs",
+        "systems/sw25-lunachil-maintained/templates/roll/roll-item.hbs",
         {
           description: chatDescription,
           spell: spell,
@@ -2882,7 +2882,7 @@ export class SW25Item extends Item {
       };
 
       chatData.content = await renderTemplate(
-        "systems/sw25/templates/roll/roll-check.hbs",
+        "systems/sw25-lunachil-maintained/templates/roll/roll-check.hbs",
         {
           formula: chatFormula,
           tooltip: await roll.getTooltip(),
@@ -3039,7 +3039,7 @@ export class SW25Item extends Item {
       };
 
       chatData.content = await renderTemplate(
-        "systems/sw25/templates/roll/roll-power.hbs",
+        "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
         {
           formula: chatFormula,
           tooltip: await roll.fakeResult.getTooltip(),

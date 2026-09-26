@@ -46,7 +46,7 @@ export async function growthCheck(actor) {
     `;
 
   let chatContent = await renderTemplate(
-    "systems/sw25/templates/roll/roll-check.hbs",
+    "systems/sw25-lunachil-maintained/templates/roll/roll-check.hbs",
     {
       formula: chatFormula,
       tooltip: await roll.getTooltip(),

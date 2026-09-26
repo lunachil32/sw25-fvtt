@@ -209,7 +209,7 @@
 
         {{!-- Elements Category --}}
         <div class="grid-span-10">
-          {{> "systems/sw25/templates/item/parts/item-elements.hbs" isMagic=true isPhysical=true}}
+          {{> "systems/sw25-lunachil-maintained/templates/item/parts/item-elements.hbs" isMagic=true isPhysical=true}}
         </div>
         
         {{!-- Resource Category --}}
@@ -252,7 +252,7 @@
           <label class="checkbox--label" for="{{item._id}}system.usedice">{{localize "SW25.Item.Usedice"}}</label>
         </legend>
         <div style="display: {{#if system.usedice}}block{{else}}none{{/if}};">
-          {{> "systems/sw25/templates/item/parts/item-usedice.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/item/parts/item-usedice.hbs"}}
         </div>
       </fieldset>
 
@@ -263,14 +263,14 @@
           <label class="checkbox--label" for="{{item._id}}system.usepower">{{localize "SW25.Item.Usepower"}}</label>
         </legend>
         <div style="display: {{#if system.usepower}}block{{else}}none{{/if}};">
-          {{> "systems/sw25/templates/item/parts/item-usepower.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/item/parts/item-usepower.hbs"}}
         </div>
       </fieldset>
     </section>
 
     {{!-- Effects Tab --}}
     <section class="tab effects" data-group="primary" data-tab="effects">
-      {{> "systems/sw25/templates/item/parts/item-effects.hbs"}}
+      {{> "systems/sw25-lunachil-maintained/templates/item/parts/item-effects.hbs"}}
     </section>
   </main>
 </section>

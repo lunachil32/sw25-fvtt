@@ -8,7 +8,7 @@ export class SW25ActiveEffectConfigV1 extends ActiveEffectConfig {
     //return mergeObject(super.defaultOptions, {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["sw25", "sheet", "active-effect-sheet"],
-      template: "systems/sw25/templates/effect/active-effect-config.hbs",
+      template: "systems/sw25-lunachil-maintained/templates/effect/active-effect-config.hbs",
     });
   }
 

@@ -323,7 +323,7 @@
 
             {{!-- <section class="main grid-span-3">
               <div>
-                {{> "systems/sw25/templates/actor/parts/actor-skills.hbs"}}
+                {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-skills.hbs"}}
               </div>
             </section> --}}
           </div>
@@ -413,7 +413,7 @@
                 </select>
               </div>
               <div>
-                {{> "systems/sw25/templates/actor/parts/actor-resources.hbs"}}
+                {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-resources.hbs"}}
               </div>
             </div>
           </div>
@@ -423,14 +423,14 @@
           </div>
           <div class="grid grid-4col gap-s">
             <div class="grid-span-4">
-              {{> "systems/sw25/templates/actor/parts/actor-battlechecks.hbs"}}
+              {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-battlechecks.hbs"}}
             </div>        
           </div>
         </div>
 
         {{!-- Actor-adventure tabs --}}
         <div class="tab adventure" data-group="sidebar" data-tab="adventure" data-scrollable="true" id="sidebar-adventure">
-        {{> "systems/sw25/templates/actor/parts/actor-checks.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-checks.hbs"}}
         </div>
 
       </section>
@@ -456,118 +456,118 @@
 
     {{!-- Check Tab --}}
     <div class="tab check" data-group="primary" data-tab="check">
-      {{> "systems/sw25/templates/actor/parts/actor-checkskills.hbs"}}
+      {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-checkskills.hbs"}}
     </div>
 
     {{!--  Battle Tab --}}
     <div class="tab battle flexcol" data-group="primary" data-tab="battle">
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-battleweapons.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-battleweapons.hbs"}}
       </div>
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-battlearmors.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-battlearmors.hbs"}}
       </div>
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-battleaccessories.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-battleaccessories.hbs"}}
       </div>
     </div>
 
     {{!-- Owned Features Tab --}}
     <div class="tab features" data-group="primary" data-tab="features">
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-raceabilities.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-raceabilities.hbs"}}
       </div>
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-combatabilities.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-combatabilities.hbs"}}
       </div>
       {{#if eashow}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-enhancearts.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-enhancearts.hbs"}}
       </div>
       {{else}}{{#if system.attributes.showfeature}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-enhancearts.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-enhancearts.hbs"}}
       </div>
       {{/if}}{{/if}}
       {{#if msshow}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-magicalsongs.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-magicalsongs.hbs"}}
       </div>
       {{else}}{{#if system.attributes.showfeature}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-magicalsongs.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-magicalsongs.hbs"}}
       </div>
       {{/if}}{{/if}}
       {{#if rtshow}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-ridingtricks.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-ridingtricks.hbs"}}
       </div>
       {{else}}{{#if system.attributes.showfeature}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-ridingtricks.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-ridingtricks.hbs"}}
       </div>
       {{/if}}{{/if}}
       {{#if atshow}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-alchemytechs.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-alchemytechs.hbs"}}
       </div>
       {{else}}{{#if system.attributes.showfeature}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-alchemytechs.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-alchemytechs.hbs"}}
       </div>
       {{/if}}{{/if}}
       {{#if pashow}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-phaseareas.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-phaseareas.hbs"}}
       </div>
       {{else}}{{#if system.attributes.showfeature}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-phaseareas.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-phaseareas.hbs"}}
       </div>
       {{/if}}{{/if}}
       {{#if tcshow}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-tactics.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-tactics.hbs"}}
       </div>
       {{else}}{{#if system.attributes.showfeature}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-tactics.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-tactics.hbs"}}
       </div>
       {{/if}}{{/if}}
       {{#if ifshow}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-infusion.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-infusion.hbs"}}
       </div>
       {{else}}{{#if system.attributes.showfeature}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-infusion.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-infusion.hbs"}}
       </div>
       {{/if}}{{/if}}
       {{#if bsshow}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-barbarousskill.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-barbarousskill.hbs"}}
       </div>
       {{else}}{{#if system.attributes.showfeature}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-barbarousskill.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-barbarousskill.hbs"}}
       </div>
       {{/if}}{{/if}}
       {{#if ewshow}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-essenceweave.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-essenceweave.hbs"}}
       </div>
       {{else}}{{#if system.attributes.showfeature}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-essenceweave.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-essenceweave.hbs"}}
       </div>
       {{/if}}{{/if}}
       {{#if ofshow}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-otherfeature.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-otherfeature.hbs"}}
       </div>
       {{else}}{{#if system.attributes.showfeature}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-otherfeature.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-otherfeature.hbs"}}
       </div>
       {{/if}}{{/if}}
       <div class="margin-m" style="display: flex; align-items: center;">
@@ -599,7 +599,7 @@
         </div>
         <div class="spelllist-description">
           <div>
-            {{> "systems/sw25/templates/actor/parts/actor-spells-sorcerer.hbs"}}
+            {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-spells-sorcerer.hbs"}}
           </div>
         </div>
       </div>
@@ -624,7 +624,7 @@
         </div>
         <div class="spelllist-description">
           <div>
-            {{> "systems/sw25/templates/actor/parts/actor-spells-conjurer.hbs"}}
+            {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-spells-conjurer.hbs"}}
           </div>
         </div>
       </div>
@@ -644,7 +644,7 @@
         </div>
         <div class="spelllist-description">
           <div>
-            {{> "systems/sw25/templates/actor/parts/actor-spells-wizard.hbs"}}
+            {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-spells-wizard.hbs"}}
           </div>
         </div>
       </div>
@@ -664,7 +664,7 @@
         </div>
         <div class="spelllist-description">
           <div>
-            {{> "systems/sw25/templates/actor/parts/actor-spells-priest.hbs"}}
+            {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-spells-priest.hbs"}}
           </div>
         </div>
       </div>
@@ -684,7 +684,7 @@
         </div>
         <div class="spelllist-description">
           <div>
-            {{> "systems/sw25/templates/actor/parts/actor-spells-magitech.hbs"}}
+            {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-spells-magitech.hbs"}}
           </div>
         </div>
       </div>
@@ -714,7 +714,7 @@
         </div>
         <div class="spelllist-description">
           <div>
-            {{> "systems/sw25/templates/actor/parts/actor-spells-fairy.hbs"}}
+            {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-spells-fairy.hbs"}}
           </div>
         </div>
       </div>
@@ -734,7 +734,7 @@
         </div>
         <div class="spelllist-description">
           <div>
-            {{> "systems/sw25/templates/actor/parts/actor-spells-druid.hbs"}}
+            {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-spells-druid.hbs"}}
           </div>
         </div>
       </div>
@@ -754,7 +754,7 @@
         </div>
         <div class="spelllist-description">
           <div>
-            {{> "systems/sw25/templates/actor/parts/actor-spells-daemon.hbs"}}
+            {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-spells-daemon.hbs"}}
           </div>
         </div>
       </div>
@@ -774,7 +774,7 @@
         </div>
         <div class="spelllist-description">
           <div>
-            {{> "systems/sw25/templates/actor/parts/actor-spells-abyssal.hbs"}}
+            {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-spells-abyssal.hbs"}}
           </div>
         </div>
       </div>
@@ -809,7 +809,7 @@
         </div>
         <div class="spelllist-description">
           <div>
-            {{> "systems/sw25/templates/actor/parts/actor-spells-bibliomancer.hbs"}}
+            {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-spells-bibliomancer.hbs"}}
           </div>
         </div>
       </div>
@@ -820,7 +820,7 @@
       </div>
       {{#if system.attributes.showspell}}
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-spells.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-spells.hbs"}}
       </div>
       {{/if}}
     </div>
@@ -836,7 +836,7 @@
         </div>
       </div>
       <div>
-        {{> "systems/sw25/templates/actor/parts/actor-effects.hbs"}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-effects.hbs"}}
       </div>
     </div>
 
@@ -848,16 +848,16 @@
           <div class="resource-label flex-group-right tooltip"><label for="{{actor._id}}system.money"><i class="fa-solid fa-coins"></i><span class="tooltip-text">{{localize "SW25.Mymoney"}}</span></label> <input id="{{actor._id}}system.money" style="max-width: calc(60% - 7px);" type="text" name="system.money" value="{{system.money}}" data-dtype="Number"/> G</div>
         </div>
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-items.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-items.hbs"}}
         </div>
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-weapons.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-weapons.hbs"}}
         </div>
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-armors.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-armors.hbs"}}
         </div>
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-accessories.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-accessories.hbs"}}
         </div>
       </div>
     </div>
@@ -866,7 +866,7 @@
     <div class="tab description flexcol" data-group="primary" data-tab="description">
       <div class="grid grid-5col margin-s">
         <div class="grid-span-2">
-          {{> "systems/sw25/templates/actor/parts/actor-languages.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-languages.hbs"}}
         </div>
         <div class="flexcol grid-span-3">
           <div class="grid {{#if system.isSidebar}}grid-8col{{else}}grid-4col{{/if}} nogapmargin">
@@ -992,14 +992,14 @@
       {{#if (eq system.tabletype "fellow")}}
       <div class="flexcol margin-s">
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-actions-fellow.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-actions-fellow.hbs"}}
         </div>
       </div>
       {{/if}}
       {{#if (eq system.tabletype "daemon")}}
       <div class="flexcol margin-s">
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-actions-daemon.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-actions-daemon.hbs"}}
         </div>
       </div>
       {{/if}}
@@ -1010,7 +1010,7 @@
       {{#if system.attributes.showaction}}
       <div class="flexcol margin-s">
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-actions.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-actions.hbs"}}
         </div>
       </div>
       {{/if}}
@@ -1075,7 +1075,7 @@
       <div id="bookmark-inner">
       <ul class="bookmarks">
       {{#each bookmarks as |item id|}}
-        {{> "systems/sw25/templates/actor/parts/actor-bookmark-item.hbs" item=item}}
+        {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-bookmark-item.hbs" item=item}}
       {{/each}}
       <li class="bookmarks--overview">
         {{localize "SW25.AddBookmark"}}

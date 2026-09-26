@@ -187,7 +187,7 @@ export async function customCommand(command, messageData, parameters) {
       };
 
       chatData.content = await renderTemplate(
-        "systems/sw25/templates/roll/roll-power.hbs",
+        "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
         {
           formula: chatFormula,
           tooltip: await roll.fakeResult.getTooltip(),

@@ -42,7 +42,7 @@ export async function rollreq() {
     abilities
   ) {
     const html = await renderTemplate(
-      "systems/sw25/templates/roll/rollreq-dialog.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/rollreq-dialog.hbs",
       { method, checkname, ability, skilllist, checklist, abilities }
     );
 
@@ -99,7 +99,7 @@ export async function rollreq() {
             }
 
             chatData.content = await renderTemplate(
-              "systems/sw25/templates/roll/rollreq-card.hbs",
+              "systems/sw25-lunachil-maintained/templates/roll/rollreq-card.hbs",
               {
                 checkName: name,
                 message: message,
@@ -155,7 +155,7 @@ export async function rollreq() {
     abilities
   ) {
     const html = await renderTemplate(
-      "systems/sw25/templates/roll/rollreq-dialog.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/rollreq-dialog.hbs",
       { method, checkname, ability, skilllist, checklist, abilities }
     );
     const variable = $(html).find("#variablearea").html();

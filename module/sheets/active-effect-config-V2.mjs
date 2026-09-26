@@ -12,7 +12,7 @@ export class SW25ActiveEffectConfigV2 extends ActiveEffectConfig {
     },
     duration: { template: "templates/sheets/active-effect/duration.hbs" },
     changes: {
-      template: "systems/sw25/templates/effect/changes.hbs",
+      template: "systems/sw25-lunachil-maintained/templates/effect/changes.hbs",
       scrollable: ["ol[data-changes]"],
     },
     footer: { template: "templates/generic/form-footer.hbs" },

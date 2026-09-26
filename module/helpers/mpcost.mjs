@@ -76,7 +76,7 @@ export async function mpCost(
     };
 
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/mp-apply.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/mp-apply.hbs",
       {
         cost: costValue,
         targetMP: targetMP,
@@ -125,7 +125,7 @@ export async function mpCost(
       },
     };
     chatData.content = await renderTemplate(
-      "systems/sw25/templates/roll/mp-apply.hbs",
+      "systems/sw25-lunachil-maintained/templates/roll/mp-apply.hbs",
       {
         cost: costMes,
         targetMP: base,
@@ -219,7 +219,7 @@ export async function hpCost(token, cost, max, name, type) {
   };
 
   chatData.content = await renderTemplate(
-    "systems/sw25/templates/roll/hp-apply.hbs",
+    "systems/sw25-lunachil-maintained/templates/roll/hp-apply.hbs",
     {
       nofix: nofix,
       formula: costLabel,

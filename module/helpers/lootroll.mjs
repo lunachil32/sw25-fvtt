@@ -47,7 +47,7 @@ export async function lootRoll(actor) {
   };
 
   chatData.content = await renderTemplate(
-    "systems/sw25/templates/roll/lootlist.hbs",
+    "systems/sw25-lunachil-maintained/templates/roll/lootlist.hbs",
     {
       flavor: actorName,
       lootlist: lootlist,

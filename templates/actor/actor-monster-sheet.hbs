@@ -266,7 +266,7 @@
       {{!-- Owned Ability Tab --}}
       <div class="tab ability" data-group="primary" data-tab="ability">
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-monsterabilities.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-monsterabilities.hbs"}}
         </div>
         <div class="margin-m" style="display: flex; align-items: center;">
           <input type="checkbox" id="{{actor._id}}system.usespell" name="system.usespell" data-dtype="Boolean" {{#if system.usespell}} checked {{/if}}/>
@@ -274,10 +274,10 @@
         </div>
         {{#if system.usespell}}
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-monsterspells.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-monsterspells.hbs"}}
         </div>
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-monsterskills.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-monsterskills.hbs"}}
         </div>
         {{/if}}
       </div>
@@ -293,7 +293,7 @@
           </div>
         </div>
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-effects.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-effects.hbs"}}
         </div>
       </div>
 
@@ -443,14 +443,14 @@
       {{#if (eq system.tabletype "fellow")}}
       <div class="flexcol margin-s">
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-actions-fellow.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-actions-fellow.hbs"}}
         </div>
       </div>
       {{/if}}
       {{#if (eq system.tabletype "daemon")}}
       <div class="flexcol margin-s">
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-actions-daemon.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-actions-daemon.hbs"}}
         </div>
       </div>
       {{/if}}
@@ -461,7 +461,7 @@
       {{#if system.attributes.showaction}}
       <div class="flexcol margin-s">
         <div>
-          {{> "systems/sw25/templates/actor/parts/actor-actions.hbs"}}
+          {{> "systems/sw25-lunachil-maintained/templates/actor/parts/actor-actions.hbs"}}
         </div>
       </div>
       {{/if}}
