@@ -1,0 +1,7 @@
+# IDE のローカル設定
+/.idea/
+
+# OS の管理ファイル
+.DS_Store
+Thumbs.db
+Desktop.ini
