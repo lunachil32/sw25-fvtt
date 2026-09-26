@@ -83,12 +83,12 @@ Hooks.once("init", function () {
 
   // Register sheet application classes
   Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet("sw25", SW25ActorSheet, {
+  Actors.registerSheet(game.system.id, SW25ActorSheet, {
     makeDefault: true,
     label: "SW25.SheetLabels.Actor",
   });
   Items.unregisterSheet("core", ItemSheet);
-  Items.registerSheet("sw25", SW25ItemSheet, {
+  Items.registerSheet(game.system.id, SW25ItemSheet, {
     makeDefault: true,
     label: "SW25.SheetLabels.Item",
   });
@@ -106,7 +106,7 @@ Hooks.once("init", function () {
 
   DocumentSheetConfig.registerSheet(
     ActiveEffect,
-    "sw25",
+    game.system.id,
     SW25ActiveEffectConfig,
     {
       makeDefault: true,
@@ -115,7 +115,7 @@ Hooks.once("init", function () {
   );
 
   // migration setting.
-  game.settings.register("sw25", "systemMigrationVersion", {
+  game.settings.register(game.system.id, "systemMigrationVersion", {
     name: "System Migration Version",
     scope: "world",
     config: false,
@@ -145,12 +145,12 @@ Hooks.once("ready", async () => {
     if (!isActiveGM) return;
 
     const currentVersion = game.system.version;
-    const storedVersion = game.settings.get("sw25", "systemMigrationVersion");
+    const storedVersion = game.settings.get(game.system.id, "systemMigrationVersion");
 
     if (Migrator.isVersionBefore(storedVersion, currentVersion)) {
       ui.notifications.info(game.i18n.localize("SW25.StartMigration"));
       await Migrator.migrateWorld(storedVersion, currentVersion);
-      await game.settings.set("sw25", "systemMigrationVersion", currentVersion);
+      await game.settings.set(game.system.id, "systemMigrationVersion", currentVersion);
       ui.notifications.info(game.i18n.localize("SW25.CompleteMigration"));
     }
   }
@@ -489,7 +489,7 @@ Hooks.once("ready", async function () {
   Hooks.on("hotbarDrop", (bar, data, slot) => createItemMacro(data, slot));
 
   // Prepare gamesystem settings.
-  game.settings.register("sw25", "effectVitResPC", {
+  game.settings.register(game.system.id, "effectVitResPC", {
     name: game.i18n.localize("SETTING.effectVitResPC.name"),
     hint:
       game.i18n.localize("SETTING.effectVitResPC.hint") +
@@ -502,8 +502,8 @@ Hooks.once("ready", async function () {
       effectVitResPC = value;
     },
   });
-  effectVitResPC = game.settings.get("sw25", "effectVitResPC");
-  game.settings.register("sw25", "effectMndResPC", {
+  effectVitResPC = game.settings.get(game.system.id, "effectVitResPC");
+  game.settings.register(game.system.id, "effectMndResPC", {
     name: game.i18n.localize("SETTING.effectMndResPC.name"),
     hint:
       game.i18n.localize("SETTING.effectMndResPC.hint") +
@@ -516,8 +516,8 @@ Hooks.once("ready", async function () {
       effectMndResPC = value;
     },
   });
-  effectMndResPC = game.settings.get("sw25", "effectMndResPC");
-  game.settings.register("sw25", "effectInitPC", {
+  effectMndResPC = game.settings.get(game.system.id, "effectMndResPC");
+  game.settings.register(game.system.id, "effectInitPC", {
     name: game.i18n.localize("SETTING.effectInitPC.name"),
     hint:
       game.i18n.localize("SETTING.effectInitPC.hint") +
@@ -530,8 +530,8 @@ Hooks.once("ready", async function () {
       effectInitPC = value;
     },
   });
-  effectInitPC = game.settings.get("sw25", "effectInitPC");
-  game.settings.register("sw25", "effectMKnowPC", {
+  effectInitPC = game.settings.get(game.system.id, "effectInitPC");
+  game.settings.register(game.system.id, "effectMKnowPC", {
     name: game.i18n.localize("SETTING.effectMKnowPC.name"),
     hint:
       game.i18n.localize("SETTING.effectMKnowPC.hint") +
@@ -544,8 +544,8 @@ Hooks.once("ready", async function () {
       effectMKnowPC = value;
     },
   });
-  effectMKnowPC = game.settings.get("sw25", "effectMKnowPC");
-  game.settings.register("sw25", "effectVitResMon", {
+  effectMKnowPC = game.settings.get(game.system.id, "effectMKnowPC");
+  game.settings.register(game.system.id, "effectVitResMon", {
     name: game.i18n.localize("SETTING.effectVitResMon.name"),
     hint:
       game.i18n.localize("SETTING.effectVitResMon.hint") +
@@ -558,8 +558,8 @@ Hooks.once("ready", async function () {
       effectVitResMon = value;
     },
   });
-  effectVitResMon = game.settings.get("sw25", "effectVitResMon");
-  game.settings.register("sw25", "effectMndResMon", {
+  effectVitResMon = game.settings.get(game.system.id, "effectVitResMon");
+  game.settings.register(game.system.id, "effectMndResMon", {
     name: game.i18n.localize("SETTING.effectMndResMon.name"),
     hint:
       game.i18n.localize("SETTING.effectMndResMon.hint") +
@@ -572,8 +572,8 @@ Hooks.once("ready", async function () {
       effectMndResMon = value;
     },
   });
-  effectMndResMon = game.settings.get("sw25", "effectMndResMon");
-  game.settings.register("sw25", "effectHitMon", {
+  effectMndResMon = game.settings.get(game.system.id, "effectMndResMon");
+  game.settings.register(game.system.id, "effectHitMon", {
     name: game.i18n.localize("SETTING.effectHitMon.name"),
     hint:
       game.i18n.localize("SETTING.effectHitMon.hint") +
@@ -586,8 +586,8 @@ Hooks.once("ready", async function () {
       effectHitMon = value;
     },
   });
-  effectHitMon = game.settings.get("sw25", "effectHitMon");
-  game.settings.register("sw25", "effectDmgMon", {
+  effectHitMon = game.settings.get(game.system.id, "effectHitMon");
+  game.settings.register(game.system.id, "effectDmgMon", {
     name: game.i18n.localize("SETTING.effectDmgMon.name"),
     hint:
       game.i18n.localize("SETTING.effectDmgMon.hint") +
@@ -600,8 +600,8 @@ Hooks.once("ready", async function () {
       effectDmgMon = value;
     },
   });
-  effectDmgMon = game.settings.get("sw25", "effectDmgMon");
-  game.settings.register("sw25", "effectDodgeMon", {
+  effectDmgMon = game.settings.get(game.system.id, "effectDmgMon");
+  game.settings.register(game.system.id, "effectDodgeMon", {
     name: game.i18n.localize("SETTING.effectDodgeMon.name"),
     hint:
       game.i18n.localize("SETTING.effectDodgeMon.hint") +
@@ -614,8 +614,8 @@ Hooks.once("ready", async function () {
       effectDodgeMon = value;
     },
   });
-  effectDodgeMon = game.settings.get("sw25", "effectDodgeMon");
-  game.settings.register("sw25", "effectScpMon", {
+  effectDodgeMon = game.settings.get(game.system.id, "effectDodgeMon");
+  game.settings.register(game.system.id, "effectScpMon", {
     name: game.i18n.localize("SETTING.effectScpMon.name"),
     hint:
       game.i18n.localize("SETTING.effectScpMon.hint") +
@@ -628,8 +628,8 @@ Hooks.once("ready", async function () {
       effectScpMon = value;
     },
   });
-  effectScpMon = game.settings.get("sw25", "effectScpMon");
-  game.settings.register("sw25", "effectCnpMon", {
+  effectScpMon = game.settings.get(game.system.id, "effectScpMon");
+  game.settings.register(game.system.id, "effectCnpMon", {
     name: game.i18n.localize("SETTING.effectCnpMon.name"),
     hint:
       game.i18n.localize("SETTING.effectCnpMon.hint") +
@@ -642,8 +642,8 @@ Hooks.once("ready", async function () {
       effectCnpMon = value;
     },
   });
-  effectCnpMon = game.settings.get("sw25", "effectCnpMon");
-  game.settings.register("sw25", "effectWzpMon", {
+  effectCnpMon = game.settings.get(game.system.id, "effectCnpMon");
+  game.settings.register(game.system.id, "effectWzpMon", {
     name: game.i18n.localize("SETTING.effectWzpMon.name"),
     hint:
       game.i18n.localize("SETTING.effectWzpMon.hint") +
@@ -656,8 +656,8 @@ Hooks.once("ready", async function () {
       effectWzpMon = value;
     },
   });
-  effectWzpMon = game.settings.get("sw25", "effectWzpMon");
-  game.settings.register("sw25", "effectPrpMon", {
+  effectWzpMon = game.settings.get(game.system.id, "effectWzpMon");
+  game.settings.register(game.system.id, "effectPrpMon", {
     name: game.i18n.localize("SETTING.effectPrpMon.name"),
     hint:
       game.i18n.localize("SETTING.effectPrpMon.hint") +
@@ -670,8 +670,8 @@ Hooks.once("ready", async function () {
       effectPrpMon = value;
     },
   });
-  effectPrpMon = game.settings.get("sw25", "effectPrpMon");
-  game.settings.register("sw25", "effectMtpMon", {
+  effectPrpMon = game.settings.get(game.system.id, "effectPrpMon");
+  game.settings.register(game.system.id, "effectMtpMon", {
     name: game.i18n.localize("SETTING.effectMtpMon.name"),
     hint:
       game.i18n.localize("SETTING.effectMtpMon.hint") +
@@ -684,8 +684,8 @@ Hooks.once("ready", async function () {
       effectMtpMon = value;
     },
   });
-  effectMtpMon = game.settings.get("sw25", "effectMtpMon");
-  game.settings.register("sw25", "effectFrpMon", {
+  effectMtpMon = game.settings.get(game.system.id, "effectMtpMon");
+  game.settings.register(game.system.id, "effectFrpMon", {
     name: game.i18n.localize("SETTING.effectFrpMon.name"),
     hint:
       game.i18n.localize("SETTING.effectFrpMon.hint") +
@@ -698,8 +698,8 @@ Hooks.once("ready", async function () {
       effectFrpMon = value;
     },
   });
-  effectFrpMon = game.settings.get("sw25", "effectFrpMon");
-  game.settings.register("sw25", "effectDrpMon", {
+  effectFrpMon = game.settings.get(game.system.id, "effectFrpMon");
+  game.settings.register(game.system.id, "effectDrpMon", {
     name: game.i18n.localize("SETTING.effectDrpMon.name"),
     hint:
       game.i18n.localize("SETTING.effectDrpMon.hint") +
@@ -712,8 +712,8 @@ Hooks.once("ready", async function () {
       effectDrpMon = value;
     },
   });
-  effectDrpMon = game.settings.get("sw25", "effectDrpMon");
-  game.settings.register("sw25", "effectDmpMon", {
+  effectDrpMon = game.settings.get(game.system.id, "effectDrpMon");
+  game.settings.register(game.system.id, "effectDmpMon", {
     name: game.i18n.localize("SETTING.effectDmpMon.name"),
     hint:
       game.i18n.localize("SETTING.effectDmpMon.hint") +
@@ -726,8 +726,8 @@ Hooks.once("ready", async function () {
       effectDmpMon = value;
     },
   });
-  effectDmpMon = game.settings.get("sw25", "effectDmpMon");
-  game.settings.register("sw25", "effectAbpMon", {
+  effectDmpMon = game.settings.get(game.system.id, "effectDmpMon");
+  game.settings.register(game.system.id, "effectAbpMon", {
     name: game.i18n.localize("SETTING.effectAbpMon.name"),
     hint:
       game.i18n.localize("SETTING.effectAbpMon.hint") +
@@ -740,8 +740,8 @@ Hooks.once("ready", async function () {
       effectAbpMon = value;
     },
   });
-  effectAbpMon = game.settings.get("sw25", "effectAbpMon");
-  game.settings.register("sw25", "effectBmpMon", {
+  effectAbpMon = game.settings.get(game.system.id, "effectAbpMon");
+  game.settings.register(game.system.id, "effectBmpMon", {
     name: game.i18n.localize("SETTING.effectBmpMon.name"),
     hint:
       game.i18n.localize("SETTING.effectBmpMon.hint") +
@@ -754,8 +754,8 @@ Hooks.once("ready", async function () {
       effectBmpMon = value;
     },
   });
-  effectBmpMon = game.settings.get("sw25", "effectBmpMon");
-  game.settings.register("sw25", "fromCompendium", {
+  effectBmpMon = game.settings.get(game.system.id, "effectBmpMon");
+  game.settings.register(game.system.id, "fromCompendium", {
     name: game.i18n.localize("SETTING.fromCompendium.name"),
     hint: game.i18n.localize("SETTING.fromCompendium.hint"),
     scope: "world",
@@ -764,7 +764,7 @@ Hooks.once("ready", async function () {
     default: false,
     requiresReload: true,
   });
-  game.settings.register("sw25", "defaultCharaAction", {
+  game.settings.register(game.system.id, "defaultCharaAction", {
     name: game.i18n.localize("SETTING.defaultCharaAction.name"),
     hint: game.i18n.localize("SETTING.defaultCharaAction.hint"),
     scope: "world",
@@ -865,7 +865,7 @@ Hooks.once("ready", async function () {
   });
 
   // Token apply hook
-  game.socket.on("system.sw25", (data) => {
+  game.socket.on(`system.${game.system.id}`, (data) => {
     if (!game.user.isGM) return;
 
     // multiple GM treatment
@@ -1238,7 +1238,7 @@ Hooks.once("ready", async function () {
   let polyglot =
     game.modules.has(polyglotmodule) && game.modules.get(polyglotmodule).active;
   if (polyglot) {
-    let fromCompendium = game.settings.get("sw25", "fromCompendium");
+    let fromCompendium = game.settings.get(game.system.id, "fromCompendium");
     if (fromCompendium) {
       await game.polyglot.languageProvider.getLanguages(fromCompendium);
     }

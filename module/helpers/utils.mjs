@@ -54,7 +54,7 @@ export class Util {
   static async getControlledActorFromUser() {
     let selectedTokens = canvas.tokens.controlled;
     if (
-      game.settings.get("sw25", "defaultCharaAction") &&
+      game.settings.get(game.system.id, "defaultCharaAction") &&
       game.user.character &&
       selectedTokens.length === 0
     ) {

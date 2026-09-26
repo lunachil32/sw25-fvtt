@@ -1415,7 +1415,7 @@ export class SW25ActorSheet extends ActorSheet {
         });
       });
     } else {
-      game.socket.emit("system.sw25", {
+      game.socket.emit(`system.${game.system.id}`, {
         method: "applyEffect",
         targetTokens: targetTokenId,
         targetEffects: targetEffects,
@@ -1601,7 +1601,7 @@ export class SW25ActorSheet extends ActorSheet {
     const actorId = this.actor.id;
     const actor = game.actors.get(actorId);
 
-    let checkName = game.settings.get("sw25", "effectMKnowPC");
+    let checkName = game.settings.get(game.system.id, "effectMKnowPC");
     let inputName = "";
     let refAbility = "";
     let modifier = "";
@@ -1678,7 +1678,7 @@ export class SW25ActorSheet extends ActorSheet {
     const actorId = this.actor.id;
     const actor = game.actors.get(actorId);
 
-    let checkName = game.settings.get("sw25", "effectInitPC");
+    let checkName = game.settings.get(game.system.id, "effectInitPC");
     let inputName = "";
     let refAbility = "";
     let modifier = "";
@@ -2290,7 +2290,7 @@ export class SW25ActorSheet extends ActorSheet {
                 });
               });
             } else {
-              game.socket.emit("system.sw25", {
+              game.socket.emit(`system.${game.system.id}`, {
                 method: "applyEffect",
                 targetTokens: targetTokenId,
                 targetEffects: targetEffects,
@@ -2431,7 +2431,7 @@ export class SW25ActorSheet extends ActorSheet {
       selectedTokens[0].actor.createEmbeddedDocuments("ActiveEffect", effects);
     } else {
       const targetTokenId = Array.from(selectedTokens, (target) => target.id);
-      game.socket.emit("system.sw25", {
+      game.socket.emit(`system.${game.system.id}`, {
         method: "applyEffect",
         targetTokens: targetTokenId,
         targetEffects: effects,

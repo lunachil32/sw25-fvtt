@@ -1233,7 +1233,7 @@ export async function chatButton(chatMessage, buttonType) {
         "system.mp.value": resultMP,
       });
     } else {
-      game.socket.emit("system.sw25", {
+      game.socket.emit(`system.${game.system.id}`, {
         method: "applyRoll",
         targetToken: chatMessage.flags.sw25.targetToken,
         resultHP: resultHP,
@@ -1462,7 +1462,7 @@ export async function chatButton(chatMessage, buttonType) {
           "system.mp.value": resultMP,
         });
       } else {
-        game.socket.emit("system.sw25", {
+        game.socket.emit(`system.${game.system.id}`, {
           method: "applyRoll",
           targetToken: targetTokenId,
           resultHP: resultHP,
@@ -1575,7 +1575,7 @@ export async function chatButton(chatMessage, buttonType) {
         });
       });
     } else {
-      game.socket.emit("system.sw25", {
+      game.socket.emit(`system.${game.system.id}`, {
         method: "applyEffect",
         targetTokens: targetTokenId,
         targetEffects: targetEffects,
@@ -1767,7 +1767,7 @@ export async function chatButton(chatMessage, buttonType) {
         "system.hp.value": base,
       });
     } else {
-      game.socket.emit("system.sw25", {
+      game.socket.emit(`system.${game.system.id}`, {
         method: "applyHp",
         targetToken: chatMessage.flags.sw25.tokenId,
         resultHP: base,
@@ -1812,7 +1812,7 @@ export async function chatButton(chatMessage, buttonType) {
         "system.mp.value": base,
       });
     } else {
-      game.socket.emit("system.sw25", {
+      game.socket.emit(`system.${game.system.id}`, {
         method: "applyMp",
         targetToken: chatMessage.flags.sw25.tokenId,
         resultMP: base,
@@ -1930,7 +1930,7 @@ export async function chatButton(chatMessage, buttonType) {
         flags: lootFlag,
       });
     } else {
-      game.socket.emit("system.sw25", {
+      game.socket.emit(`system.${game.system.id}`, {
         method: "updateChat",
         id: chatMessage.id,
         content: lootContent,

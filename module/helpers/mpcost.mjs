@@ -42,7 +42,7 @@ export async function mpCost(
       "system.mp.value": resultMP,
     });
   } else {
-    game.socket.emit("system.sw25", {
+    game.socket.emit(`system.${game.system.id}`, {
       method: "applyMp",
       targetToken: targetTokenId,
       resultMP: resultMP,
@@ -198,7 +198,7 @@ export async function hpCost(token, cost, max, name, type) {
       "system.hp.value": resultHP,
     });
   } else {
-    game.socket.emit("system.sw25", {
+    game.socket.emit(`system.${game.system.id}`, {
       method: "applyHp",
       targetToken: targetTokenId,
       resultHP: resultHP,
