@@ -5,3 +5,7 @@
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# エージェントの一時作業場
+/agent workspace/*
+!/agent workspace/.gitkeep
