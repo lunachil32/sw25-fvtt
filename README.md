@@ -1,64 +1,88 @@
-# ソード・ワールド 2.5 (for FoundryVTT)
+# ソード・ワールド2.5 for FoundryVTT（フォーク）
 
-![Foundry v11](https://img.shields.io/badge/foundry-v11-green)
-![Foundry v12](https://img.shields.io/badge/foundry-v12-green)
-![Foundry v13](https://img.shields.io/badge/foundry-v13-green)
+FoundryVTT 用のソード・ワールド2.5ゲームシステムです。
+[Jean.N 氏による本家リポジトリ](https://github.com/jeannjeann/sw25-fvtt)をもとに、このフォークでメンテナンスを行います。
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/X8X415YUSP)
-[![OFUSE](https://img.shields.io/badge/OFUSE-9cf.svg?style=for-the-badge)](https://ofuse.me/o?uid=81619)
+## このフォークの目的
 
-FVTT用ソード・ワールド2.5ゲームシステム
+本家の更新が再開されるまでの一時的な対応として、ソード・ワールド2.5を FoundryVTT で継続して利用できるよう、以下の改善を進めます。
+
+- 新しいバージョンの FoundryVTT への対応
+- 新発売のサプリメントに伴う機能・データ構造への対応
+- 不具合の修正、コードの整理とリファクタリング
+
+開発は [lunachil32/sw25-fvtt](https://github.com/lunachil32/sw25-fvtt) で行います。
+この期間に必要な改善を、このフォーク内で進めます。
+
+## 開発・対応状況
+
+現在は開発準備段階です。独自のリリースはまだありません。
+
+| 項目 | 状況 |
+| --- | --- |
+| フォーク元のバージョン | 2.4.1 |
+| 本家から継承した FoundryVTT の互換性宣言 | minimum: 12 / verified: 12.343 / maximum: 13 |
+| フォークとしての動作検証 | 未実施。確認した環境を今後記載します |
+
+互換性宣言は現在の [system.json](system.json) の記載です。
+このフォークでの動作確認結果や、新しい FoundryVTT への対応完了を示すものではありません。
 
 ## インストール
-「ゲームシステム」タブの「ゲームシステムを入手」からインストール。
 
-## 使い方
-- [日本語マニュアル](https://github.com/jeannjeann/sw25-fvtt/blob/main/docs/MANUAL.md)
-- [English Manual](https://github.com/jeannjeann/sw25-fvtt/blob/main/docs/MANUAL-en.md)
+フォーク版の配布用マニフェストとインストール手順は、初回リリース時に案内します。
+現在の `system.json` にある `manifest`・`download` は本家のリリースを指しています。
 
+本家版の導入方法や案内は、[本家リポジトリの README](https://github.com/jeannjeann/sw25-fvtt#readme) を参照してください。
 
-### 推奨モジュール
-- [Token Action HUD Sword World 2.5](https://foundryvtt.com/packages/token-action-hud-sw25)（[Token Action HUD Core](https://foundryvtt.com/packages/token-action-hud-core)が必要）
-- [Drag Ruler for Sword World 2.5](https://foundryvtt.com/packages/drag-ruler-integration-for-sw25)（[Drag Ruler](https://foundryvtt.com/packages/drag-ruler)が必要）
-- [Sword World 2.5 Support Tools](https://github.com/keyslock/sw25-fvtt-support)
+## ドキュメント
 
-## 対応言語
-- 日本語（[Jean.N](https://github.com/jeannjeann)）
-- English ([kuouvadis](https://github.com/kuouvadis))
-- Korean ([CC8788](https://github.com/CC8788))
+- [日本語マニュアル](docs/MANUAL.md)
+- [English Manual](docs/MANUAL-en.md)
+- [変更履歴](CHANGELOG.md)
 
-## 作者
-- [Jean.N](https://github.com/jeannjeann)
+マニュアルと過去の変更履歴は本家から引き継いだ資料です。
+マニュアル冒頭の版表記は日本語が v0.10.3、英語が v0.10.2 で、現在のシステムバージョンとは異なります。
+このフォークでの機能変更や検証に合わせて更新していきます。
 
-### 開発サポート
+## 開発とブランチ運用
+
+| ブランチ | 用途 |
+| --- | --- |
+| `main` | このフォークのリリース状態を管理する既定ブランチ |
+| `upstream-sync` | 本家の `main` を追跡するブランチ |
+| 作業ブランチ | 新機能、修正、リファクタリング、取り込み後の検証 |
+
+本家の更新は `upstream-sync` に取り込み、作業ブランチで検証してからリリースに反映します。
+ブランチの役割と命名規則は [ブランチ運用](docs/BRANCHING.md) を参照してください。
+
+## 不具合報告・問い合わせ
+
+このフォークに関する不具合報告・問い合わせは、[このリポジトリの Issues](https://github.com/lunachil32/sw25-fvtt/issues) へお願いします。
+このフォーク固有の変更に関する不具合や問い合わせを、本家リポジトリへ送らないでください。
+
+## 本家システムの開発者・貢献者
+
+本家リポジトリの FoundryVTT 用システムは、[Jean.N](https://github.com/jeannjeann) 氏が開発したものです。
+本家の実装・翻訳・改善を引き継いでいます。
+
+本家 README に記載された開発協力者：
+
 - [kuouvadis](https://github.com/kuouvadis)
 - [HikariNoTsurugi](https://github.com/HikariNoTsurugi)
 - [keyslock](https://github.com/keyslock)
 - [Airamhh](https://github.com/Airamhh)
 - [Ryotai](https://github.com/ryotai-trpg)
 
+継承した言語データは、日本語（Jean.N）、英語（kuouvadis）、韓国語（[CC8788](https://github.com/CC8788)）です。
+
+本家システムの開発者への支援については、[本家リポジトリの README](https://github.com/jeannjeann/sw25-fvtt#readme) をご覧ください。
+
 ## 権利表記
-[MITライセンス](LICENSE.txt)
+
+[MIT ライセンス](LICENSE.txt)。本家システムの著作権表記とライセンス本文は `LICENSE.txt` を参照してください。
 
 本作は、「グループSNE」および「株式会社KADOKAWA」が権利を有する『ソード・ワールド2.0/2.5』の、二次創作です。 (C)GroupSNE (C)KADOKAWA
 
-このシステムはBoilerplateテンプレートをベースにしています。
+このシステムは Boilerplate テンプレートをベースにしています。
 
-このシステムは、Apache License 2.0に基づいて許諾されているMingCute Icon（https://www.mingcute.com/）を使用しています。 (C) 2025 MingCute Design.
-
-## 検証環境
-- OS:Windows 10
-- ブラウザ:GoogleChrome
-- FVTT:バージョン12.343
-
-## 注意事項
-- FoundryVTTのv11対応は、v1.4.1で終了しています。
-- バグを見つけたら報告していただけると助かります。
-- Modとの相性などはほとんど検証していません。「Dice So Nice!」「Times Up」「Chat Commander」「Token Action HUD」「Polyglot」は簡単に検証済み。
-- バフ・デバフの持続時間の管理には「Times Up」Modの使用をオススメします。
-- カスタムチャットコマンド使用には「Chat Commander」が必要です。
-- 戦闘に関する実装は行っていません。行動順に関しては手動で行うか、Modの導入をオススメします。
-- 行動順をサポートするModの一例（ポップコーンイニシアチブが向いているのではないかと個人的には思う）
-  - ポップコーンタイプ「Lancer Initiative」「Just Popcorn Initiative」
-  - グループタイプ「Combat Tracker Extensions」「Combat Tracker Groups」
-
+このシステムは、Apache License 2.0 に基づいて許諾されている [MingCute Icon](https://www.mingcute.com/) を使用しています。 (C) 2025 MingCute Design.
