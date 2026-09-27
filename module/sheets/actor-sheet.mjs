@@ -14,6 +14,7 @@ import { DamageSupporter } from "../helpers/damagesupport.mjs";
 import { updateAllResourceQuantities } from "../services/resource-quantity.mjs";
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../services/notes.mjs";
 import { gainTacspower, spendTacspower } from "../services/tacspower.mjs";
+import { consumeResource } from "../services/resource-consumption.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -1000,31 +1001,15 @@ export class SW25ActorSheet extends ActorSheet {
 
       let chatresuse;
       if (dataset.resuse) {
-        const resuseid = dataset.resuse;
-        const resusequantity = dataset.resusequantity;
-        const resuseitem = this.actor.items.get(resuseid);
-        const resuseitemquantity = resuseitem.system.quantity;
-        const remainingquantity = resuseitemquantity - resusequantity;
-        const min = resuseitem.system.qmin;
-
-        if (resuseitem) {
-          if (resuseitemquantity < resusequantity) {
-            ui.notifications.warn(
-              game.i18n.localize("SW25.Item.Noresquantitiywarn") +
-                resuseitem.name
-            );
-            return;
-          }
-          if (remainingquantity < min) {
-            ui.notifications.warn(
-              game.i18n.localize("SW25.Item.Noresquantitiywarn") +
-                resuseitem.name
-            );
-            return;
-          }
-          resuseitem.update({ "system.quantity": remainingquantity });
-          chatresuse = `<div style="text-align: right;">${resuseitem.name}: ${resuseitemquantity} >>> ${remainingquantity}</div>`;
+        const resource = this.actor.items.get(dataset.resuse);
+        const result = await consumeResource(resource, dataset.resusequantity);
+        if (!result.consumed) {
+          ui.notifications.warn(
+            game.i18n.localize("SW25.Item.Noresquantitiywarn") + resource.name
+          );
+          return;
         }
+        chatresuse = `<div style="text-align: right;">${resource.name}: ${result.previousQuantity} >>> ${result.remainingQuantity}</div>`;
       }
 
       let chatData = {
@@ -1509,42 +1494,23 @@ export class SW25ActorSheet extends ActorSheet {
 
   async _onResourceCost(event) {
     event.preventDefault();
-    const element = event.currentTarget;
-    const dataset = element.dataset;
+    const dataset = event.currentTarget.dataset;
     const speaker = ChatMessage.getSpeaker({ actor: this.actor });
+    if (!dataset.resuse) return;
 
-    if (dataset.resuse) {
-      const resuseid = dataset.resuse;
-      const resusequantity = dataset.resusequantity;
-      const resuseitem = this.actor.items.get(resuseid);
-      const resuseitemquantity = resuseitem.system.quantity;
-      const remainingquantity = resuseitemquantity - resusequantity;
-      const min = resuseitem.system.qmin;
-
-      if (resuseitem) {
-        if (resuseitemquantity < resusequantity) {
-          ui.notifications.warn(
-            game.i18n.localize("SW25.Item.Noresquantitiywarn") + resuseitem.name
-          );
-          return;
-        }
-        if (remainingquantity < min) {
-          ui.notifications.warn(
-            game.i18n.localize("SW25.Item.Noresquantitiywarn") + resuseitem.name
-          );
-          return;
-        }
-        resuseitem.update({ "system.quantity": remainingquantity });
-
-        let chatData = {
-          speaker: speaker,
-        };
-
-        chatData.content = `<div style="text-align: right;">${resuseitem.name}: ${resuseitemquantity} >>> ${remainingquantity}</div>`;
-
-        ChatMessage.create(chatData);
-      }
+    const resource = this.actor.items.get(dataset.resuse);
+    const result = await consumeResource(resource, dataset.resusequantity);
+    if (!result.consumed) {
+      ui.notifications.warn(
+        game.i18n.localize("SW25.Item.Noresquantitiywarn") + resource.name
+      );
+      return;
     }
+
+    ChatMessage.create({
+      speaker,
+      content: `<div style="text-align: right;">${resource.name}: ${result.previousQuantity} >>> ${result.remainingQuantity}</div>`,
+    });
   }
 
   async _onLootRoll(event) {
