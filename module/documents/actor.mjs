@@ -48,7 +48,21 @@ export class SW25Actor extends Actor {
 
     // Make modifications to data here. For example:
     const systemData = actorData.system;
-    await this.update({});
+    systemData.abilities.agi.racevalue = systemData.abilities.dex.racevalue;
+    systemData.abilities.vit.racevalue = systemData.abilities.str.racevalue;
+    systemData.abilities.mnd.racevalue = systemData.abilities.int.racevalue;
+    for (const ability of Object.values(systemData.abilities)) {
+      ability.value =
+        Number(ability.racevalue) +
+        Number(ability.valuebase) +
+        Number(ability.valuegrowth) +
+        Number(ability.valuemodify) +
+        Number(ability.efvaluemodify);
+      ability.mod = Math.floor(ability.value / 6) + Number(ability.efmodify);
+    }
+
+    // Temporary actors created before persistence do not have an ID to update.
+    if (this.id) await this.update({});
 
     //Calcurate Exp & AdvLevel & MgLevel
     this.items.forEach((item) => {
@@ -82,23 +96,13 @@ export class SW25Actor extends Actor {
     if (systemData.effect?.allac) systemData.efallacmod = Number(systemData.effect.allac);
     else systemData.efallacmod = 0;
 
-    // Calculate the abilities & modifier
-    systemData.abilities.agi.racevalue = systemData.abilities.dex.racevalue;
-    systemData.abilities.vit.racevalue = systemData.abilities.str.racevalue;
-    systemData.abilities.mnd.racevalue = systemData.abilities.int.racevalue;
+    // Calculate adventurer checks using the prepared ability modifiers
     if (!systemData.effect) systemData.efallskadvmod = 0;
     else if (systemData.effect.allsk)
       systemData.efallskadvmod = Number(systemData.effect.allsk);
     else systemData.efallskadvmod = 0;
 
     for (let [key, ability] of Object.entries(systemData.abilities)) {
-      ability.value =
-        Number(ability.racevalue) +
-        Number(ability.valuebase) +
-        Number(ability.valuegrowth) +
-        Number(ability.valuemodify) +
-        Number(ability.efvaluemodify);
-      ability.mod = Math.floor(ability.value / 6) + Number(ability.efmodify);
       ability.advbase =
         Number(ability.mod) +
         Number(systemData.attributes.advlevel.value) +
