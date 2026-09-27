@@ -11,11 +11,9 @@ import { targetRollDialog, targetSelectDialog } from "../helpers/dialogs.mjs";
 import { SW25 } from "../helpers/config.mjs";
 import { Util } from "../helpers/utils.mjs";
 import { DamageSupporter } from "../helpers/damagesupport.mjs";
-import {
-  updateResourceQuantity,
-  updateAllResourceQuantities,
-} from "../services/resource-quantity.mjs";
+import { updateAllResourceQuantities } from "../services/resource-quantity.mjs";
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../services/notes.mjs";
+import { gainTacspower, spendTacspower } from "../services/tacspower.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -2713,12 +2711,8 @@ export class SW25ActorSheet extends ActorSheet {
       changeItem.parents(".item")[0].dataset.itemId
     );
 
-    if (item.system.get) {
-      let resourceType = {
-        type: "tacspower",
-      };
-      await this._updateResource(resourceType, item.system.get);
-    }
+    const missingResources = await gainTacspower(this.actor, item);
+    this._notifyMissingResources(missingResources);
   }
 
   async _onTacspowerCost(event) {
@@ -2738,12 +2732,8 @@ export class SW25ActorSheet extends ActorSheet {
       changeItem.parents(".item")[0].dataset.itemId
     );
 
-    if (item.system.cost) {
-      let resourceType = {
-        type: "tacspower",
-      };
-      await this._updateResource(resourceType, item.system.cost, -1);
-    }
+    const missingResources = await spendTacspower(this.actor, item);
+    this._notifyMissingResources(missingResources);
   }
 
   async _onNotesReset(event) {
@@ -2774,15 +2764,6 @@ export class SW25ActorSheet extends ActorSheet {
     missingResources.forEach(() => {
       ui.notifications.warn(game.i18n.localize("SW25.NotResource"));
     });
-  }
-
-  async _updateResource(resourceType, modifyValue, multiple = 1) {
-    const updated = await updateResourceQuantity(
-      this.actor, resourceType, modifyValue, multiple
-    );
-    if (!updated) {
-      ui.notifications.warn(game.i18n.localize("SW25.NotResource"));
-    }
   }
 
   async _updateAllResource(resourceType, modifyValue, multiple = 1) {
