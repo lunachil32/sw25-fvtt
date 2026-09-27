@@ -11,10 +11,9 @@ import { targetRollDialog, targetSelectDialog } from "../helpers/dialogs.mjs";
 import { SW25 } from "../helpers/config.mjs";
 import { Util } from "../helpers/utils.mjs";
 import { DamageSupporter } from "../helpers/damagesupport.mjs";
-import {
-  updateResourceQuantity,
-  updateAllResourceQuantities,
-} from "../services/resource-quantity.mjs";
+import { updateAllResourceQuantities } from "../services/resource-quantity.mjs";
+import { gainNotes, gainAdditionalNotes, spendNotes } from "../services/notes.mjs";
+import { gainTacspower, spendTacspower } from "../services/tacspower.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -2649,27 +2648,8 @@ export class SW25ActorSheet extends ActorSheet {
       changeItem.parents(".item")[0].dataset.itemId
     );
 
-    if (item.system.upget) {
-      let resourceType = {
-        type: "note",
-        notetype: "up",
-      };
-      await this._updateResource(resourceType, item.system.upget);
-    }
-    if (item.system.downget) {
-      let resourceType = {
-        type: "note",
-        notetype: "down",
-      };
-      await this._updateResource(resourceType, item.system.downget);
-    }
-    if (item.system.charmget) {
-      let resourceType = {
-        type: "note",
-        notetype: "charm",
-      };
-      await this._updateResource(resourceType, item.system.charmget);
-    }
+    const missingResources = await gainNotes(this.actor, item);
+    this._notifyMissingResources(missingResources);
   }
 
   async _onNotesCost(event) {
@@ -2689,27 +2669,8 @@ export class SW25ActorSheet extends ActorSheet {
       changeItem.parents(".item")[0].dataset.itemId
     );
 
-    if (item.system.upcost) {
-      let resourceType = {
-        type: "note",
-        notetype: "up",
-      };
-      await this._updateResource(resourceType, item.system.upcost, -1);
-    }
-    if (item.system.downcost) {
-      let resourceType = {
-        type: "note",
-        notetype: "down",
-      };
-      await this._updateResource(resourceType, item.system.downcost, -1);
-    }
-    if (item.system.charmcost) {
-      let resourceType = {
-        type: "note",
-        notetype: "charm",
-      };
-      await this._updateResource(resourceType, item.system.charmcost, -1);
-    }
+    const missingResources = await spendNotes(this.actor, item);
+    this._notifyMissingResources(missingResources);
   }
 
   async _onNotesAddGet(event) {
@@ -2729,27 +2690,8 @@ export class SW25ActorSheet extends ActorSheet {
       changeItem.parents(".item")[0].dataset.itemId
     );
 
-    if (item.system.upadd) {
-      let resourceType = {
-        type: "note",
-        notetype: "up",
-      };
-      await this._updateResource(resourceType, item.system.upadd);
-    }
-    if (item.system.downadd) {
-      let resourceType = {
-        type: "note",
-        notetype: "down",
-      };
-      await this._updateResource(resourceType, item.system.downadd);
-    }
-    if (item.system.charmadd) {
-      let resourceType = {
-        type: "note",
-        notetype: "charm",
-      };
-      await this._updateResource(resourceType, item.system.charmadd);
-    }
+    const missingResources = await gainAdditionalNotes(this.actor, item);
+    this._notifyMissingResources(missingResources);
   }
 
   async _onTacspowerGet(event) {
@@ -2769,12 +2711,8 @@ export class SW25ActorSheet extends ActorSheet {
       changeItem.parents(".item")[0].dataset.itemId
     );
 
-    if (item.system.get) {
-      let resourceType = {
-        type: "tacspower",
-      };
-      await this._updateResource(resourceType, item.system.get);
-    }
+    const missingResources = await gainTacspower(this.actor, item);
+    this._notifyMissingResources(missingResources);
   }
 
   async _onTacspowerCost(event) {
@@ -2794,12 +2732,8 @@ export class SW25ActorSheet extends ActorSheet {
       changeItem.parents(".item")[0].dataset.itemId
     );
 
-    if (item.system.cost) {
-      let resourceType = {
-        type: "tacspower",
-      };
-      await this._updateResource(resourceType, item.system.cost, -1);
-    }
+    const missingResources = await spendTacspower(this.actor, item);
+    this._notifyMissingResources(missingResources);
   }
 
   async _onNotesReset(event) {
@@ -2826,13 +2760,10 @@ export class SW25ActorSheet extends ActorSheet {
     await this._updateAllResource({type: "tacspower"}, null);
   }
 
-  async _updateResource(resourceType, modifyValue, multiple = 1) {
-    const updated = await updateResourceQuantity(
-      this.actor, resourceType, modifyValue, multiple
-    );
-    if (!updated) {
+  _notifyMissingResources(missingResources) {
+    missingResources.forEach(() => {
       ui.notifications.warn(game.i18n.localize("SW25.NotResource"));
-    }
+    });
   }
 
   async _updateAllResource(resourceType, modifyValue, multiple = 1) {
