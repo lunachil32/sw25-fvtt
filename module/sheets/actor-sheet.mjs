@@ -11,6 +11,10 @@ import { targetRollDialog, targetSelectDialog } from "../helpers/dialogs.mjs";
 import { SW25 } from "../helpers/config.mjs";
 import { Util } from "../helpers/utils.mjs";
 import { DamageSupporter } from "../helpers/damagesupport.mjs";
+import {
+  updateResourceQuantity,
+  updateAllResourceQuantities,
+} from "../services/resource-quantity.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -2823,63 +2827,21 @@ export class SW25ActorSheet extends ActorSheet {
   }
 
   async _updateResource(resourceType, modifyValue, multiple = 1) {
-    const result = isNaN(Number(modifyValue))
-      ? 0
-      : Number(modifyValue) * multiple;
-
-    let resource = this.actor.items.find((i) => {
-      if (i.type !== "resource") return false;
-
-      const res = i.system?.resource;
-      return (
-        res &&
-        Object.entries(resourceType).every(([key, value]) => res[key] === value)
-      );
-    });
-
-    if (resource) {
-      let oldVal = resource.system.quantity ? resource.system.quantity : 0;
-      let newVal = oldVal + Number(result);
-
-      await resource.update({ "system.quantity": newVal });
-    } else {
+    const updated = await updateResourceQuantity(
+      this.actor, resourceType, modifyValue, multiple
+    );
+    if (!updated) {
       ui.notifications.warn(game.i18n.localize("SW25.NotResource"));
-      return;
     }
   }
-  
+
   async _updateAllResource(resourceType, modifyValue, multiple = 1) {
-    const result = isNaN(Number(modifyValue))
-      ? 0
-      : Number(modifyValue) * multiple;
-
-    const resources = this.actor.items.filter((i) => {
-      if (i.type !== "resource") return false;
-
-      const res = i.system?.resource;
-      return (
-        res &&
-        Object.entries(resourceType).every(([key, value]) => res[key] === value)
-      );
-    });
-
-    if (resources.length === 0) {
+    const updated = await updateAllResourceQuantities(
+      this.actor, resourceType, modifyValue, multiple
+    );
+    if (!updated) {
       ui.notifications.warn(game.i18n.localize("SW25.NotResource"));
-      return;
     }
-
-    const updates = resources.map(resource => {
-      const oldVal = Number(resource.system.quantity ?? 0);
-      const newVal = modifyValue ? oldVal + Number(result) : 0;
-      return {
-        _id: resource.id,
-        system: {
-          quantity: newVal
-        }
-      };
-    });
-
-    await this.actor.updateEmbeddedDocuments("Item", updates);
   }
 
   async render(force = false, options = {}) {
