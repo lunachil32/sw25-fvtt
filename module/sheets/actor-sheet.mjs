@@ -15,6 +15,7 @@ import { updateAllResourceQuantities } from "../services/resource-quantity.mjs";
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../services/notes.mjs";
 import { gainTacspower, spendTacspower } from "../services/tacspower.mjs";
 import { consumeResource } from "../services/resource-consumption.mjs";
+import { spendMaterialCards, applyAlchemyRank } from "../services/alchemy.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -2487,94 +2488,33 @@ export class SW25ActorSheet extends ActorSheet {
       changeItem.parents(".item")[0].dataset.itemId
     );
 
-    const useRank = event.target.textContent.trim().toLowerCase();
-    let update = {};
-    const cards = [
-      { color: "red", mark: "fa-paw" },
-      { color: "green", mark: "fa-leaf" },
-      { color: "black", mark: "fa-gem" },
-      { color: "white", mark: "fa-heart" },
-      { color: "gold", mark: "fa-sun" },
-    ];
-    let name = `${item.name}(${event.target.textContent.trim()})`;
-    let materialcards = [];
-
-    for (let card of cards) {
-      if (!isNaN(item.system[card.color]) && item.system[card.color] <= 0) {
-        continue;
-      }
-
-      let resource = this.actor.items.find(
-        (i) =>
-          i.type === "resource" &&
-          i.system?.resource?.type === "material" &&
-          i.system?.resource?.materialtype === card.color &&
-          i.system?.resource?.materialrank === useRank
-      );
-
-      let name =
+    const rankLabel = event.target.textContent.trim();
+    const useRank = rankLabel.toLowerCase();
+    const marks = {
+      red: "fa-paw",
+      green: "fa-leaf",
+      black: "fa-gem",
+      white: "fa-heart",
+      gold: "fa-sun",
+    };
+    const name = `${item.name}(${rankLabel})`;
+    const results = await spendMaterialCards(this.actor, item, useRank);
+    const materialcards = results.map((card) => ({
+      key: card.cost,
+      name:
         game.i18n.localize(`SW25.Item.Alchemytech.${card.color.capitalize()}`) +
-        event.target.textContent.trim();
+        rankLabel,
+      color: card.color,
+      ...(card.resource ? { mark: marks[card.color] } : {}),
+      cost: card.cost,
+      resource: card.resource,
+      oldVal: card.previousQuantity,
+      newVal: card.remainingQuantity,
+    }));
 
-      if (!resource) {
-        materialcards.push({
-          key: item.system[card.color],
-          name: name,
-          color: card.color,
-          cost: item.system[card.color],
-          resource: false,
-          oldVal: null,
-          newVal: null,
-        });
-      } else {
-        let oldVal = resource.system.quantity ? resource.system.quantity : 0;
-        let newVal = oldVal - item.system[card.color];
+    await applyAlchemyRank(item, useRank);
 
-        await resource.update({ "system.quantity": newVal });
-
-        materialcards.push({
-          key: item.system[card.color],
-          name: name,
-          color: card.color,
-          mark: card.mark,
-          cost: item.system[card.color],
-          resource: true,
-          oldVal: oldVal,
-          newVal: newVal,
-        });
-      }
-    }
-
-    // alchemitech effective change.
-    if ((item.system.effectvalue?.type && item.system.effectvalue.type !== "-")
-        && item.effects) {
-      const changeValue = item.system.effectvalue[useRank];
-      if (changeValue) {
-        const updates = [];
-
-        if (item.system.effectvalue.type === "diceformula") {
-          await item.update({ "system.customformula": String(changeValue) });
-        } else {
-          for (let effect of item.effects) {
-            const updateData = { _id: effect.id };
-
-            if (item.system.effectvalue.type === "time") {
-              updateData.duration = { rounds: Number(changeValue) };
-            } else if (item.system.effectvalue.type === "value") {
-              updateData.changes = effect.changes.map((c) => ({
-                ...c,
-                value: Number(changeValue),
-              }));
-            }
-
-            updates.push(updateData);
-          }
-          await item.updateEmbeddedDocuments("ActiveEffect", updates);
-        }
-      }
-    }
-
-    this.actor.update(update);
+    this.actor.update({});
 
     // Chat message
     const speaker = ChatMessage.getSpeaker({ actor: this.actor });
