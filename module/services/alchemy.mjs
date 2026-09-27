@@ -36,3 +36,34 @@ export async function spendMaterialCards(actor, alchemy, rank) {
   }
   return results;
 }
+
+/** Apply the selected rank to the alchemy Item's effects or dice formula. */
+export async function applyAlchemyRank(alchemy, rank) {
+  if ((alchemy.system.effectvalue?.type && alchemy.system.effectvalue.type !== "-")
+      && alchemy.effects) {
+    const changeValue = alchemy.system.effectvalue[rank];
+    if (changeValue) {
+      const updates = [];
+
+      if (alchemy.system.effectvalue.type === "diceformula") {
+        await alchemy.update({ "system.customformula": String(changeValue) });
+      } else {
+        for (let effect of alchemy.effects) {
+          const updateData = { _id: effect.id };
+
+          if (alchemy.system.effectvalue.type === "time") {
+            updateData.duration = { rounds: Number(changeValue) };
+          } else if (alchemy.system.effectvalue.type === "value") {
+            updateData.changes = effect.changes.map((c) => ({
+              ...c,
+              value: Number(changeValue),
+            }));
+          }
+
+          updates.push(updateData);
+        }
+        await alchemy.updateEmbeddedDocuments("ActiveEffect", updates);
+      }
+    }
+  }
+}

@@ -15,7 +15,7 @@ import { updateAllResourceQuantities } from "../services/resource-quantity.mjs";
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../services/notes.mjs";
 import { gainTacspower, spendTacspower } from "../services/tacspower.mjs";
 import { consumeResource } from "../services/resource-consumption.mjs";
-import { spendMaterialCards } from "../services/alchemy.mjs";
+import { spendMaterialCards, applyAlchemyRank } from "../services/alchemy.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -2512,34 +2512,7 @@ export class SW25ActorSheet extends ActorSheet {
       newVal: card.remainingQuantity,
     }));
 
-    // alchemitech effective change.
-    if ((item.system.effectvalue?.type && item.system.effectvalue.type !== "-")
-        && item.effects) {
-      const changeValue = item.system.effectvalue[useRank];
-      if (changeValue) {
-        const updates = [];
-
-        if (item.system.effectvalue.type === "diceformula") {
-          await item.update({ "system.customformula": String(changeValue) });
-        } else {
-          for (let effect of item.effects) {
-            const updateData = { _id: effect.id };
-
-            if (item.system.effectvalue.type === "time") {
-              updateData.duration = { rounds: Number(changeValue) };
-            } else if (item.system.effectvalue.type === "value") {
-              updateData.changes = effect.changes.map((c) => ({
-                ...c,
-                value: Number(changeValue),
-              }));
-            }
-
-            updates.push(updateData);
-          }
-          await item.updateEmbeddedDocuments("ActiveEffect", updates);
-        }
-      }
-    }
+    await applyAlchemyRank(item, useRank);
 
     this.actor.update({});
 
