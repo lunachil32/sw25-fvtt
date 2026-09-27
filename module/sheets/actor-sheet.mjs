@@ -18,6 +18,7 @@ import { consumeResource } from "../services/resource-consumption.mjs";
 import { spendMaterialCards, applyAlchemyRank } from "../services/alchemy.mjs";
 import { spendLifeline, buildPhaseareaEffect } from "../services/phasearea.mjs";
 import { assignActionTableEntry } from "../services/action-table.mjs";
+import { bookmarkItem, toggleItemBookmark } from "../services/item-bookmarks.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -2635,25 +2636,7 @@ export class SW25ActorSheet extends ActorSheet {
     const droppedItem = await fromUuid(data.uuid ?? data.data?.uuid);
     if (!droppedItem) return;
 
-    const droppedItemId = droppedItem.id;
-    const droppedItemName = droppedItem.name;
-
-    let ownedItem = this.actor.items.get(droppedItemId);
-
-    if (ownedItem) {
-      await ownedItem.update({ "system.bookmark": true });
-    } else {
-      const sameNameItem = this.actor.items.find(i => i.name === droppedItemName);
-
-      if (sameNameItem) {
-        await sameNameItem.update({ "system.bookmark": true });
-      } else {
-        const newItemData = foundry.utils.duplicate(droppedItem.toObject());
-        newItemData.system.bookmark = true;
-
-        await this.actor.createEmbeddedDocuments("Item", [newItemData]);
-      }
-    }
+    await bookmarkItem(this.actor, droppedItem);
   }
 
   async _onDropItem(event, data) {
@@ -2665,25 +2648,7 @@ export class SW25ActorSheet extends ActorSheet {
     const droppedItem = await fromUuid(data.uuid ?? data.data?.uuid);
     if (!droppedItem) return;
 
-    const droppedItemId = droppedItem.id;
-    const droppedItemName = droppedItem.name;
-
-    let ownedItem = this.actor.items.get(droppedItemId);
-
-    if (ownedItem) {
-      await ownedItem.update({ "system.bookmark": true });
-    } else {
-      const sameNameItem = this.actor.items.find(i => i.name === droppedItemName);
-
-      if (sameNameItem) {
-        await sameNameItem.update({ "system.bookmark": true });
-      } else {
-        const newItemData = foundry.utils.duplicate(droppedItem.toObject());
-        newItemData.system.bookmark = true;
-
-        await this.actor.createEmbeddedDocuments("Item", [newItemData]);
-      }
-    }
+    await bookmarkItem(this.actor, droppedItem);
 
     return;
   }
@@ -2694,7 +2659,7 @@ export class SW25ActorSheet extends ActorSheet {
     const item = this.actor.items.get(
       changeItem.parents(".item")[0].dataset.itemId
     );
-    item.update({ "system.bookmark": !item.system.bookmark });
+    toggleItemBookmark(item);
   }
 
 }
