@@ -1,0 +1,2 @@
+# Preserve LevelDB files byte-for-byte.
+/packs/** -text
