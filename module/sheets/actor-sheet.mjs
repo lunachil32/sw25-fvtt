@@ -16,6 +16,7 @@ import { gainNotes, gainAdditionalNotes, spendNotes } from "../services/notes.mj
 import { gainTacspower, spendTacspower } from "../services/tacspower.mjs";
 import { consumeResource } from "../services/resource-consumption.mjs";
 import { spendMaterialCards, applyAlchemyRank } from "../services/alchemy.mjs";
+import { spendLifeline, buildPhaseareaEffect } from "../services/phasearea.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -2347,25 +2348,7 @@ export class SW25ActorSheet extends ActorSheet {
       " " +
       cost +
       game.i18n.localize("SW25.Item.Phasearea.Point");
-    let effects = [
-      {
-        name: name,
-        img: item.img,
-        origin: "Item." + item._id,
-        disabled: false,
-        changes: [],
-        description: item.system.description,
-        transfer: false,
-        statuses: [],
-        flags: {
-          sw25: {
-            sourceName: orgActor,
-            sourceId: `Actor.${orgId}`,
-          },
-        },
-        tint: null,
-      },
-    ];
+    const effects = [buildPhaseareaEffect(this.actor, item, name)];
 
     let lifeline = "";
     if (item.system.type == "ten") {
@@ -2376,24 +2359,14 @@ export class SW25ActorSheet extends ActorSheet {
       lifeline = "Jin";
     }
 
-    let resource = this.actor.items.find(
-      (i) =>
-        i.type === "resource" &&
-        i.system?.resource?.type === "lifeline" &&
-        i.system?.resource?.lifelinetype === item.system.type
-    );
+    const consumed = await spendLifeline(this.actor, item, cost);
 
-    if (!resource) {
+    if (!consumed) {
       ui.notifications.warn(
         game.i18n.localize("SW25.NotResource") +
           ":" +
           game.i18n.localize(`SW25.Item.Phasearea.${lifeline}`)
       );
-    } else {
-      let oldVal = resource.system.quantity ? resource.system.quantity : 0;
-      let newVal = oldVal - cost;
-
-      await resource.update({ "system.quantity": newVal });
     }
 
     // Apply
