@@ -1,4 +1,4 @@
-import { prepareItemFieldAdjustment, saveItemFieldAdjustment } from "../../use-cases/edit-item-field.mjs";
+import { bindItemFieldButtons } from "../bindings/item-field-buttons.mjs";
 import { bindItemFieldChanges } from "../bindings/item-fields.mjs";
 import { showEffectTargetDialog } from "../dialogs/effect-target.mjs";
 import { showPhaseareaCostDialog } from "../dialogs/phasearea-cost.mjs";
@@ -218,9 +218,7 @@ export class SW25ActorSheet extends ActorSheet {
 
     // Change Button
     html.find(".adjustment-button").click(this._onAdjustmentButton.bind(this));
-    html.find(".quantity-button").click(this._onQuantityButton.bind(this));
-    html.find(".changesl-button").click(this._onSkilllevelButton.bind(this));
-    html.find(".checkmod-button").click(this._onCheckmodButton.bind(this));
+    bindItemFieldButtons(html, this.actor, () => this.submit());
     html.find(".roll-ability-check").click(this._onGrowthCheck.bind(this));
     html.find(".roll-actiontable").click(this._onActionTable.bind(this));
 
@@ -602,74 +600,6 @@ export class SW25ActorSheet extends ActorSheet {
       isNaN(input.valueAsNumber) || !input.valueAsNumber
         ? (input.valueAsNumber = 1)
         : (input.valueAsNumber += 1);
-
-    this.submit();
-  }
-
-  async _onQuantityButton(event) {
-    event.preventDefault();
-    const action = event.currentTarget.dataset.action;
-    const input = event.currentTarget.closest("li").querySelector("input.qt-change");
-    const property = event.currentTarget.dataset.property;
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-
-    const limited = prepareItemFieldAdjustment(item, input.value, action, { limitQuantity: true });
-    const quantity = limited.value;
-    for (const limit of limited.limits) {
-      const key = limit === "max" ? "SW25.isAlreadyMax" : "SW25.isAlreadyMin";
-      ui.notifications.warn(`"${item.name}"${game.i18n.localize(key)}`);
-    }
-
-    input.value = quantity;
-
-    if (item) {
-      await saveItemFieldAdjustment(item, property, quantity, "system.quantity");
-    }
-
-    this.submit();
-  }
-
-  async _onSkilllevelButton(event) {
-    event.preventDefault();
-    const action = event.currentTarget.dataset.action;
-    const input = event.currentTarget.closest("li").querySelector("input.sl-change");
-    const property = event.currentTarget.dataset.property;
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-
-    const { value: skilllevel } = prepareItemFieldAdjustment(item, input.value, action);
-
-    input.value = skilllevel;
-
-    if (item) {
-      await saveItemFieldAdjustment(item, property, skilllevel, "system.skilllevel");
-    }
-
-    this.submit();
-  }
-
-  async _onCheckmodButton(event) {
-    event.preventDefault();
-    const action = event.currentTarget.dataset.action;
-    const input = event.currentTarget.closest("li").querySelector("input.cm-change");
-    const property = event.currentTarget.dataset.property;
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-
-    const { value: checkmod } = prepareItemFieldAdjustment(item, input.value, action);
-
-    input.value = checkmod;
-
-    if (item) {
-      await saveItemFieldAdjustment(item, property, checkmod, "system.checkmod3");
-    }
 
     this.submit();
   }
