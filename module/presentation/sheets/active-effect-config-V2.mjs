@@ -1,4 +1,4 @@
-import { prepareEffectContextV2 } from "../presentation/sheet-context/effect-context.mjs";
+import { prepareEffectContextV2 } from "../sheet-context/effect-context.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications

@@ -1,20 +1,20 @@
-import { postSessionResult } from "../presentation/chat/session-messages.mjs";
-import { prepareItemSheetContext } from "../presentation/sheet-context/item-context.mjs";
+import { postSessionResult } from "../chat/session-messages.mjs";
+import { prepareItemSheetContext } from "../sheet-context/item-context.mjs";
 import {
   onManageActiveEffect,
-} from "../helpers/effects.mjs";
-import { SW25 } from "../helpers/config.mjs";
-import { resolveSessionResult } from "../services/session-results.mjs";
+} from "../../helpers/effects.mjs";
+import { SW25 } from "../../helpers/config.mjs";
+import { resolveSessionResult } from "../../services/session-results.mjs";
 import {
   applyPropertyElements,
   applyWeaponTypeElements,
-} from "../services/item-elements.mjs";
+} from "../../services/item-elements.mjs";
 import {
   addCustomField,
   removeCustomField,
   moveCustomFieldUp,
   moveCustomFieldDown,
-} from "../services/item-custom-fields.mjs";
+} from "../../services/item-custom-fields.mjs";
 
 /**
  * Extend the basic ItemSheet with some very simple modifications

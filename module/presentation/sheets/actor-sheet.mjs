@@ -1,34 +1,34 @@
-import { showEffectTargetDialog } from "../presentation/dialogs/effect-target.mjs";
-import { showPhaseareaCostDialog } from "../presentation/dialogs/phasearea-cost.mjs";
-import { postActorCheck } from "../presentation/chat/check-roll.mjs";
-import { postActorPower } from "../presentation/chat/power-roll.mjs";
-import { postApplyAll } from "../presentation/chat/apply-all.mjs";
-import { postAppliedEffects, postPhaseareaEffect } from "../presentation/chat/effect-messages.mjs";
-import { postAlchemyCost, postResourceCost } from "../presentation/chat/resource-messages.mjs";
-import { postActorCheckRequest, postMonsterCheckRequest, postMonsterReveal } from "../presentation/chat/check-requests.mjs";
-import { prepareActorSheetContext } from "../presentation/sheet-context/actor-context.mjs";
+import { showEffectTargetDialog } from "../dialogs/effect-target.mjs";
+import { showPhaseareaCostDialog } from "../dialogs/phasearea-cost.mjs";
+import { postActorCheck } from "../chat/check-roll.mjs";
+import { postActorPower } from "../chat/power-roll.mjs";
+import { postApplyAll } from "../chat/apply-all.mjs";
+import { postAppliedEffects, postPhaseareaEffect } from "../chat/effect-messages.mjs";
+import { postAlchemyCost, postResourceCost } from "../chat/resource-messages.mjs";
+import { postActorCheckRequest, postMonsterCheckRequest, postMonsterReveal } from "../chat/check-requests.mjs";
+import { prepareActorSheetContext } from "../sheet-context/actor-context.mjs";
 import {
   onManageActiveEffect,
-} from "../helpers/effects.mjs";
-import { mpCost, hpCost } from "../helpers/mpcost.mjs";
-import { lootRoll } from "../helpers/lootroll.mjs";
-import { growthCheck } from "../helpers/growthcheck.mjs";
-import { actionRoll } from "../helpers/actionroll.mjs";
-import { targetRollDialog, targetSelectDialog } from "../helpers/dialogs.mjs";
-import { SW25 } from "../helpers/config.mjs";
-import { Util } from "../helpers/utils.mjs";
-import { updateAllResourceQuantities, limitResourceQuantity } from "../services/resource-quantity.mjs";
-import { gainNotes, gainAdditionalNotes, spendNotes } from "../services/notes.mjs";
-import { gainTacspower, spendTacspower } from "../services/tacspower.mjs";
-import { consumeResource, isMpCostTarget } from "../services/resource-consumption.mjs";
-import { useAlchemy } from "../services/alchemy.mjs";
-import { preparePhaseareaUse } from "../services/phasearea.mjs";
-import { assignActionTableEntry } from "../services/action-table.mjs";
-import { bookmarkItem, toggleItemBookmark } from "../services/item-bookmarks.mjs";
-import { applyItemEffects, applyEffectsToTokens, applyPreparedEffectsToTokens } from "../services/effect-application.mjs";
-import { resolveActorCheck } from "../services/actor-checks.mjs";
-import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../services/actor-check-requests.mjs";
-import { resolveActorPower } from "../services/actor-power-rolls.mjs";
+} from "../../helpers/effects.mjs";
+import { mpCost, hpCost } from "../../helpers/mpcost.mjs";
+import { lootRoll } from "../../helpers/lootroll.mjs";
+import { growthCheck } from "../../helpers/growthcheck.mjs";
+import { actionRoll } from "../../helpers/actionroll.mjs";
+import { targetRollDialog, targetSelectDialog } from "../../helpers/dialogs.mjs";
+import { SW25 } from "../../helpers/config.mjs";
+import { Util } from "../../helpers/utils.mjs";
+import { updateAllResourceQuantities, limitResourceQuantity } from "../../services/resource-quantity.mjs";
+import { gainNotes, gainAdditionalNotes, spendNotes } from "../../services/notes.mjs";
+import { gainTacspower, spendTacspower } from "../../services/tacspower.mjs";
+import { consumeResource, isMpCostTarget } from "../../services/resource-consumption.mjs";
+import { useAlchemy } from "../../services/alchemy.mjs";
+import { preparePhaseareaUse } from "../../services/phasearea.mjs";
+import { assignActionTableEntry } from "../../services/action-table.mjs";
+import { bookmarkItem, toggleItemBookmark } from "../../services/item-bookmarks.mjs";
+import { applyItemEffects, applyEffectsToTokens, applyPreparedEffectsToTokens } from "../../services/effect-application.mjs";
+import { resolveActorCheck } from "../../services/actor-checks.mjs";
+import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../../services/actor-check-requests.mjs";
+import { resolveActorPower } from "../../services/actor-power-rolls.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
