@@ -13,7 +13,7 @@ import { updateAllResourceQuantities, limitResourceQuantity } from "../services/
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../services/notes.mjs";
 import { gainTacspower, spendTacspower } from "../services/tacspower.mjs";
 import { consumeResource } from "../services/resource-consumption.mjs";
-import { spendMaterialCards, applyAlchemyRank } from "../services/alchemy.mjs";
+import { useAlchemy } from "../services/alchemy.mjs";
 import { preparePhaseareaUse } from "../services/phasearea.mjs";
 import { assignActionTableEntry } from "../services/action-table.mjs";
 import { bookmarkItem, toggleItemBookmark } from "../services/item-bookmarks.mjs";
@@ -2032,7 +2032,7 @@ export class SW25ActorSheet extends ActorSheet {
       gold: "fa-sun",
     };
     const name = `${item.name}(${rankLabel})`;
-    const results = await spendMaterialCards(this.actor, item, useRank);
+    const results = await useAlchemy(this.actor, item, useRank);
     const materialcards = results.map((card) => ({
       key: card.cost,
       name:
@@ -2045,10 +2045,6 @@ export class SW25ActorSheet extends ActorSheet {
       oldVal: card.previousQuantity,
       newVal: card.remainingQuantity,
     }));
-
-    await applyAlchemyRank(item, useRank);
-
-    this.actor.update({});
 
     // Chat message
     const speaker = ChatMessage.getSpeaker({ actor: this.actor });
