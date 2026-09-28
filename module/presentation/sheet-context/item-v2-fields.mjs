@@ -1,6 +1,6 @@
 /** Field metadata for V2 item editors; calculations remain in the Item document. */
 export function prepareItemV2Fields(item) {
-  const definitions = [...common, ...(item.type === "skill" ? skill : resource)];
+  const definitions = [...common, ...(fieldsByType[item.type] ?? [])];
   if (item.type === "resource") {
     const subtype = subtypes[item.system.resource?.type];
     if (subtype) definitions.push(...subtype);
@@ -13,7 +13,7 @@ export function prepareItemV2Fields(item) {
   }));
 }
 
-export const supportedItemTypesV2 = ["skill", "resource"];
+export const supportedItemTypesV2 = ["skill", "resource", "armor"];
 
 const common = [["name", "Name"], ["system.overview", "SW25.Item.Overview"]];
 const skill = [
@@ -42,3 +42,24 @@ const subtypes = {
   magitech: [["system.resource.magitechtype", "SW25.V2.ResourceSubtype", "select", "magitechTypes"]],
   abyssex: [["system.resource.abyssextype", "SW25.V2.ResourceSubtype", "select", "abyssexTypes"]],
 };
+
+const armor = [
+  ["system.equip", "SW25.Equip", "checkbox"],
+  ["system.dedicated", "SW25.Item.Dedicated", "checkbox"],
+  ["system.quantity", "SW25.Quantity", "number"],
+  ["system.category", "SW25.Item.Category", "select", "armorCategorys"],
+  ["system.rank", "SW25.Attributes.Honer.Rank", "select", "ranks"],
+  ["system.price", "SW25.Item.Price", "number"],
+  ["system.isMagicitem", "SW25.Item.MagicItem", "checkbox"],
+  ["system.isHonoritem", "SW25.Item.HonorItem", "checkbox"],
+  ["system.honor", "SW25.Item.Honor", "number"],
+  ["system.info.popularity", "SW25.Item.Popularity"],
+  ["system.info.shape", "SW25.Item.Shape"],
+  ["system.info.create", "SW25.Item.Create"],
+  ["system.usage", "SW25.Item.Weapon.Usage", "select", "weaponUsages"],
+  ["system.reqstr", "SW25.Item.Reqstr", "number"],
+  ["system.dodge", "SW25.Item.Armor.Dodge", "number"],
+  ["system.pp", "SW25.Attributes.Protectionpoint.long", "number"],
+  ["system.mpp", "SW25.Attributes.Magicprotection.abbr", "number"],
+];
+const fieldsByType = { skill, resource, armor };
