@@ -20,6 +20,7 @@ import { spendLifeline, buildPhaseareaEffect } from "../services/phasearea.mjs";
 import { assignActionTableEntry } from "../services/action-table.mjs";
 import { bookmarkItem, toggleItemBookmark } from "../services/item-bookmarks.mjs";
 import { transferEffects } from "../services/effect-transfer.mjs";
+import { resolveActorCheck } from "../services/actor-checks.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -996,26 +997,25 @@ export class SW25ActorSheet extends ActorSheet {
 
     // Handle rolls that supply the formula directly.
     if (dataset.roll) {
-      const rollData = this.actor.getRollData();
       const checktype = dataset.checktype ? dataset.checktype.split(",") : "";
-
-      let roll = new Roll(dataset.roll, rollData);
-      await roll.evaluate();
-
-      let label = dataset.label ? `${dataset.label}` : "";
-
-      let chatresuse;
-      if (dataset.resuse) {
-        const resource = this.actor.items.get(dataset.resuse);
-        const result = await consumeResource(resource, dataset.resusequantity);
-        if (!result.consumed) {
-          ui.notifications.warn(
-            game.i18n.localize("SW25.Item.Noresquantitiywarn") + resource.name
-          );
-          return;
-        }
-        chatresuse = `<div style="text-align: right;">${resource.name}: ${result.previousQuantity} >>> ${result.remainingQuantity}</div>`;
+      const result = await resolveActorCheck(this.actor, {
+        formula: dataset.roll,
+        itemId,
+        resourceId: dataset.resuse,
+        resourceAmount: dataset.resusequantity,
+      });
+      const { roll, resourceCost, critical, fumble, elements, damage, tags } = result;
+      if (resourceCost && !resourceCost.consumed) {
+        ui.notifications.warn(
+          game.i18n.localize("SW25.Item.Noresquantitiywarn") + resourceCost.name
+        );
+        return;
       }
+
+      const label = dataset.label ? `${dataset.label}` : "";
+      const chatresuse = resourceCost
+        ? `<div style="text-align: right;">${resourceCost.name}: ${resourceCost.previousQuantity} >>> ${resourceCost.remainingQuantity}</div>`
+        : undefined;
 
       let chatData = {
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
@@ -1023,11 +1023,6 @@ export class SW25ActorSheet extends ActorSheet {
         rollMode: game.settings.get("core", "rollMode"),
         rolls: [roll],
       };
-
-      let chatCritical = null;
-      let chatFumble = null;
-      if (roll.terms[0].total == 12) chatCritical = 1;
-      if (roll.terms[0].total == 2) chatFumble = 1;
 
       let chatapply = dataset.apply;
       let chatspell = dataset.spell;
@@ -1055,13 +1050,6 @@ export class SW25ActorSheet extends ActorSheet {
         };
       }
 
-      const item = itemId ? this.actor.items.get(itemId) : null;
-      const elements = item ? item.system.elements : null;
-      const damage = this.actor ? this.actor.system.attributes.damage : null;
-      const classType = this.actor ? this.actor.system.classType : null;
-      const isWeapon = DamageSupporter.getWeaponAttributes(item);
-      const tags = DamageSupporter.createChatTag(elements, damage, classType, isWeapon);
-      
       chatData.flags = {
         sw25: {
           total: roll.total,
@@ -1086,8 +1074,8 @@ export class SW25ActorSheet extends ActorSheet {
         {
           formula: roll.formula,
           tooltip: await roll.getTooltip(),
-          critical: chatCritical,
-          fumble: chatFumble,
+          critical,
+          fumble,
           total: roll.total,
           apply: chatapply,
           spell: chatspell,
