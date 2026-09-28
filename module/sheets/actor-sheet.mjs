@@ -2,7 +2,6 @@ import {
   onManageActiveEffect,
   prepareActiveEffectCategories,
 } from "../helpers/effects.mjs";
-import { powerRoll } from "../helpers/powerroll.mjs";
 import { mpCost, hpCost } from "../helpers/mpcost.mjs";
 import { lootRoll } from "../helpers/lootroll.mjs";
 import { growthCheck } from "../helpers/growthcheck.mjs";
@@ -10,7 +9,6 @@ import { actionRoll } from "../helpers/actionroll.mjs";
 import { targetRollDialog, targetSelectDialog } from "../helpers/dialogs.mjs";
 import { SW25 } from "../helpers/config.mjs";
 import { Util } from "../helpers/utils.mjs";
-import { DamageSupporter } from "../helpers/damagesupport.mjs";
 import { updateAllResourceQuantities } from "../services/resource-quantity.mjs";
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../services/notes.mjs";
 import { gainTacspower, spendTacspower } from "../services/tacspower.mjs";
@@ -21,6 +19,7 @@ import { assignActionTableEntry } from "../services/action-table.mjs";
 import { bookmarkItem, toggleItemBookmark } from "../services/item-bookmarks.mjs";
 import { transferEffects } from "../services/effect-transfer.mjs";
 import { resolveActorCheck } from "../services/actor-checks.mjs";
+import { resolveActorPower } from "../services/actor-power-rolls.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -1154,85 +1153,25 @@ export class SW25ActorSheet extends ActorSheet {
   }
   async _onPowerRollExec(event, targetTokens) {
     event.preventDefault();
-    const element = event.currentTarget;
-    const dataset = element.dataset;
+    const dataset = event.currentTarget.dataset;
     const itemId =
       dataset.itemid ??
       event.currentTarget.closest("[data-item-id]")?.dataset.itemId ??
       null;
-    const formula = dataset.roll;
     const powertype = dataset.powertype ? dataset.powertype.split(",") : "";
-    const powertable = dataset.pt.split(",");
-    //const powertable = dataset.pt.split(",").map(Number);
-    let roll = await powerRoll(formula, powertable);
+    const { roll, details, elements, damage, tags } = await resolveActorPower(this.actor, {
+      formula: dataset.roll,
+      powerTable: dataset.pt.split(","),
+      itemId,
+    });
 
-    const chatLabel = `${dataset.label}`;
-    let cValueFormula = "@" + roll.cValue;
-    let halfFormula = "";
-    let lethalTechFormula = "";
-    let criticalRayFormula = "";
-    let pharmToolFormula = "";
-    let powupFormula = "";
-    if (roll.cValue == 100) cValueFormula = "@13";
-    if (roll.halfPow == 1) halfFormula = "h+" + roll.halfPowMod;
-    else if (roll.halfPowMod && roll.halfPowMod != 0)
-      halfFormula = "+" + roll.halfPowMod;
-    if (roll.lethalTech != 0) lethalTechFormula = "#" + roll.lethalTech;
-    if (roll.criticalRay > 0) criticalRayFormula = "$+" + roll.criticalRay;
-    else if (roll.criticalRay != 0) criticalRayFormula = "$" + roll.criticalRay;
-    if (roll.pharmTool != 0) pharmToolFormula = "tf" + roll.pharmTool;
-    if (roll.powup != 0) powupFormula = "r" + roll.powup;
-
-    let chatFormula =
-      "k" +
-      roll.power +
-      cValueFormula +
-      "+" +
-      roll.powMod +
-      lethalTechFormula +
-      criticalRayFormula +
-      pharmToolFormula +
-      powupFormula +
-      halfFormula;
-
-    let chatPower = roll.power;
-    let chatLethalTech = null;
-    let chatCriticalRay = null;
-    let chatPharmTool = null;
-    let chatPowup = null;
-    let chatResult = roll.eachPowerResult;
-    let chatMod = roll.powMod;
-    let chatModTotal = roll.powMod;
-    if (roll.halfPow == 0 && roll.halfPowMod && roll.halfPowMod != 0)
-      chatModTotal += roll.halfPowMod;
-    let chatHalf = null;
-    let chatResults = roll.rawPowerResult;
-    let chatTotal = roll.powerResult;
-    let chatExtraRoll = null;
-    let chatFumble = null;
-    if (roll.halfPow == 1) chatHalf = roll.halfPowMod;
-    if (roll.lethalTech != 0) chatLethalTech = roll.lethalTech;
-    if (roll.criticalRay != 0) chatCriticalRay = roll.criticalRay;
-    if (roll.pharmTool != 0) chatPharmTool = roll.pharmTool;
-    if (roll.powup != 0) chatPowup = roll.powup;
-    if (roll.rollCount > 0) chatExtraRoll = roll.rollCount;
-    if (roll.fumble == 1) chatFumble = roll.fumble;
-
-    let chatData = {
+    const chatData = {
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: chatLabel,
+      flavor: `${dataset.label}`,
       rollMode: game.settings.get("core", "rollMode"),
       rolls: [roll.fakeResult],
     };
-
-    let showhalf = true;
-    let shownoc = true;
-    if (roll.halfPow == 1) {
-      showhalf = false;
-      shownoc = false;
-    }
-    if (roll.cValue == 100 || chatExtraRoll == null) shownoc = false;
-    let chatapply = dataset.apply;
+    const chatapply = dataset.apply;
 
     // when selected target
     let target = null;
@@ -1249,68 +1188,34 @@ export class SW25ActorSheet extends ActorSheet {
       targetName = targetName + ``;
     }
 
-    const item = itemId ? this.actor.items.get(itemId) : null;
-    const elements = item ? item.system.elements : null;
-    const damage = this.actor ? this.actor.system.attributes.damage : null;
-    const classType = this.actor ? this.actor.system.classType : null;
-    const isWeapon = DamageSupporter.getWeaponAttributes(item);
-    const tags = DamageSupporter.createChatTag(elements, damage, classType, isWeapon);
-
     chatData.flags = {
       sw25: {
-        formula: chatFormula,
+        ...details,
         tooltip: await roll.fakeResult.getTooltip(),
-        power: chatPower,
-        lethalTech: chatLethalTech,
-        criticalRay: chatCriticalRay,
-        pharmTool: chatPharmTool,
-        powup: chatPowup,
-        result: chatResult,
-        mod: chatMod,
-        modTotal: chatModTotal,
-        half: chatHalf,
-        results: chatResults,
-        total: chatTotal,
-        extraRoll: chatExtraRoll,
-        fumble: chatFumble,
         orghalf: roll.halfPowMod,
-        orgtotal: chatTotal,
-        orgextraRoll: chatExtraRoll,
-        showhalf: showhalf,
-        shownoc: shownoc,
+        orgtotal: details.total,
+        orgextraRoll: details.extraRoll,
         apply: chatapply,
-        powertype: powertype,
+        powertype,
         target,
-        targetName: targetName,
-        elements: elements,
-        damage: damage,
-        tags: tags,
+        targetName,
+        elements,
+        damage,
+        tags,
       },
     };
-    
+
+    const { modTotal, ...display } = details;
     chatData.content = await renderTemplate(
       "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
       {
-        formula: chatFormula,
+        ...display,
         tooltip: await roll.fakeResult.getTooltip(),
-        power: chatPower,
-        lethalTech: chatLethalTech,
-        criticalRay: chatCriticalRay,
-        pharmTool: chatPharmTool,
-        powup: chatPowup,
-        result: chatResult,
-        mod: chatModTotal,
-        half: chatHalf,
-        results: chatResults,
-        total: chatTotal,
-        extraRoll: chatExtraRoll,
-        fumble: chatFumble,
-        showhalf: showhalf,
-        shownoc: shownoc,
+        mod: modTotal,
         apply: chatapply,
-        powertype: powertype,
-        targetName: targetName,
-        tags: tags,
+        powertype,
+        targetName,
+        tags,
       }
     );
 
@@ -1318,7 +1223,6 @@ export class SW25ActorSheet extends ActorSheet {
     await ChatMessage.create(chatData).then((chatMessage) => {
       chatMessageId = chatMessage.id;
     });
-
     return { roll, chatMessageId };
   }
 
