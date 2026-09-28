@@ -2,6 +2,7 @@ import { postActorCheck } from "../presentation/chat/check-roll.mjs";
 import { postActorPower } from "../presentation/chat/power-roll.mjs";
 import { postApplyAll } from "../presentation/chat/apply-all.mjs";
 import { postAppliedEffects, postPhaseareaEffect } from "../presentation/chat/effect-messages.mjs";
+import { postAlchemyCost, postResourceCost } from "../presentation/chat/resource-messages.mjs";
 import { postActorCheckRequest, postMonsterCheckRequest, postMonsterReveal } from "../presentation/chat/check-requests.mjs";
 import { prepareActorSheetContext } from "../presentation/sheet-context/actor-context.mjs";
 import {
@@ -515,10 +516,7 @@ export class SW25ActorSheet extends ActorSheet {
       return;
     }
 
-    ChatMessage.create({
-      speaker,
-      content: `<div style="text-align: right;">${resource.name}: ${result.previousQuantity} >>> ${result.remainingQuantity}</div>`,
-    });
+    postResourceCost(speaker, resource.name, result);
   }
 
   async _onLootRoll(event) {
@@ -1137,47 +1135,8 @@ export class SW25ActorSheet extends ActorSheet {
 
     const rankLabel = event.target.textContent.trim();
     const useRank = rankLabel.toLowerCase();
-    const marks = {
-      red: "fa-paw",
-      green: "fa-leaf",
-      black: "fa-gem",
-      white: "fa-heart",
-      gold: "fa-sun",
-    };
-    const name = `${item.name}(${rankLabel})`;
     const results = await useAlchemy(this.actor, item, useRank);
-    const materialcards = results.map((card) => ({
-      key: card.cost,
-      name:
-        game.i18n.localize(`SW25.Item.Alchemytech.${card.color.capitalize()}`) +
-        rankLabel,
-      color: card.color,
-      ...(card.resource ? { mark: marks[card.color] } : {}),
-      cost: card.cost,
-      resource: card.resource,
-      oldVal: card.previousQuantity,
-      newVal: card.remainingQuantity,
-    }));
-
-    // Chat message
-    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-    let label =
-      game.i18n.localize("SW25.Item.Alchemytech.MaterialCard") +
-      game.i18n.localize("SW25.Cost");
-
-    let chatData = {
-      speaker: speaker,
-      flavor: label,
-    };
-    chatData.content = await renderTemplate(
-      "systems/sw25-lunachil-maintained/templates/roll/card-apply.hbs",
-      {
-        name: name,
-        materialcards: materialcards,
-      }
-    );
-
-    ChatMessage.create(chatData);
+    await postAlchemyCost(this.actor, item.name, rankLabel, results);
   }
 
   async _onNotesGet(event) {
