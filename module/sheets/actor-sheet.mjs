@@ -1,5 +1,6 @@
 import { postActorCheck } from "../presentation/chat/check-roll.mjs";
 import { postActorPower } from "../presentation/chat/power-roll.mjs";
+import { postApplyAll } from "../presentation/chat/apply-all.mjs";
 import { prepareActorSheetContext } from "../presentation/sheet-context/actor-context.mjs";
 import {
   onManageActiveEffect,
@@ -321,27 +322,7 @@ export class SW25ActorSheet extends ActorSheet {
           });
         }
 
-        // rendar apply all message
-        const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-        const checktype = dataset.checktype ? dataset.checktype.split(",") : "";
-        let chatData = {
-          speaker: speaker,
-          flavor: `${label} - <b>${game.i18n.localize("SW25.Applyall")}</b>`,
-        };
-        chatData.flags = {
-          sw25: {
-            targetMessage: chatMessageId,
-          },
-        };
-        chatData.content = await renderTemplate(
-          "systems/sw25-lunachil-maintained/templates/roll/roll-applyall.hbs",
-          {
-            apply: dataset.apply,
-            checktype: checktype,
-          }
-        );
-
-        ChatMessage.create(chatData);
+        await postApplyAll(this.actor, dataset, label, chatMessageId, "checktype");
         return;
       }
     }
@@ -415,27 +396,7 @@ export class SW25ActorSheet extends ActorSheet {
           });
         }
 
-        // rendar apply all message
-        const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-        const powertype = dataset.powertype ? dataset.powertype.split(",") : "";
-        let chatData = {
-          speaker: speaker,
-          flavor: `${label} - <b>${game.i18n.localize("SW25.Applyall")}</b>`,
-        };
-        chatData.flags = {
-          sw25: {
-            targetMessage: chatMessageId,
-          },
-        };
-        chatData.content = await renderTemplate(
-          "systems/sw25-lunachil-maintained/templates/roll/roll-applyall.hbs",
-          {
-            apply: dataset.apply,
-            powertype: powertype,
-          }
-        );
-
-        ChatMessage.create(chatData);
+        await postApplyAll(this.actor, dataset, label, chatMessageId, "powertype");
         return;
       }
     }
