@@ -15,6 +15,7 @@ export function prepareItemV2FieldGroups(item, context) {
     const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
     groups.push({ label: "SW25.Check", fields: prepareFields(item, check, options) });
     groups.push({ label: "SW25.Item.Power", fields: prepareFields(item, power, options) });
+    groups.push({ label: "SW25.Item.Powertable", fields: prepareFields(item, Array.from({ length: 10 }, (_, index) => ["system.pt" + (index + 3), String(index + 3), "number"])) });
   }
   return groups;
 }
