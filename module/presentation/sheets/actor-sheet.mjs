@@ -1,3 +1,4 @@
+import { prepareItemFieldAdjustment, saveItemFieldAdjustment } from "../../use-cases/edit-item-field.mjs";
 import { bindItemFieldChanges } from "../bindings/item-fields.mjs";
 import { showEffectTargetDialog } from "../dialogs/effect-target.mjs";
 import { showPhaseareaCostDialog } from "../dialogs/phasearea-cost.mjs";
@@ -18,7 +19,7 @@ import { actionRoll } from "../../helpers/actionroll.mjs";
 import { targetRollDialog, targetSelectDialog } from "../../helpers/dialogs.mjs";
 import { SW25 } from "../../helpers/config.mjs";
 import { Util } from "../../helpers/utils.mjs";
-import { updateAllResourceQuantities, limitResourceQuantity } from "../../services/resource-quantity.mjs";
+import { updateAllResourceQuantities } from "../../services/resource-quantity.mjs";
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../../use-cases/notes.mjs";
 import { gainTacspower, spendTacspower } from "../../use-cases/tacspower.mjs";
 import { isMpCostTarget } from "../../services/resource-consumption.mjs";
@@ -615,13 +616,8 @@ export class SW25ActorSheet extends ActorSheet {
       changeItem.parents(".item")[0].dataset.itemId
     );
 
-    let quantity = parseInt(input.value);
-    if (isNaN(quantity)) quantity = 0;
-    if (action === "decrease") quantity -= 1;
-    else if (action === "increase") quantity += 1;
-
-    const limited = limitResourceQuantity(item, quantity);
-    quantity = limited.quantity;
+    const limited = prepareItemFieldAdjustment(item, input.value, action, { limitQuantity: true });
+    const quantity = limited.value;
     for (const limit of limited.limits) {
       const key = limit === "max" ? "SW25.isAlreadyMax" : "SW25.isAlreadyMin";
       ui.notifications.warn(`"${item.name}"${game.i18n.localize(key)}`);
@@ -630,17 +626,10 @@ export class SW25ActorSheet extends ActorSheet {
     input.value = quantity;
 
     if (item) {
-      const data = {};
-      data[property] = quantity;
-      await item.update(data);
-      this._updateQuantity(item, quantity);
+      await saveItemFieldAdjustment(item, property, quantity, "system.quantity");
     }
 
     this.submit();
-  }
-
-  async _updateQuantity(item, quantity) {
-    await item.update({ "system.quantity": quantity });
   }
 
   async _onSkilllevelButton(event) {
