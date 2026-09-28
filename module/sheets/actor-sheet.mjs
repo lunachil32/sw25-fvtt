@@ -9,7 +9,7 @@ import { actionRoll } from "../helpers/actionroll.mjs";
 import { targetRollDialog, targetSelectDialog } from "../helpers/dialogs.mjs";
 import { SW25 } from "../helpers/config.mjs";
 import { Util } from "../helpers/utils.mjs";
-import { updateAllResourceQuantities } from "../services/resource-quantity.mjs";
+import { updateAllResourceQuantities, limitResourceQuantity } from "../services/resource-quantity.mjs";
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../services/notes.mjs";
 import { gainTacspower, spendTacspower } from "../services/tacspower.mjs";
 import { consumeResource } from "../services/resource-consumption.mjs";
@@ -1696,24 +1696,11 @@ export class SW25ActorSheet extends ActorSheet {
     if (action === "decrease") quantity -= 1;
     else if (action === "increase") quantity += 1;
 
-    // Check limit
-    if (item.type == "resource") {
-      if (item.system.qmax || item.system.qmax == 0) {
-        if (item.system.qmax && quantity > item.system.qmax) {
-          quantity = item.system.qmax;
-          ui.notifications.warn(
-            `"${item.name}"${game.i18n.localize("SW25.isAlreadyMax")}`
-          );
-        }
-      }
-      if (item.system.qmin || item.system.qmin == 0) {
-        if (item.system.qmin && quantity < item.system.qmin) {
-          quantity = item.system.qmin;
-          ui.notifications.warn(
-            `"${item.name}"${game.i18n.localize("SW25.isAlreadyMin")}`
-          );
-        }
-      }
+    const limited = limitResourceQuantity(item, quantity);
+    quantity = limited.quantity;
+    for (const limit of limited.limits) {
+      const key = limit === "max" ? "SW25.isAlreadyMax" : "SW25.isAlreadyMin";
+      ui.notifications.warn(`"${item.name}"${game.i18n.localize(key)}`);
     }
 
     input.value = quantity;
