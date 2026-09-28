@@ -22,11 +22,11 @@ import { gainNotes, gainAdditionalNotes, spendNotes } from "../../use-cases/note
 import { gainTacspower, spendTacspower } from "../../use-cases/tacspower.mjs";
 import { consumeResource, isMpCostTarget } from "../../services/resource-consumption.mjs";
 import { useAlchemy } from "../../use-cases/use-alchemy.mjs";
-import { preparePhaseareaUse } from "../../services/phasearea.mjs";
+import { usePhasearea } from "../../use-cases/use-phasearea.mjs";
 import { assignActionTableEntry } from "../../use-cases/action-table.mjs";
 import { bookmarkItem, toggleItemBookmark } from "../../use-cases/item-bookmarks.mjs";
 import { applyItemEffects } from "../../use-cases/apply-item-effects.mjs";
-import { applyEffectsToTokens, applyPreparedEffectsToTokens } from "../../services/effect-application.mjs";
+import { applyEffectsToTokens } from "../../services/effect-application.mjs";
 import { resolveActorCheck } from "../../use-cases/actor-checks.mjs";
 import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../../use-cases/actor-check-requests.mjs";
 import { resolveActorPower } from "../../use-cases/actor-power-rolls.mjs";
@@ -933,15 +933,13 @@ export class SW25ActorSheet extends ActorSheet {
       return;
     }
 
-    const orgActor = this.actor.name;
-    const orgId = this.actor._id;
     const name =
       item.name +
       game.i18n.localize("SW25.Use") +
       " " +
       cost +
       game.i18n.localize("SW25.Item.Phasearea.Point");
-    const { effects, consumed } = await preparePhaseareaUse(this.actor, item, cost, name);
+    const { effects, consumed } = await usePhasearea(this.actor, item, cost, name, selectedTokens);
 
     let lifeline = "";
     if (item.system.type == "ten") {
@@ -959,8 +957,6 @@ export class SW25ActorSheet extends ActorSheet {
           game.i18n.localize(`SW25.Item.Phasearea.${lifeline}`)
       );
     }
-
-    applyPreparedEffectsToTokens(selectedTokens, effects, orgActor, orgId);
 
     await postPhaseareaEffect(this.actor, selectedTokens[0].actor.name, effects[0].name, lifeline);
   }
