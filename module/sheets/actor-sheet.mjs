@@ -19,6 +19,7 @@ import { spendMaterialCards, applyAlchemyRank } from "../services/alchemy.mjs";
 import { spendLifeline, buildPhaseareaEffect } from "../services/phasearea.mjs";
 import { assignActionTableEntry } from "../services/action-table.mjs";
 import { bookmarkItem, toggleItemBookmark } from "../services/item-bookmarks.mjs";
+import { transferEffects } from "../services/effect-transfer.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -1393,18 +1394,7 @@ export class SW25ActorSheet extends ActorSheet {
 
     if (game.user.isGM) {
       targetActors.forEach((targetActor) => {
-        targetEffects.forEach((effect) => {
-          const transferEffect = foundry.utils.duplicate(effect);
-          transferEffect.disabled = false;
-          transferEffect.sourceName = orgActor;
-          transferEffect.flags = {
-            sw25: {
-              sourceName: orgActor,
-              sourceId: `Actor.${orgId}`,
-            },
-          };
-          targetActor.createEmbeddedDocuments("ActiveEffect", [transferEffect]);
-        });
+        transferEffects(targetActor, targetEffects, orgActor, orgId);
       });
     } else {
       game.socket.emit(`system.${game.system.id}`, {
@@ -2184,20 +2174,7 @@ export class SW25ActorSheet extends ActorSheet {
 
             if (game.user.isGM) {
               selectedTokens.forEach((targetActor) => {
-                targetEffects.forEach((effect) => {
-                  const transferEffect = foundry.utils.duplicate(effect);
-                  transferEffect.disabled = false;
-                  transferEffect.sourceName = orgActor;
-                  transferEffect.flags = {
-                    sw25: {
-                      sourceName: orgActor,
-                      sourceId: `Actor.${orgId}`,
-                    },
-                  };
-                  targetActor.actor.createEmbeddedDocuments("ActiveEffect", [
-                    transferEffect,
-                  ]);
-                });
+                transferEffects(targetActor.actor, targetEffects, orgActor, orgId);
               });
             } else {
               game.socket.emit(`system.${game.system.id}`, {
