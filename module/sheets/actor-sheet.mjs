@@ -1,3 +1,5 @@
+import { showEffectTargetDialog } from "../presentation/dialogs/effect-target.mjs";
+import { showPhaseareaCostDialog } from "../presentation/dialogs/phasearea-cost.mjs";
 import { postActorCheck } from "../presentation/chat/check-roll.mjs";
 import { postActorPower } from "../presentation/chat/power-roll.mjs";
 import { postApplyAll } from "../presentation/chat/apply-all.mjs";
@@ -890,126 +892,8 @@ export class SW25ActorSheet extends ActorSheet {
   }
 
   async _selectApplyTarget(event, item, targetEffects, orgActor, orgId) {
-    const tokens = canvas.tokens.placeables;
-
-    if (tokens.length === 0) {
-      return ui.notifications.warn(game.i18n.localize("SW25.NotTokenwarn"));
-    }
-
-    const categories = {
-      friendly: [],
-      neutral: [],
-      hostile: [],
-    };
-
-    tokens.forEach((token) => {
-      switch (token.document.disposition) {
-        case 1:
-          categories.friendly.push(token);
-          break;
-        case 0:
-          categories.neutral.push(token);
-          break;
-        case -1:
-          categories.hostile.push(token);
-          break;
-      }
-    });
-
-    for (const key in categories) {
-      categories[key].sort((a, b) => a.name.localeCompare(b.name));
-    }
-
-    const createCategoryBox = (category, title, categoryId) => {
-      let box = `<fieldset class="target-select">
-        <legend id="${categoryId}-toggle" style="cursor: pointer;">
-          <span class="selectable">${title}</span>
-        </legend>`;
-      category.forEach((token) => {
-        box += `
-          <div>
-            <input type="checkbox" id="token-${token.id}" name="${categoryId}" value="${token.id}" />
-            <label for="token-${token.id}" style="font-weight: normal;">${token.name}</label>
-          </div>`;
-      });
-      box += `</fieldset>`;
-      return box;
-    };
-
-    const content = `
-      <div style="width: 100%;">
-        ${createCategoryBox(
-          categories.friendly,
-          game.i18n.localize("SW25.Disposition.Friendly"),
-          "friendly"
-        )}
-        ${createCategoryBox(
-          categories.neutral,
-          game.i18n.localize("SW25.Disposition.Neutral"),
-          "neutral"
-        )}
-        ${createCategoryBox(
-          categories.hostile,
-          game.i18n.localize("SW25.Disposition.Hostile"),
-          "hostile"
-        )}
-      </div>`;
-
-    const dialog = new Dialog({
-      title: game.i18n.localize("SW25.TargetSelect") + `(${item.name})`,
-      content: content,
-      buttons: {
-        process: {
-          label: game.i18n.localize("SW25.Item.EffectB"),
-          callback: (html) => {
-            const selectedIds = html
-              .find('input[type="checkbox"]:checked')
-              .map((_, el) => el.value)
-              .get();
-
-            if (selectedIds.length === 0) {
-              return ui.notifications.warn(
-                game.i18n.localize("SW25.Notargetwarn")
-              );
-            }
-
-            const selectedTokens = canvas.tokens.placeables.filter((token) =>
-              selectedIds.includes(token.id)
-            );
-            applyEffectsToTokens(selectedTokens, targetEffects, orgActor, orgId);
-          },
-        },
-        cancel: {
-          label: game.i18n.localize("SW25.Item.Spell.Cancel"),
-        },
-      },
-      default: "cancel",
-    });
-
-    dialog.render(true);
-
-    Hooks.once("renderDialog", (app, html) => {
-      const addToggleHandler = (categoryId) => {
-        const toggle = html.find(`#${categoryId}-toggle`);
-        const checkboxes = html.find(`input[name="${categoryId}"]`);
-
-        toggle.on("click", () => {
-          const allChecked = checkboxes.toArray().every((cb) => cb.checked);
-          checkboxes.prop("checked", !allChecked).trigger("change");
-        });
-
-        checkboxes.on("change", (event) => {
-          const checkbox = $(event.currentTarget);
-          const label = checkbox.next("label");
-          label.css("font-weight", checkbox.is(":checked") ? "bold" : "normal");
-        });
-      };
-
-      addToggleHandler("friendly");
-      addToggleHandler("neutral");
-      addToggleHandler("hostile");
-
-      html[0].style.width = "500px";
+    return showEffectTargetDialog(item.name, (tokens) => {
+      applyEffectsToTokens(tokens, targetEffects, orgActor, orgId);
     });
   }
 
@@ -1081,39 +965,9 @@ export class SW25ActorSheet extends ActorSheet {
   }
 
   async _inputUsePhaseareaCost(item) {
-    const title = game.i18n.localize("SW25.InputPhaseareaPoint");
-    new Dialog({
-      title: `${title} (${item.name})`,
-      content: `
-        <form>
-          <div class="form-group">
-            <label for="number">${title} (${item.system.mincost}-${item.system.maxcost})</label>
-          </div>
-          <div class="form-group">
-            <input id="number" name="number" type="number" value="0" />
-          </div>
-        </form>
-      `,
-      buttons: {
-        ok: {
-          label: game.i18n.localize("SW25.Use"),
-          callback: (html) => {
-            const cost = parseInt(html.find("#number").val());
-            if (isNaN(cost)) {
-              ui.notifications.error(
-                game.i18n.localize("SW25.Item.Spell.Cancel")
-              );
-              return;
-            }
-            this._applyPhasearea(item, cost);
-          },
-        },
-        cancel: {
-          label: game.i18n.localize("SW25.Item.Spell.Cancel"),
-        },
-      },
-      default: "ok",
-    }).render(true);
+    showPhaseareaCostDialog({
+      name: item.name, minimum: item.system.mincost, maximum: item.system.maxcost,
+    }, (cost) => this._applyPhasearea(item, cost));
   }
 
   async _onMaterialcardCost(event) {
