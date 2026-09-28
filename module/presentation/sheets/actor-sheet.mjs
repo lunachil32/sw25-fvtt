@@ -20,9 +20,10 @@ import { Util } from "../../helpers/utils.mjs";
 import { updateAllResourceQuantities, limitResourceQuantity } from "../../services/resource-quantity.mjs";
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../../use-cases/notes.mjs";
 import { gainTacspower, spendTacspower } from "../../use-cases/tacspower.mjs";
-import { consumeResource, isMpCostTarget } from "../../services/resource-consumption.mjs";
+import { isMpCostTarget } from "../../services/resource-consumption.mjs";
 import { useAlchemy } from "../../use-cases/use-alchemy.mjs";
 import { usePhasearea } from "../../use-cases/use-phasearea.mjs";
+import { consumeActorResource } from "../../use-cases/consume-actor-resource.mjs";
 import { assignActionTableEntry } from "../../use-cases/action-table.mjs";
 import { bookmarkItem, toggleItemBookmark } from "../../use-cases/item-bookmarks.mjs";
 import { applyItemEffects } from "../../use-cases/apply-item-effects.mjs";
@@ -510,16 +511,15 @@ export class SW25ActorSheet extends ActorSheet {
     const speaker = ChatMessage.getSpeaker({ actor: this.actor });
     if (!dataset.resuse) return;
 
-    const resource = this.actor.items.get(dataset.resuse);
-    const result = await consumeResource(resource, dataset.resusequantity);
+    const result = await consumeActorResource(this.actor, dataset.resuse, dataset.resusequantity);
     if (!result.consumed) {
       ui.notifications.warn(
-        game.i18n.localize("SW25.Item.Noresquantitiywarn") + resource.name
+        game.i18n.localize("SW25.Item.Noresquantitiywarn") + result.name
       );
       return;
     }
 
-    postResourceCost(speaker, resource.name, result);
+    postResourceCost(speaker, result.name, result);
   }
 
   async _onLootRoll(event) {
