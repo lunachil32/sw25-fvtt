@@ -1,5 +1,5 @@
 import { powerRoll } from "../helpers/powerroll.mjs";
-import { getActorDamageContext } from "./actor-roll-context.mjs";
+import { getActorDamageContext } from "../services/actor-roll-context.mjs";
 
 /** Resolve a power roll and its result rules without requiring a sheet or chat. */
 export async function resolveActorPower(actor, { formula, powerTable, itemId }) {

@@ -28,7 +28,7 @@ import { bookmarkItem, toggleItemBookmark } from "../../services/item-bookmarks.
 import { applyItemEffects, applyEffectsToTokens, applyPreparedEffectsToTokens } from "../../services/effect-application.mjs";
 import { resolveActorCheck } from "../../use-cases/actor-checks.mjs";
 import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../../services/actor-check-requests.mjs";
-import { resolveActorPower } from "../../services/actor-power-rolls.mjs";
+import { resolveActorPower } from "../../use-cases/actor-power-rolls.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
