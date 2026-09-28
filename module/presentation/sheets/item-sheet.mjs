@@ -14,7 +14,7 @@ import {
   removeCustomField,
   moveCustomFieldUp,
   moveCustomFieldDown,
-} from "../../services/item-custom-fields.mjs";
+} from "../../use-cases/item-custom-fields.mjs";
 
 /**
  * Extend the basic ItemSheet with some very simple modifications
