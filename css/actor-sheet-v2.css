@@ -17,3 +17,11 @@
 .sw25-actor-v2 .v2-fields label { display: flex; flex-direction: column; gap: 4px; }
 .sw25-actor-v2 .v2-ability-inputs input { width: 100%; min-width: 0; text-align: center; }
 .sw25-actor-v2 .v2-ability-inputs td { width: 18%; padding: 4px; }
+.sw25-item-v2 .window-content { overflow-y: auto; }
+.sw25-item-v2 .v2-item-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.sw25-item-v2 .v2-item-fields label { display: flex; flex-direction: column; gap: 4px; }
+.sw25-actor-v2 .v2-inventory { margin-bottom: 20px; }
+.sw25-actor-v2 .v2-item-create, .sw25-actor-v2 .v2-inventory li { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.sw25-actor-v2 .v2-inventory ul { list-style: none; padding: 0; }
+.sw25-actor-v2 .v2-inventory li span { flex: 1; overflow-wrap: anywhere; }
+.sw25-actor-v2 .v2-inventory button { flex: 0 0 auto; }

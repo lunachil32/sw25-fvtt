@@ -90,6 +90,11 @@ Hooks.once("init", async function () {
   // ActorSheetV2 is available in V13; V12 keeps the existing sheet registration.
   if (game.release.generation >= 13) {
     const { SW25ActorSheetV2 } = await import("./presentation/sheets/actor-sheet-v2.mjs");
+    const { SW25ItemSheetV2 } = await import("./presentation/sheets/item-sheet-v2.mjs");
+    const { supportedItemTypesV2 } = await import("./presentation/sheet-context/item-v2-fields.mjs");
+    DocumentSheetConfig.registerSheet(Item, game.system.id, SW25ItemSheetV2, {
+      types: supportedItemTypesV2, makeDefault: false, label: "SW25.V2.ItemLabel",
+    });
     DocumentSheetConfig.registerSheet(Actor, game.system.id, SW25ActorSheetV2, {
       types: ["character"], makeDefault: false, label: "SW25.V2.Label",
     });

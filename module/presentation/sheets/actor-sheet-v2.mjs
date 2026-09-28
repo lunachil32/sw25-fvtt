@@ -1,3 +1,6 @@
+import { createActorItem, deleteActorItem } from "../../use-cases/actor-items.mjs";
+import { openItemSheetV2 } from "./item-sheet-v2.mjs";
+import { supportedItemTypesV2 } from "../sheet-context/item-v2-fields.mjs";
 import { prepareActorV2Fields } from "../sheet-context/actor-v2-fields.mjs";
 import { resolveActorCheck } from "../../use-cases/actor-checks.mjs";
 import { postActorCheck } from "../chat/check-roll.mjs";
@@ -11,6 +14,9 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     tag: "form",
     form: { submitOnChange: true, closeOnSubmit: false },
     actions: {
+      createItem: SW25ActorSheetV2._onCreateItem,
+      editItem: SW25ActorSheetV2._onEditItem,
+      deleteItem: SW25ActorSheetV2._onDeleteItem,
       adjustResource: SW25ActorSheetV2._onAdjustResource,
       rollBasicCheck: SW25ActorSheetV2._onRollBasicCheck,
     },
@@ -21,12 +27,16 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
 
   static PARTS = {
     profile: { template: "systems/sw25-lunachil-maintained/templates/actor/v2/profile.hbs" },
+    inventory: { template: "systems/sw25-lunachil-maintained/templates/actor/v2/inventory.hbs" },
     overview: { template: "systems/sw25-lunachil-maintained/templates/actor/v2/overview.hbs" },
   };
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     const data = this.actor.toObject(false);
+    context.selectedItemType = this._itemType ?? supportedItemTypesV2[0];
+    context.itemTypes = Object.fromEntries(supportedItemTypesV2.map(type => [type, "TYPES.Item." + type]));
+    context.managedItems = data.items.filter(item => supportedItemTypesV2.includes(item.type));
     context.resourceItems = data.items.filter(item => item.type === "resource");
     return prepareActorSheetContext(this.actor, {
       ...context, ...prepareActorV2Fields(data), actor: this.actor, data, items: data.items,
@@ -37,6 +47,11 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     if (event.target.matches("[data-resource-quantity]")) {
       return this._onResourceChange({ currentTarget: event.target });
     }
+    if (event.target.matches("[data-item-type]")) {
+      this._itemType = event.target.value;
+      return;
+    }
+    if (!event.target.name) return;
     return super._onChangeForm(formConfig, event);
   }
 
@@ -75,5 +90,29 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     if (!this.isEditable) return;
     const result = await resolveActorCheck(this.actor, { formula: "2d6" });
     return postActorCheck(this.actor, { label: game.i18n.localize("SW25.V2.BasicCheck") }, result);
+  }
+  static async _onCreateItem() {
+    if (!this.isEditable) return;
+    const type = this.element.querySelector("[data-item-type]").value;
+    if (!supportedItemTypesV2.includes(type)) return;
+    const item = await createActorItem(this.actor, type);
+    await openItemSheetV2(item);
+  }
+
+  static async _onEditItem(event, button) {
+    const item = this.actor.items.get(button.closest("[data-item-id]").dataset.itemId);
+    if (item) await openItemSheetV2(item);
+  }
+
+  static async _onDeleteItem(event, button) {
+    if (!this.isEditable) return;
+    const itemId = button.closest("[data-item-id]").dataset.itemId;
+    if (!this.actor.items.has(itemId)) return;
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize("SW25.V2.DeleteItem") },
+      content: "<p>" + game.i18n.localize("SW25.V2.DeleteItemPrompt") + "</p>",
+      rejectClose: false,
+    });
+    if (confirmed) await deleteActorItem(this.actor, itemId);
   }
 }

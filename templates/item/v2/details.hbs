@@ -1,0 +1,16 @@
+<section>
+  <h2>{{item.name}}</h2>
+  <div class="v2-item-fields">
+    {{#each itemFields as |field|}}
+    <label>{{localize field.label}}
+      {{#if field.select}}
+      <select name="{{field.name}}" {{#unless @root.editable}}disabled{{/unless}}>{{selectOptions field.options selected=field.value localize=true blank="-"}}</select>
+      {{else if field.checkbox}}
+      <input type="checkbox" name="{{field.name}}" {{checked field.value}} data-dtype="Boolean" {{#unless @root.editable}}disabled{{/unless}}>
+      {{else}}
+      <input type="{{field.type}}" name="{{field.name}}" value="{{field.value}}" data-dtype="{{field.dtype}}" {{#unless @root.editable}}disabled{{/unless}}>
+      {{/if}}
+    </label>
+    {{/each}}
+  </div>
+</section>

@@ -18,7 +18,15 @@
       "TotalExperience": "総経験点",
       "Money": "所持金（ガメル）",
       "HpModifier": "最大HP修正",
-      "MpModifier": "最大MP修正"
+      "MpModifier": "最大MP修正",
+      "ItemLabel": "アイテムシート V2",
+      "ResourceSubtype": "リソースの内訳",
+      "Items": "所持アイテム・技能",
+      "ItemType": "種類",
+      "CreateItem": "新規作成",
+      "EditItem": "編集",
+      "DeleteItem": "削除",
+      "DeleteItemPrompt": "このアイテムをキャラクターから削除しますか？"
     },
 
     "Setting": "設定",

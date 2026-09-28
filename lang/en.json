@@ -18,7 +18,15 @@
       "TotalExperience": "Total EXP",
       "Money": "Gamel",
       "HpModifier": "Max HP Modifier",
-      "MpModifier": "Max MP Modifier"
+      "MpModifier": "Max MP Modifier",
+      "ItemLabel": "Item Sheet V2",
+      "ResourceSubtype": "Resource Subtype",
+      "Items": "Items",
+      "ItemType": "Item Type",
+      "CreateItem": "Create Item",
+      "EditItem": "Edit",
+      "DeleteItem": "Delete",
+      "DeleteItemPrompt": "Delete this item from the character?"
     },
 
     "Setting": "Setting",
