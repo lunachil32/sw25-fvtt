@@ -19,7 +19,7 @@ import { SW25 } from "../../helpers/config.mjs";
 import { Util } from "../../helpers/utils.mjs";
 import { updateAllResourceQuantities, limitResourceQuantity } from "../../services/resource-quantity.mjs";
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../../use-cases/notes.mjs";
-import { gainTacspower, spendTacspower } from "../../services/tacspower.mjs";
+import { gainTacspower, spendTacspower } from "../../use-cases/tacspower.mjs";
 import { consumeResource, isMpCostTarget } from "../../services/resource-consumption.mjs";
 import { useAlchemy } from "../../use-cases/use-alchemy.mjs";
 import { preparePhaseareaUse } from "../../services/phasearea.mjs";
