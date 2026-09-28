@@ -1,3 +1,4 @@
+import { bindItemFieldButtons } from "../bindings/item-field-buttons.mjs";
 import { bindItemFieldChanges } from "../bindings/item-fields.mjs";
 import { showEffectTargetDialog } from "../dialogs/effect-target.mjs";
 import { showPhaseareaCostDialog } from "../dialogs/phasearea-cost.mjs";
@@ -18,7 +19,7 @@ import { actionRoll } from "../../helpers/actionroll.mjs";
 import { targetRollDialog, targetSelectDialog } from "../../helpers/dialogs.mjs";
 import { SW25 } from "../../helpers/config.mjs";
 import { Util } from "../../helpers/utils.mjs";
-import { updateAllResourceQuantities, limitResourceQuantity } from "../../services/resource-quantity.mjs";
+import { updateAllResourceQuantities } from "../../services/resource-quantity.mjs";
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../../use-cases/notes.mjs";
 import { gainTacspower, spendTacspower } from "../../use-cases/tacspower.mjs";
 import { isMpCostTarget } from "../../services/resource-consumption.mjs";
@@ -217,9 +218,7 @@ export class SW25ActorSheet extends ActorSheet {
 
     // Change Button
     html.find(".adjustment-button").click(this._onAdjustmentButton.bind(this));
-    html.find(".quantity-button").click(this._onQuantityButton.bind(this));
-    html.find(".changesl-button").click(this._onSkilllevelButton.bind(this));
-    html.find(".checkmod-button").click(this._onCheckmodButton.bind(this));
+    bindItemFieldButtons(html, this.actor, () => this.submit());
     html.find(".roll-ability-check").click(this._onGrowthCheck.bind(this));
     html.find(".roll-actiontable").click(this._onActionTable.bind(this));
 
@@ -605,108 +604,7 @@ export class SW25ActorSheet extends ActorSheet {
     this.submit();
   }
 
-  async _onQuantityButton(event) {
-    event.preventDefault();
-    const action = event.currentTarget.dataset.action;
-    const input = event.currentTarget.closest("li").querySelector("input.qt-change");
-    const property = event.currentTarget.dataset.property;
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-
-    let quantity = parseInt(input.value);
-    if (isNaN(quantity)) quantity = 0;
-    if (action === "decrease") quantity -= 1;
-    else if (action === "increase") quantity += 1;
-
-    const limited = limitResourceQuantity(item, quantity);
-    quantity = limited.quantity;
-    for (const limit of limited.limits) {
-      const key = limit === "max" ? "SW25.isAlreadyMax" : "SW25.isAlreadyMin";
-      ui.notifications.warn(`"${item.name}"${game.i18n.localize(key)}`);
-    }
-
-    input.value = quantity;
-
-    if (item) {
-      const data = {};
-      data[property] = quantity;
-      await item.update(data);
-      this._updateQuantity(item, quantity);
-    }
-
-    this.submit();
-  }
-
-  async _updateQuantity(item, quantity) {
-    await item.update({ "system.quantity": quantity });
-  }
-
-  async _onSkilllevelButton(event) {
-    event.preventDefault();
-    const action = event.currentTarget.dataset.action;
-    const input = event.currentTarget.closest("li").querySelector("input.sl-change");
-    const property = event.currentTarget.dataset.property;
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-
-    let skilllevel = parseInt(input.value);
-    if (isNaN(skilllevel)) skilllevel = 0;
-    if (action === "decrease") skilllevel -= 1;
-    else if (action === "increase") skilllevel += 1;
-
-    input.value = skilllevel;
-
-    if (item) {
-      const data = {};
-      data[property] = skilllevel;
-      await item.update(data);
-      this._updateSkilllevel(item, skilllevel);
-    }
-
-    this.submit();
-  }
-
-  async _updateSkilllevel(item, skilllevel) {
-    await item.update({ "system.skilllevel": skilllevel });
-  }
-
-  async _onCheckmodButton(event) {
-    event.preventDefault();
-    const action = event.currentTarget.dataset.action;
-    const input = event.currentTarget.closest("li").querySelector("input.cm-change");
-    const property = event.currentTarget.dataset.property;
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-
-    let checkmod = parseInt(input.value);
-    if (isNaN(checkmod)) checkmod = 0;
-    if (action === "decrease") checkmod -= 1;
-    else if (action === "increase") checkmod += 1;
-
-    input.value = checkmod;
-
-    if (item) {
-      const data = {};
-      data[property] = checkmod;
-      await item.update(data);
-      this._updateCheckmod(item, checkmod);
-    }
-
-    this.submit();
-  }
-
   
-  // Preserve the effective legacy button update (earlier duplicate methods were shadowed).
-  async _updateCheckmod(item, checkmod) {
-    await item.update({ "system.checkmod3": checkmod });
-  }
-
   async _onGrowthCheck(event) {
     event.preventDefault();
     growthCheck(this.actor);
