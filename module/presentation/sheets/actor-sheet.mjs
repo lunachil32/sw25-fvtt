@@ -21,7 +21,7 @@ import { updateAllResourceQuantities, limitResourceQuantity } from "../../servic
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../../services/notes.mjs";
 import { gainTacspower, spendTacspower } from "../../services/tacspower.mjs";
 import { consumeResource, isMpCostTarget } from "../../services/resource-consumption.mjs";
-import { useAlchemy } from "../../services/alchemy.mjs";
+import { useAlchemy } from "../../use-cases/use-alchemy.mjs";
 import { preparePhaseareaUse } from "../../services/phasearea.mjs";
 import { assignActionTableEntry } from "../../services/action-table.mjs";
 import { bookmarkItem, toggleItemBookmark } from "../../services/item-bookmarks.mjs";
