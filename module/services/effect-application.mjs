@@ -33,16 +33,29 @@ export function applyEffectsToTokens(tokens, effects, sourceName, sourceId) {
   dispatchEffects(actors, targetIds, effects, sourceName, sourceId);
 }
 
+/** Create already prepared effects as a batch, or request GM application. */
+export function applyPreparedEffectsToTokens(tokens, effects, sourceName, sourceId) {
+  if (game.user.isGM) {
+    tokens.forEach(token => token.actor.createEmbeddedDocuments("ActiveEffect", effects));
+  } else {
+    requestEffects(Array.from(tokens, token => token.id), effects, sourceName, sourceId);
+  }
+}
+
 function dispatchEffects(actors, targetIds, effects, sourceName, sourceId) {
   if (game.user.isGM) {
     actors.forEach(actor => transferEffects(actor, effects, sourceName, sourceId));
   } else {
-    game.socket.emit(`system.${game.system.id}`, {
-      method: "applyEffect",
-      targetTokens: targetIds,
-      targetEffects: effects,
-      orgActor: sourceName,
-      orgId: sourceId,
-    });
+    requestEffects(targetIds, effects, sourceName, sourceId);
   }
+}
+
+function requestEffects(targetIds, effects, sourceName, sourceId) {
+  game.socket.emit(`system.${game.system.id}`, {
+    method: "applyEffect",
+    targetTokens: targetIds,
+    targetEffects: effects,
+    orgActor: sourceName,
+    orgId: sourceId,
+  });
 }

@@ -14,10 +14,10 @@ import { gainNotes, gainAdditionalNotes, spendNotes } from "../services/notes.mj
 import { gainTacspower, spendTacspower } from "../services/tacspower.mjs";
 import { consumeResource } from "../services/resource-consumption.mjs";
 import { spendMaterialCards, applyAlchemyRank } from "../services/alchemy.mjs";
-import { spendLifeline, buildPhaseareaEffect } from "../services/phasearea.mjs";
+import { preparePhaseareaUse } from "../services/phasearea.mjs";
 import { assignActionTableEntry } from "../services/action-table.mjs";
 import { bookmarkItem, toggleItemBookmark } from "../services/item-bookmarks.mjs";
-import { applyItemEffects, applyEffectsToTokens } from "../services/effect-application.mjs";
+import { applyItemEffects, applyEffectsToTokens, applyPreparedEffectsToTokens } from "../services/effect-application.mjs";
 import { resolveActorCheck } from "../services/actor-checks.mjs";
 import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../services/actor-check-requests.mjs";
 import { resolveActorPower } from "../services/actor-power-rolls.mjs";
@@ -1923,7 +1923,7 @@ export class SW25ActorSheet extends ActorSheet {
       " " +
       cost +
       game.i18n.localize("SW25.Item.Phasearea.Point");
-    const effects = [buildPhaseareaEffect(this.actor, item, name)];
+    const { effects, consumed } = await preparePhaseareaUse(this.actor, item, cost, name);
 
     let lifeline = "";
     if (item.system.type == "ten") {
@@ -1934,8 +1934,6 @@ export class SW25ActorSheet extends ActorSheet {
       lifeline = "Jin";
     }
 
-    const consumed = await spendLifeline(this.actor, item, cost);
-
     if (!consumed) {
       ui.notifications.warn(
         game.i18n.localize("SW25.NotResource") +
@@ -1944,19 +1942,7 @@ export class SW25ActorSheet extends ActorSheet {
       );
     }
 
-    // Apply
-    if (game.user.isGM) {
-      selectedTokens[0].actor.createEmbeddedDocuments("ActiveEffect", effects);
-    } else {
-      const targetTokenId = Array.from(selectedTokens, (target) => target.id);
-      game.socket.emit(`system.${game.system.id}`, {
-        method: "applyEffect",
-        targetTokens: targetTokenId,
-        targetEffects: effects,
-        orgActor: orgActor,
-        orgId: orgId,
-      });
-    }
+    applyPreparedEffectsToTokens(selectedTokens, effects, orgActor, orgId);
 
     // Chat message
     const speaker = ChatMessage.getSpeaker({ actor: this.actor });
