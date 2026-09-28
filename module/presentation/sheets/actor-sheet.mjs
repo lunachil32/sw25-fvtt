@@ -1,3 +1,4 @@
+import { bindItemFieldChanges } from "../bindings/item-fields.mjs";
 import { showEffectTargetDialog } from "../dialogs/effect-target.mjs";
 import { showPhaseareaCostDialog } from "../dialogs/phasearea-cost.mjs";
 import { postActorCheck } from "../chat/check-roll.mjs";
@@ -212,17 +213,7 @@ export class SW25ActorSheet extends ActorSheet {
     }
 
     // Change Input Area
-    html.on("change", ".qt-change", this._changeQuantity.bind(this));
-    html.on("change", ".sl-change", this._changeSkillLevel.bind(this));
-    html.on("change", ".sc-change", this._changeSkillMod.bind(this));
-    html.on("change", ".cm-change", this._changeCheckMod.bind(this));
-    html.on("change", ".cm1-change", this._changeCheckMod1.bind(this));
-    html.on("change", ".cm2-change", this._changeCheckMod2.bind(this));
-    html.on("change", ".cm3-change", this._changeCheckMod3.bind(this));
-    html.on("change", ".pm-change", this._changePowerMod.bind(this));
-    html.on("change", ".eq-change", this._changeEquip.bind(this));
-    html.on("change", ".rd-change", this._changeReading.bind(this));
-    html.on("change", ".cv-change", this._changeConversation.bind(this));
+    bindItemFieldChanges(html, this.actor);
 
     // Change Button
     html.find(".adjustment-button").click(this._onAdjustmentButton.bind(this));
@@ -648,17 +639,6 @@ export class SW25ActorSheet extends ActorSheet {
     this.submit();
   }
 
-  async _changeQuantity(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newQuantity = Number(event.currentTarget.value);
-    await this._updateQuantity(item, newQuantity);
-  }
-
   async _updateQuantity(item, quantity) {
     await item.update({ "system.quantity": quantity });
   }
@@ -690,32 +670,10 @@ export class SW25ActorSheet extends ActorSheet {
     this.submit();
   }
 
-  async _changeSkillLevel(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newSkillLevel = Number(event.currentTarget.value);
-    item.update({ "system.skilllevel": newSkillLevel });
-  }
-
   async _updateSkilllevel(item, skilllevel) {
     await item.update({ "system.skilllevel": skilllevel });
   }
 
-  async _changeSkillMod(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newSkillMod = Number(event.currentTarget.value);
-    if (newSkillMod == 0) newSkillMod = null;
-    item.update({ "system.skillmod": newSkillMod });
-  }
   async _onCheckmodButton(event) {
     event.preventDefault();
     const action = event.currentTarget.dataset.action;
@@ -743,128 +701,10 @@ export class SW25ActorSheet extends ActorSheet {
     this.submit();
   }
 
-  async _changeCheckMod(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newCheckMod = Number(event.currentTarget.value);
-    if (newCheckMod == 0) newCheckMod = null;
-    item.update({ "system.checkmod": newCheckMod });
-  }
-  async _updateCheckmod(item, checkmod) {
-    await item.update({ "system.checkmod": checkmod });
-  }
-
-  async _changeCheckMod1(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newCheckMod = Number(event.currentTarget.value);
-    if (newCheckMod == 0) newCheckMod = null;
-    item.update({ "system.checkmod1": newCheckMod });
-  }
-
-  async _updateCheckmod(item, checkmod) {
-    await item.update({ "system.checkmod1": checkmod });
-  }
-
-  async _changeCheckMod2(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newCheckMod = Number(event.currentTarget.value);
-    if (newCheckMod == 0) newCheckMod = null;
-    item.update({ "system.checkmod2": newCheckMod });
-  }
   
-  async _updateCheckmod(item, checkmod) {
-    await item.update({ "system.checkmod2": checkmod });
-  }
-
-  async _changeCheckMod3(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newCheckMod = Number(event.currentTarget.value);
-    if (newCheckMod == 0) newCheckMod = null;
-    item.update({ "system.checkmod3": newCheckMod });
-  }
-
+  // Preserve the effective legacy button update (earlier duplicate methods were shadowed).
   async _updateCheckmod(item, checkmod) {
     await item.update({ "system.checkmod3": checkmod });
-  }
-
-  async _changePowerMod(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newPowerMod = Number(event.currentTarget.value);
-    if (newPowerMod == 0) newPowerMod = null;
-    item.update({ "system.powermod": newPowerMod });
-  }
-
-  async _updatePowermod(item, powermod) {
-    await item.update({ "system.powermod": powermod });
-  }
-
-  async _changeEquip(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newEquip = event.currentTarget.checked;
-    item.update({ "system.equip": newEquip });
-  }
-
-  async _updateEquip(item, equip) {
-    await item.update({ "system.equip": equip });
-  }
-
-  async _changeReading(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newReading = event.currentTarget.checked;
-    item.update({ "system.reading": newReading });
-  }
-
-  async _updateReading(item, reading) {
-    await item.update({ "system.reading": reading });
-  }
-
-  async _changeConversation(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newConversation = event.currentTarget.checked;
-    item.update({ "system.conversation": newConversation });
-  }
-
-  async _updateConversation(item, conversation) {
-    await item.update({ "system.conversation": conversation });
   }
 
   async _onGrowthCheck(event) {
