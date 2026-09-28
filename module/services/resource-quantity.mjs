@@ -39,6 +39,23 @@ export async function updateAllResourceQuantities(actor, resourceType, modifyVal
   return true;
 }
 
+/** Apply resource bounds without updating the item or displaying warnings. */
+export function limitResourceQuantity(item, quantity) {
+  const limits = [];
+  if (item.type === "resource") {
+    // Preserve the existing treatment of numeric zero as an inactive bound.
+    if (item.system.qmax && quantity > item.system.qmax) {
+      quantity = item.system.qmax;
+      limits.push("max");
+    }
+    if (item.system.qmin && quantity < item.system.qmin) {
+      quantity = item.system.qmin;
+      limits.push("min");
+    }
+  }
+  return { quantity, limits };
+}
+
 function matchesResource(item, resourceType) {
   if (item.type !== "resource") return false;
   const resource = item.system?.resource;
