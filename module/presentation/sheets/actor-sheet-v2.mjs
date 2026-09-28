@@ -15,6 +15,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     form: { submitOnChange: true, closeOnSubmit: false },
     actions: {
       createItem: SW25ActorSheetV2._onCreateItem,
+      useItem: SW25ActorSheetV2._onUseItem,
       editItem: SW25ActorSheetV2._onEditItem,
       deleteItem: SW25ActorSheetV2._onDeleteItem,
       adjustResource: SW25ActorSheetV2._onAdjustResource,
@@ -97,6 +98,12 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     if (!supportedItemTypesV2.includes(type)) return;
     const item = await createActorItem(this.actor, type);
     await openItemSheetV2(item);
+  }
+
+  static async _onUseItem(event, button) {
+    if (!this.isEditable) return;
+    const item = this.actor.items.get(button.closest("[data-item-id]").dataset.itemId);
+    if (item) return item.roll();
   }
 
   static async _onEditItem(event, button) {
