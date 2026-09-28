@@ -13,7 +13,7 @@ export function prepareItemV2Fields(item) {
   }));
 }
 
-export const supportedItemTypesV2 = ["skill", "resource", "armor"];
+export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon"];
 
 const common = [["name", "Name"], ["system.overview", "SW25.Item.Overview"]];
 const skill = [
@@ -43,11 +43,10 @@ const subtypes = {
   abyssex: [["system.resource.abyssextype", "SW25.V2.ResourceSubtype", "select", "abyssexTypes"]],
 };
 
-const armor = [
+const equipment = [
   ["system.equip", "SW25.Equip", "checkbox"],
   ["system.dedicated", "SW25.Item.Dedicated", "checkbox"],
   ["system.quantity", "SW25.Quantity", "number"],
-  ["system.category", "SW25.Item.Category", "select", "armorCategorys"],
   ["system.rank", "SW25.Attributes.Honer.Rank", "select", "ranks"],
   ["system.price", "SW25.Item.Price", "number"],
   ["system.isMagicitem", "SW25.Item.MagicItem", "checkbox"],
@@ -58,8 +57,20 @@ const armor = [
   ["system.info.create", "SW25.Item.Create"],
   ["system.usage", "SW25.Item.Weapon.Usage", "select", "weaponUsages"],
   ["system.reqstr", "SW25.Item.Reqstr", "number"],
+];
+const armor = [
+  ...equipment,
+  ["system.category", "SW25.Item.Category", "select", "armorCategorys"],
   ["system.dodge", "SW25.Item.Armor.Dodge", "number"],
   ["system.pp", "SW25.Attributes.Protectionpoint.long", "number"],
   ["system.mpp", "SW25.Attributes.Magicprotection.abbr", "number"],
 ];
-const fieldsByType = { skill, resource, armor };
+const weapon = [
+  ...equipment,
+  ["system.category", "SW25.Item.Category", "select", "weaponCategories"],
+  ["system.type", "SW25.Item.Weapon.Type", "select", "weaponTypes"],
+  ["system.hit", "SW25.Item.Weapon.Hit", "number"],
+  ["system.dmod", "SW25.Item.Weapon.Dmod", "number"],
+  ["system.range", "SW25.Item.Weapon.Range"],
+];
+const fieldsByType = { skill, resource, armor, weapon };
