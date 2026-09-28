@@ -5,9 +5,25 @@ export function prepareItemV2Fields(item) {
     const subtype = subtypes[item.system.resource?.type];
     if (subtype) definitions.push(...subtype);
   }
+  return prepareFields(item, definitions);
+}
+
+/** Group editable roll configuration without duplicating document calculations. */
+export function prepareItemV2FieldGroups(item, context) {
+  const groups = [{ label: "SW25.Details", fields: prepareItemV2Fields(item) }];
+  if (["weapon", "armor"].includes(item.type)) {
+    const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
+    groups.push({ label: "SW25.Check", fields: prepareFields(item, check, options) });
+    groups.push({ label: "SW25.Item.Power", fields: prepareFields(item, power, options) });
+  }
+  return groups;
+}
+
+function prepareFields(item, definitions, context = {}) {
   return definitions.map(([name, label, type = "text", options]) => ({
     name, label, type, value: foundry.utils.getProperty(item, name),
-    options: options ? CONFIG.SW25[options] : null,
+    options: options ? context[options] ?? CONFIG.SW25[options] : null,
+    localizeOptions: options !== 'skills',
     checkbox: type === "checkbox", select: type === "select",
     dtype: type === "number" ? "Number" : type === "checkbox" ? "Boolean" : "String",
   }));
@@ -74,3 +90,31 @@ const weapon = [
   ["system.range", "SW25.Item.Weapon.Range"],
 ];
 const fieldsByType = { skill, resource, armor, weapon };
+
+const check = [
+  ["system.clickitem", "SW25.Item.Clickitem", "select", "clickitemOptions"],
+  ["system.usedice", "SW25.Item.Usedice", "checkbox"],
+  ["system.checkskill", "SW25.Skillname", "select", "skills"],
+  ["system.checkabi", "SW25.Abilityname", "select", "abilities"],
+  ["system.checkmod", "SW25.Modifier", "number"],
+  ["system.applycheck", "SW25.Item.applyon", "select", "applyOptions"],
+  ["system.customdice", "SW25.Item.Customdice", "checkbox"],
+  ["system.customformula", "SW25.Item.Formula"],
+  ...["pd", "md", "cd", "hr", "mr"].map(type => ["system.ck" + type + "bt", "SW25.Item." + type, "checkbox"]),
+];
+const power = [
+  ["system.usepower", "SW25.Item.Usepower", "checkbox"],
+  ["system.powerskill", "SW25.Skillname", "select", "skills"],
+  ["system.powerabi", "SW25.Abilityname", "select", "abilities"],
+  ["system.powermod", "SW25.Modifier", "number"],
+  ["system.power", "SW25.Item.Power", "number"],
+  ["system.cvalue", "SW25.Item.Cvalue", "number"],
+  ["system.halfpow", "SW25.Item.Halfpow", "checkbox"],
+  ["system.applypower", "SW25.Item.applyon", "select", "applyOptions"],
+  ...["pd", "md", "cd", "hr", "mr"].map(type => ["system.pw" + type + "bt", "SW25.Item." + type, "checkbox"]),
+  ["system.halfpowmod", "SW25.Item.Halfpowmod", "number"],
+  ["system.lethaltech", "SW25.Item.Lethaltech", "number"],
+  ["system.criticalray", "SW25.Item.Criticalray"],
+  ["system.pharmtool", "SW25.Item.Pharmtool", "number"],
+  ["system.powup", "SW25.Item.Powup", "number"],
+];

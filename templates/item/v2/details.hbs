@@ -1,10 +1,12 @@
 <section>
   <h2>{{item.name}}</h2>
+  {{#each itemFieldGroups as |group|}}
+  <fieldset><legend>{{localize group.label}}</legend>
   <div class="v2-item-fields">
-    {{#each itemFields as |field|}}
+    {{#each group.fields as |field|}}
     <label>{{localize field.label}}
       {{#if field.select}}
-      <select name="{{field.name}}" {{#unless @root.editable}}disabled{{/unless}}>{{selectOptions field.options selected=field.value localize=true blank="-"}}</select>
+      <select name="{{field.name}}" {{#unless @root.editable}}disabled{{/unless}}>{{selectOptions field.options selected=field.value localize=field.localizeOptions blank="-"}}</select>
       {{else if field.checkbox}}
       <input type="checkbox" name="{{field.name}}" {{checked field.value}} data-dtype="Boolean" {{#unless @root.editable}}disabled{{/unless}}>
       {{else}}
@@ -13,4 +15,6 @@
     </label>
     {{/each}}
   </div>
+  </fieldset>
+  {{/each}}
 </section>

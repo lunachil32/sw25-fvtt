@@ -1,5 +1,5 @@
 import { prepareItemSheetContext } from "../sheet-context/item-context.mjs";
-import { prepareItemV2Fields } from "../sheet-context/item-v2-fields.mjs";
+import { prepareItemV2FieldGroups } from "../sheet-context/item-v2-fields.mjs";
 
 export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
   static DEFAULT_OPTIONS = {
@@ -16,10 +16,11 @@ export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicat
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
-    return prepareItemSheetContext(this.item, {
+    const prepared = prepareItemSheetContext(this.item, {
       ...context, item: this.item, data: this.item.toObject(false),
-      itemFields: prepareItemV2Fields(this.item),
     });
+    prepared.itemFieldGroups = prepareItemV2FieldGroups(this.item, prepared);
+    return prepared;
   }
 
   _processFormData(event, form, formData) {
