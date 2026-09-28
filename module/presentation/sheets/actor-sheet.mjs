@@ -1,3 +1,4 @@
+import { bindItemFieldChanges } from "../bindings/item-fields.mjs";
 import { showEffectTargetDialog } from "../dialogs/effect-target.mjs";
 import { showPhaseareaCostDialog } from "../dialogs/phasearea-cost.mjs";
 import { postActorCheck } from "../chat/check-roll.mjs";
@@ -18,17 +19,19 @@ import { targetRollDialog, targetSelectDialog } from "../../helpers/dialogs.mjs"
 import { SW25 } from "../../helpers/config.mjs";
 import { Util } from "../../helpers/utils.mjs";
 import { updateAllResourceQuantities, limitResourceQuantity } from "../../services/resource-quantity.mjs";
-import { gainNotes, gainAdditionalNotes, spendNotes } from "../../services/notes.mjs";
-import { gainTacspower, spendTacspower } from "../../services/tacspower.mjs";
-import { consumeResource, isMpCostTarget } from "../../services/resource-consumption.mjs";
+import { gainNotes, gainAdditionalNotes, spendNotes } from "../../use-cases/notes.mjs";
+import { gainTacspower, spendTacspower } from "../../use-cases/tacspower.mjs";
+import { isMpCostTarget } from "../../services/resource-consumption.mjs";
 import { useAlchemy } from "../../use-cases/use-alchemy.mjs";
-import { preparePhaseareaUse } from "../../services/phasearea.mjs";
-import { assignActionTableEntry } from "../../services/action-table.mjs";
-import { bookmarkItem, toggleItemBookmark } from "../../services/item-bookmarks.mjs";
-import { applyItemEffects, applyEffectsToTokens, applyPreparedEffectsToTokens } from "../../services/effect-application.mjs";
-import { resolveActorCheck } from "../../services/actor-checks.mjs";
-import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../../services/actor-check-requests.mjs";
-import { resolveActorPower } from "../../services/actor-power-rolls.mjs";
+import { usePhasearea } from "../../use-cases/use-phasearea.mjs";
+import { consumeActorResource } from "../../use-cases/consume-actor-resource.mjs";
+import { assignActionTableEntry } from "../../use-cases/action-table.mjs";
+import { bookmarkItem, toggleItemBookmark } from "../../use-cases/item-bookmarks.mjs";
+import { applyItemEffects } from "../../use-cases/apply-item-effects.mjs";
+import { applyEffectsToTokens } from "../../services/effect-application.mjs";
+import { resolveActorCheck } from "../../use-cases/actor-checks.mjs";
+import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../../use-cases/actor-check-requests.mjs";
+import { resolveActorPower } from "../../use-cases/actor-power-rolls.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -210,17 +213,7 @@ export class SW25ActorSheet extends ActorSheet {
     }
 
     // Change Input Area
-    html.on("change", ".qt-change", this._changeQuantity.bind(this));
-    html.on("change", ".sl-change", this._changeSkillLevel.bind(this));
-    html.on("change", ".sc-change", this._changeSkillMod.bind(this));
-    html.on("change", ".cm-change", this._changeCheckMod.bind(this));
-    html.on("change", ".cm1-change", this._changeCheckMod1.bind(this));
-    html.on("change", ".cm2-change", this._changeCheckMod2.bind(this));
-    html.on("change", ".cm3-change", this._changeCheckMod3.bind(this));
-    html.on("change", ".pm-change", this._changePowerMod.bind(this));
-    html.on("change", ".eq-change", this._changeEquip.bind(this));
-    html.on("change", ".rd-change", this._changeReading.bind(this));
-    html.on("change", ".cv-change", this._changeConversation.bind(this));
+    bindItemFieldChanges(html, this.actor);
 
     // Change Button
     html.find(".adjustment-button").click(this._onAdjustmentButton.bind(this));
@@ -509,16 +502,15 @@ export class SW25ActorSheet extends ActorSheet {
     const speaker = ChatMessage.getSpeaker({ actor: this.actor });
     if (!dataset.resuse) return;
 
-    const resource = this.actor.items.get(dataset.resuse);
-    const result = await consumeResource(resource, dataset.resusequantity);
+    const result = await consumeActorResource(this.actor, dataset.resuse, dataset.resusequantity);
     if (!result.consumed) {
       ui.notifications.warn(
-        game.i18n.localize("SW25.Item.Noresquantitiywarn") + resource.name
+        game.i18n.localize("SW25.Item.Noresquantitiywarn") + result.name
       );
       return;
     }
 
-    postResourceCost(speaker, resource.name, result);
+    postResourceCost(speaker, result.name, result);
   }
 
   async _onLootRoll(event) {
@@ -647,17 +639,6 @@ export class SW25ActorSheet extends ActorSheet {
     this.submit();
   }
 
-  async _changeQuantity(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newQuantity = Number(event.currentTarget.value);
-    await this._updateQuantity(item, newQuantity);
-  }
-
   async _updateQuantity(item, quantity) {
     await item.update({ "system.quantity": quantity });
   }
@@ -689,32 +670,10 @@ export class SW25ActorSheet extends ActorSheet {
     this.submit();
   }
 
-  async _changeSkillLevel(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newSkillLevel = Number(event.currentTarget.value);
-    item.update({ "system.skilllevel": newSkillLevel });
-  }
-
   async _updateSkilllevel(item, skilllevel) {
     await item.update({ "system.skilllevel": skilllevel });
   }
 
-  async _changeSkillMod(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newSkillMod = Number(event.currentTarget.value);
-    if (newSkillMod == 0) newSkillMod = null;
-    item.update({ "system.skillmod": newSkillMod });
-  }
   async _onCheckmodButton(event) {
     event.preventDefault();
     const action = event.currentTarget.dataset.action;
@@ -742,128 +701,10 @@ export class SW25ActorSheet extends ActorSheet {
     this.submit();
   }
 
-  async _changeCheckMod(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newCheckMod = Number(event.currentTarget.value);
-    if (newCheckMod == 0) newCheckMod = null;
-    item.update({ "system.checkmod": newCheckMod });
-  }
-  async _updateCheckmod(item, checkmod) {
-    await item.update({ "system.checkmod": checkmod });
-  }
-
-  async _changeCheckMod1(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newCheckMod = Number(event.currentTarget.value);
-    if (newCheckMod == 0) newCheckMod = null;
-    item.update({ "system.checkmod1": newCheckMod });
-  }
-
-  async _updateCheckmod(item, checkmod) {
-    await item.update({ "system.checkmod1": checkmod });
-  }
-
-  async _changeCheckMod2(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newCheckMod = Number(event.currentTarget.value);
-    if (newCheckMod == 0) newCheckMod = null;
-    item.update({ "system.checkmod2": newCheckMod });
-  }
   
-  async _updateCheckmod(item, checkmod) {
-    await item.update({ "system.checkmod2": checkmod });
-  }
-
-  async _changeCheckMod3(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newCheckMod = Number(event.currentTarget.value);
-    if (newCheckMod == 0) newCheckMod = null;
-    item.update({ "system.checkmod3": newCheckMod });
-  }
-
+  // Preserve the effective legacy button update (earlier duplicate methods were shadowed).
   async _updateCheckmod(item, checkmod) {
     await item.update({ "system.checkmod3": checkmod });
-  }
-
-  async _changePowerMod(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newPowerMod = Number(event.currentTarget.value);
-    if (newPowerMod == 0) newPowerMod = null;
-    item.update({ "system.powermod": newPowerMod });
-  }
-
-  async _updatePowermod(item, powermod) {
-    await item.update({ "system.powermod": powermod });
-  }
-
-  async _changeEquip(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newEquip = event.currentTarget.checked;
-    item.update({ "system.equip": newEquip });
-  }
-
-  async _updateEquip(item, equip) {
-    await item.update({ "system.equip": equip });
-  }
-
-  async _changeReading(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newReading = event.currentTarget.checked;
-    item.update({ "system.reading": newReading });
-  }
-
-  async _updateReading(item, reading) {
-    await item.update({ "system.reading": reading });
-  }
-
-  async _changeConversation(event) {
-    event.preventDefault();
-
-    const changeItem = $(event.currentTarget);
-    const item = this.actor.items.get(
-      changeItem.parents(".item")[0].dataset.itemId
-    );
-    let newConversation = event.currentTarget.checked;
-    item.update({ "system.conversation": newConversation });
-  }
-
-  async _updateConversation(item, conversation) {
-    await item.update({ "system.conversation": conversation });
   }
 
   async _onGrowthCheck(event) {
@@ -932,15 +773,13 @@ export class SW25ActorSheet extends ActorSheet {
       return;
     }
 
-    const orgActor = this.actor.name;
-    const orgId = this.actor._id;
     const name =
       item.name +
       game.i18n.localize("SW25.Use") +
       " " +
       cost +
       game.i18n.localize("SW25.Item.Phasearea.Point");
-    const { effects, consumed } = await preparePhaseareaUse(this.actor, item, cost, name);
+    const { effects, consumed } = await usePhasearea(this.actor, item, cost, name, selectedTokens);
 
     let lifeline = "";
     if (item.system.type == "ten") {
@@ -958,8 +797,6 @@ export class SW25ActorSheet extends ActorSheet {
           game.i18n.localize(`SW25.Item.Phasearea.${lifeline}`)
       );
     }
-
-    applyPreparedEffectsToTokens(selectedTokens, effects, orgActor, orgId);
 
     await postPhaseareaEffect(this.actor, selectedTokens[0].actor.name, effects[0].name, lifeline);
   }

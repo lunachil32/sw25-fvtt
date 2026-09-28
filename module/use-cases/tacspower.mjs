@@ -1,4 +1,4 @@
-import { updateResourceQuantity } from "./resource-quantity.mjs";
+import { updateResourceQuantity } from "../services/resource-quantity.mjs";
 
 /** Gain a tactic's tacspower. Returns the resource criteria that were not found. */
 export async function gainTacspower(actor, tactic) {

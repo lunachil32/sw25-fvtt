@@ -4,17 +4,17 @@ import {
   onManageActiveEffect,
 } from "../../helpers/effects.mjs";
 import { SW25 } from "../../helpers/config.mjs";
-import { resolveSessionResult } from "../../services/session-results.mjs";
+import { resolveSessionResult } from "../../use-cases/session-results.mjs";
 import {
   applyPropertyElements,
   applyWeaponTypeElements,
-} from "../../services/item-elements.mjs";
+} from "../../use-cases/item-elements.mjs";
 import {
   addCustomField,
   removeCustomField,
   moveCustomFieldUp,
   moveCustomFieldDown,
-} from "../../services/item-custom-fields.mjs";
+} from "../../use-cases/item-custom-fields.mjs";
 
 /**
  * Extend the basic ItemSheet with some very simple modifications
