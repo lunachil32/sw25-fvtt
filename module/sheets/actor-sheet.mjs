@@ -1,6 +1,7 @@
 import { postActorCheck } from "../presentation/chat/check-roll.mjs";
 import { postActorPower } from "../presentation/chat/power-roll.mjs";
 import { postApplyAll } from "../presentation/chat/apply-all.mjs";
+import { postAppliedEffects, postPhaseareaEffect } from "../presentation/chat/effect-messages.mjs";
 import { postActorCheckRequest, postMonsterCheckRequest, postMonsterReveal } from "../presentation/chat/check-requests.mjs";
 import { prepareActorSheetContext } from "../presentation/sheet-context/actor-context.mjs";
 import {
@@ -447,32 +448,7 @@ export class SW25ActorSheet extends ActorSheet {
     // reset target
     game.user.targets.forEach((target) => target.setTarget(false));
 
-    // Chat message
-    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-    let label = game.i18n.localize("SW25.Effectslong");
-    let chatActorName = "";
-    let chatEffectName = "";
-
-    for (let i = 0; i < targetNames.length; i++) {
-      chatActorName += ">>> " + targetNames[i] + "<br>";
-    }
-    for (let i = 0; i < effectNames.length; i++) {
-      chatEffectName += effectNames[i] + "<br>";
-    }
-
-    let chatData = {
-      speaker: speaker,
-      flavor: label,
-    };
-    chatData.content = await renderTemplate(
-      "systems/sw25-lunachil-maintained/templates/roll/effect-apply.hbs",
-      {
-        targetActorName: chatActorName,
-        transferEffectName: chatEffectName,
-      }
-    );
-
-    ChatMessage.create(chatData);
+    await postAppliedEffects(this.actor, targetNames, effectNames);
   }
 
   async _onMpCost(event) {
@@ -1103,29 +1079,7 @@ export class SW25ActorSheet extends ActorSheet {
 
     applyPreparedEffectsToTokens(selectedTokens, effects, orgActor, orgId);
 
-    // Chat message
-    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-    let label = game.i18n.localize("SW25.Effectslong");
-    let chatActorName = ">>> " + selectedTokens[0].actor.name + "<br>";
-    let chatEffectName =
-      effects[0].name +
-      "(" +
-      game.i18n.localize(`SW25.Item.Phasearea.${lifeline}`) +
-      ")<br>";
-
-    let chatData = {
-      speaker: speaker,
-      flavor: label,
-    };
-    chatData.content = await renderTemplate(
-      "systems/sw25-lunachil-maintained/templates/roll/effect-apply.hbs",
-      {
-        targetActorName: chatActorName,
-        transferEffectName: chatEffectName,
-      }
-    );
-
-    ChatMessage.create(chatData);
+    await postPhaseareaEffect(this.actor, selectedTokens[0].actor.name, effects[0].name, lifeline);
   }
 
   async _inputUsePhaseareaCost(item) {
