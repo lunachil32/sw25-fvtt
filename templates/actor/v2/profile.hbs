@@ -1,0 +1,25 @@
+<section class="v2-profile">
+  <h2>{{localize "SW25.V2.Profile"}}</h2>
+  <div class="v2-fields">{{#each profileFields as |field|}}
+      <label>{{localize field.label}}<input name="{{field.name}}" type="{{field.type}}" data-dtype="{{field.dtype}}" value="{{field.value}}" {{#unless @root.editable}}disabled{{/unless}}></label>
+      {{/each}}</div>
+  <h3>{{localize "SW25.V2.Vitals"}}</h3>
+  <div class="v2-fields">{{#each vitalFields as |field|}}
+      <label>{{localize field.label}}<input name="{{field.name}}" type="{{field.type}}" data-dtype="{{field.dtype}}" value="{{field.value}}" {{#unless @root.editable}}disabled{{/unless}}></label>
+      {{/each}}</div>
+  <h3>{{localize "SW25.Abilityname"}}</h3>
+  <div class="v2-fields">{{#each baseFields as |field|}}
+      <label>{{localize field.label}}<input name="{{field.name}}" type="{{field.type}}" data-dtype="{{field.dtype}}" value="{{field.value}}" {{#unless @root.editable}}disabled{{/unless}}></label>
+      {{/each}}</div>
+  <table class="v2-ability-inputs">
+    <thead><tr><th>{{localize "SW25.Abilityname"}}</th><th>{{localize "SW25.V2.Base"}}</th><th>{{localize "SW25.V2.Growth"}}</th><th>{{localize "SW25.Modifier"}}</th><th>{{localize "SW25.V2.Total"}}</th></tr></thead>
+    <tbody>{{#each system.abilities as |ability key|}}
+      <tr><th>{{ability.label}}</th>
+        <td><input aria-label="{{ability.label}} {{localize 'SW25.V2.Base'}}" type="number" name="system.abilities.{{key}}.valuebase" value="{{ability.valuebase}}" data-dtype="Number" {{#unless @root.editable}}disabled{{/unless}}></td>
+        <td><input aria-label="{{ability.label}} {{localize 'SW25.V2.Growth'}}" type="number" name="system.abilities.{{key}}.valuegrowth" value="{{ability.valuegrowth}}" data-dtype="Number" {{#unless @root.editable}}disabled{{/unless}}></td>
+        <td><input aria-label="{{ability.label}} {{localize 'SW25.Modifier'}}" type="number" name="system.abilities.{{key}}.valuemodify" value="{{ability.valuemodify}}" data-dtype="Number" {{#unless @root.editable}}disabled{{/unless}}></td>
+        <td>{{ability.value}} ({{ability.mod}})</td>
+      </tr>{{/each}}
+    </tbody>
+  </table>
+</section>

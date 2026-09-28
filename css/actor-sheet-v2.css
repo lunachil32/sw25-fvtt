@@ -12,3 +12,8 @@
 .sw25-actor-v2 .v2-resources label { flex: 1; overflow-wrap: anywhere; }
 .sw25-actor-v2 .v2-resources input { width: 64px; text-align: center; }
 .sw25-actor-v2 .v2-resources button { flex: 0 0 32px; }
+.sw25-actor-v2 .v2-profile { margin-bottom: 20px; }
+.sw25-actor-v2 .v2-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+.sw25-actor-v2 .v2-fields label { display: flex; flex-direction: column; gap: 4px; }
+.sw25-actor-v2 .v2-ability-inputs input { width: 100%; min-width: 0; text-align: center; }
+.sw25-actor-v2 .v2-ability-inputs td { width: 18%; padding: 4px; }

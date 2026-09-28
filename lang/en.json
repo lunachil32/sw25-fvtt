@@ -2,11 +2,23 @@
   "SW25": {
     "V2": {
       "Label": "PC Sheet V2 (Preview)",
-      "Scope": "Preview: abilities, HP/MP, resources and a basic check.",
+      "Scope": "V2 sheet under development. Character fields, resources and basic checks are available.",
       "Decrease": "Decrease",
       "Increase": "Increase",
       "NoResources": "No resources. Add resources using the existing sheet.",
-      "BasicCheck": "Basic Check"
+      "BasicCheck": "Basic Check",
+      "Profile": "Character",
+      "Vitals": "HP / MP",
+      "SkillBase": "Skill",
+      "BodyBase": "Body",
+      "MindBase": "Mind",
+      "Base": "Base (A–F)",
+      "Growth": "Growth",
+      "Total": "Total (Mod)",
+      "TotalExperience": "Total EXP",
+      "Money": "Gamel",
+      "HpModifier": "Max HP Modifier",
+      "MpModifier": "Max MP Modifier"
     },
 
     "Setting": "Setting",
