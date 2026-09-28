@@ -27,7 +27,7 @@ import { assignActionTableEntry } from "../../services/action-table.mjs";
 import { bookmarkItem, toggleItemBookmark } from "../../services/item-bookmarks.mjs";
 import { applyItemEffects, applyEffectsToTokens, applyPreparedEffectsToTokens } from "../../services/effect-application.mjs";
 import { resolveActorCheck } from "../../use-cases/actor-checks.mjs";
-import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../../services/actor-check-requests.mjs";
+import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../../use-cases/actor-check-requests.mjs";
 import { resolveActorPower } from "../../use-cases/actor-power-rolls.mjs";
 
 /**
