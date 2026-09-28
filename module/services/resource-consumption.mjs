@@ -14,3 +14,8 @@ export async function consumeResource(resource, amount) {
   await resource.update({ "system.quantity": remainingQuantity });
   return { consumed: true, previousQuantity, remainingQuantity };
 }
+
+/** Determine who can pay the cost; summoning and returning exclude the summoned Actor. */
+export function isMpCostTarget(actor, { sourceActorId, type }) {
+  return !(sourceActorId === actor.id && (type === "summon" || type === "return"));
+}

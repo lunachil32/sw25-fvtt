@@ -12,7 +12,7 @@ import { Util } from "../helpers/utils.mjs";
 import { updateAllResourceQuantities, limitResourceQuantity } from "../services/resource-quantity.mjs";
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../services/notes.mjs";
 import { gainTacspower, spendTacspower } from "../services/tacspower.mjs";
-import { consumeResource } from "../services/resource-consumption.mjs";
+import { consumeResource, isMpCostTarget } from "../services/resource-consumption.mjs";
 import { useAlchemy } from "../services/alchemy.mjs";
 import { preparePhaseareaUse } from "../services/phasearea.mjs";
 import { assignActionTableEntry } from "../services/action-table.mjs";
@@ -1302,7 +1302,7 @@ export class SW25ActorSheet extends ActorSheet {
     const id = dataset.id;
     const meta = 1;
 
-    if (id === token.actor.id && (type === "summon" || type === "return")){
+    if (!isMpCostTarget(token.actor, { sourceActorId: id, type })) {
       ui.notifications.warn(game.i18n.localize("SW25.SummonMpwarn"));
       return;
     }
