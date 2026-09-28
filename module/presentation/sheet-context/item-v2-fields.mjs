@@ -11,10 +11,10 @@ export function prepareItemV2Fields(item) {
 /** Group editable roll configuration without duplicating document calculations. */
 export function prepareItemV2FieldGroups(item, context) {
   const groups = [{ label: "SW25.Details", fields: prepareItemV2Fields(item) }];
-  if (["weapon", "armor"].includes(item.type)) {
+  if (["weapon", "armor", "accessory", "item"].includes(item.type)) {
     const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
     options.resources = Object.fromEntries((item.system.itemlist ?? []).map(resource => [resource.itemId, resource.itemName]));
-    groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
+    if (item.type !== "item") groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
     groups.push({ label: "SW25.Check", fields: prepareFields(item, check, options) });
     groups.push({ label: "SW25.Item.Power", fields: prepareFields(item, power, options) });
     groups.push({ label: "SW25.Item.Powertable", fields: prepareFields(item, Array.from({ length: 10 }, (_, index) => ["system.pt" + (index + 3), String(index + 3), "number"])) });
@@ -32,7 +32,7 @@ function prepareFields(item, definitions, context = {}) {
   }));
 }
 
-export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon"];
+export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item"];
 
 const common = [["name", "Name"], ["system.overview", "SW25.Item.Overview"]];
 const skill = [
@@ -62,11 +62,8 @@ const subtypes = {
   abyssex: [["system.resource.abyssextype", "SW25.V2.ResourceSubtype", "select", "abyssexTypes"]],
 };
 
-const equipment = [
-  ["system.equip", "SW25.Equip", "checkbox"],
-  ["system.dedicated", "SW25.Item.Dedicated", "checkbox"],
+const goods = [
   ["system.quantity", "SW25.Quantity", "number"],
-  ["system.rank", "SW25.Attributes.Honer.Rank", "select", "ranks"],
   ["system.price", "SW25.Item.Price", "number"],
   ["system.isMagicitem", "SW25.Item.MagicItem", "checkbox"],
   ["system.isHonoritem", "SW25.Item.HonorItem", "checkbox"],
@@ -74,6 +71,16 @@ const equipment = [
   ["system.info.popularity", "SW25.Item.Popularity"],
   ["system.info.shape", "SW25.Item.Shape"],
   ["system.info.create", "SW25.Item.Create"],
+  ["system.selfbuff", "SW25.Item.Selfbuff", "checkbox"],
+];
+const wearable = [
+  ...goods,
+  ["system.equip", "SW25.Equip", "checkbox"],
+  ["system.dedicated", "SW25.Item.Dedicated", "checkbox"],
+];
+const equipment = [
+  ...wearable,
+  ["system.rank", "SW25.Attributes.Honer.Rank", "select", "ranks"],
   ["system.usage", "SW25.Item.Weapon.Usage", "select", "weaponUsages"],
   ["system.reqstr", "SW25.Item.Reqstr", "number"],
 ];
@@ -92,7 +99,17 @@ const weapon = [
   ["system.dmod", "SW25.Item.Weapon.Dmod", "number"],
   ["system.range", "SW25.Item.Weapon.Range"],
 ];
-const fieldsByType = { skill, resource, armor, weapon };
+const accessory = [
+  ...wearable,
+  ["system.accpart", "SW25.Item.Accessory.Part", "select", "accparts"],
+  ["system.deffect", "SW25.Item.Dedicated", "select", "deffects"],
+];
+const item = [
+  ...goods,
+  ["system.type", "SW25.Item.Category", "select", "itemTypes"],
+  ["system.info.category", "SW25.Item.Category"],
+];
+const fieldsByType = { skill, resource, armor, weapon, accessory, item };
 
 const check = [
   ["system.clickitem", "SW25.Item.Clickitem", "select", "clickitemOptions"],
