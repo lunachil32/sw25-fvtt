@@ -13,6 +13,8 @@ export function prepareItemV2FieldGroups(item, context) {
   const groups = [{ label: "SW25.Details", fields: prepareItemV2Fields(item) }];
   if (["weapon", "armor"].includes(item.type)) {
     const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
+    options.resources = Object.fromEntries((item.system.itemlist ?? []).map(resource => [resource.itemId, resource.itemName]));
+    groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
     groups.push({ label: "SW25.Check", fields: prepareFields(item, check, options) });
     groups.push({ label: "SW25.Item.Power", fields: prepareFields(item, power, options) });
     groups.push({ label: "SW25.Item.Powertable", fields: prepareFields(item, Array.from({ length: 10 }, (_, index) => ["system.pt" + (index + 3), String(index + 3), "number"])) });
@@ -24,7 +26,7 @@ function prepareFields(item, definitions, context = {}) {
   return definitions.map(([name, label, type = "text", options]) => ({
     name, label, type, value: foundry.utils.getProperty(item, name),
     options: options ? context[options] ?? CONFIG.SW25[options] : null,
-    localizeOptions: options !== 'skills',
+    localizeOptions: !["skills", "resources"].includes(options),
     checkbox: type === "checkbox", select: type === "select",
     dtype: type === "number" ? "Number" : type === "checkbox" ? "Boolean" : "String",
   }));
@@ -118,4 +120,13 @@ const power = [
   ["system.criticalray", "SW25.Item.Criticalray"],
   ["system.pharmtool", "SW25.Item.Pharmtool", "number"],
   ["system.powup", "SW25.Item.Powup", "number"],
+];
+
+const costs = [
+  ["system.basehpcost", "SW25.Item.Hpcost"],
+  ["system.maxhpcost", "SW25.Max", "number"],
+  ["system.basempcost", "SW25.Item.Mpcost", "number"],
+  ["system.resuse", "SW25.Item.Resuse", "select", "resources"],
+  ["system.resusequantity", "SW25.Item.Resquantity", "number"],
+  ["system.autouseres", "SW25.Item.AutoUseres", "checkbox"],
 ];
