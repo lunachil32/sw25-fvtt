@@ -1,5 +1,9 @@
 {
   "SW25": {
+    "V2": {
+      "Label": "PC Sheet V2 (Preview)",
+      "Scope": "Preview: abilities, HP/MP, resources and a basic check."
+    },
 
     "Setting": "Setting",
     "Message": "Message",

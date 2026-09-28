@@ -50,7 +50,7 @@ export let effectVitResPC,
 /*  Init Hook                                   */
 /* -------------------------------------------- */
 
-Hooks.once("init", function () {
+Hooks.once("init", async function () {
   // Add utility classes to the global game object so that they're more easily
   // accessible in global contexts.
   game.sw25 = {
@@ -87,6 +87,13 @@ Hooks.once("init", function () {
     makeDefault: true,
     label: "SW25.SheetLabels.Actor",
   });
+  // ActorSheetV2 is available in V13; V12 keeps the existing sheet registration.
+  if (game.release.generation >= 13) {
+    const { SW25ActorSheetV2 } = await import("./presentation/sheets/actor-sheet-v2.mjs");
+    DocumentSheetConfig.registerSheet(Actor, game.system.id, SW25ActorSheetV2, {
+      types: ["character"], makeDefault: false, label: "SW25.V2.Label",
+    });
+  }
   Items.unregisterSheet("core", ItemSheet);
   Items.registerSheet(game.system.id, SW25ItemSheet, {
     makeDefault: true,

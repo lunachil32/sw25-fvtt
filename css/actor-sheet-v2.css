@@ -1,0 +1,9 @@
+.sw25-actor-v2 .window-content { overflow-y: auto; }
+.sw25-actor-v2 .v2-overview { display: flex; flex-direction: column; gap: 16px; }
+.sw25-actor-v2 h2, .sw25-actor-v2 h3, .sw25-actor-v2 p { margin: 0 0 8px; }
+.sw25-actor-v2 .v2-vitals, .sw25-actor-v2 .v2-abilities { display: grid; gap: 12px; }
+.sw25-actor-v2 .v2-vitals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sw25-actor-v2 .v2-vitals > div { display: flex; justify-content: space-between; }
+.sw25-actor-v2 .v2-abilities { grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; }
+.sw25-actor-v2 .v2-abilities > div { padding: 10px; border: 1px solid var(--color-border-light-primary); border-radius: 4px; }
+.sw25-actor-v2 dd { margin: 6px 0 0; font-size: 1.2em; }

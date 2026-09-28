@@ -1,0 +1,15 @@
+<section class="v2-overview">
+  <header><h2>{{actor.name}}</h2><p>{{localize "SW25.V2.Scope"}}</p></header>
+  <div class="v2-vitals">
+    <div><strong>{{localize "SW25.Hp"}}</strong><span>{{system.hp.value}} / {{system.hp.max}}</span></div>
+    <div><strong>{{localize "SW25.Mp"}}</strong><span>{{system.mp.value}} / {{system.mp.max}}</span></div>
+  </div>
+  <section aria-label="{{localize 'SW25.Abilityname'}}">
+    <h3>{{localize "SW25.Abilityname"}}</h3>
+    <dl class="v2-abilities">
+      {{#each system.abilities as |ability|}}
+      <div><dt>{{ability.label}}</dt><dd>{{ability.value}} ({{ability.mod}})</dd></div>
+      {{/each}}
+    </dl>
+  </section>
+</section>
