@@ -1,3 +1,5 @@
+import { calculateUnboundedConsumption } from "../rules/resource-consumption.mjs";
+
 /** Spend the required cards, apply the rank and refresh the source Actor. */
 export async function useAlchemy(actor, alchemy, rank) {
   const results = await spendMaterialCards(actor, alchemy, rank);
@@ -30,8 +32,7 @@ export async function spendMaterialCards(actor, alchemy, rank) {
     let previousQuantity = null;
     let remainingQuantity = null;
     if (resource) {
-      previousQuantity = resource.system.quantity ? resource.system.quantity : 0;
-      remainingQuantity = previousQuantity - alchemy.system[color];
+      ({ previousQuantity, remainingQuantity } = calculateUnboundedConsumption(resource.system.quantity, alchemy.system[color]));
       await resource.update({ "system.quantity": remainingQuantity });
     }
 
