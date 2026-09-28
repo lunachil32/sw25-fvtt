@@ -5,7 +5,8 @@
       "Scope": "能力値・HP/MP・リソース・基本判定のみの試作シートです。",
       "Decrease": "減らす",
       "Increase": "増やす",
-      "NoResources": "リソースがありません。追加は既存シートで行えます。"
+      "NoResources": "リソースがありません。追加は既存シートで行えます。",
+      "BasicCheck": "基本判定"
     },
 
     "Setting": "設定",

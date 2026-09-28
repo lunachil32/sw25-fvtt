@@ -1,3 +1,5 @@
+import { resolveActorCheck } from "../../use-cases/actor-checks.mjs";
+import { postActorCheck } from "../chat/check-roll.mjs";
 import { editItemField, prepareItemFieldAdjustment, saveItemFieldAdjustment } from "../../use-cases/edit-item-field.mjs";
 import { prepareActorSheetContext } from "../sheet-context/actor-context.mjs";
 
@@ -6,7 +8,10 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
   static DEFAULT_OPTIONS = {
     classes: ["sw25-actor-v2"],
     tag: "div",
-    actions: { adjustResource: SW25ActorSheetV2._onAdjustResource },
+    actions: {
+      adjustResource: SW25ActorSheetV2._onAdjustResource,
+      rollBasicCheck: SW25ActorSheetV2._onRollBasicCheck,
+    },
     position: { width: 560, height: 540 },
     window: { resizable: true },
     viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
@@ -24,6 +29,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
       ...context, actor: this.actor, data, items: data.items,
     });
   }
+
   _onRender(context, options) {
     super._onRender(context, options);
     for (const input of this.element.querySelectorAll("[data-resource-quantity]")) {
@@ -53,5 +59,11 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     input.value = result.value;
     // Retain the V1 button's two writes until the shared use-case is corrected separately.
     await saveItemFieldAdjustment(item, "item.system.quantity", result.value, "system.quantity");
+  }
+
+  static async _onRollBasicCheck() {
+    if (!this.isEditable) return;
+    const result = await resolveActorCheck(this.actor, { formula: "2d6" });
+    return postActorCheck(this.actor, { label: game.i18n.localize("SW25.V2.BasicCheck") }, result);
   }
 }

@@ -5,7 +5,8 @@
       "Scope": "Preview: abilities, HP/MP, resources and a basic check.",
       "Decrease": "Decrease",
       "Increase": "Increase",
-      "NoResources": "No resources. Add resources using the existing sheet."
+      "NoResources": "No resources. Add resources using the existing sheet.",
+      "BasicCheck": "Basic Check"
     },
 
     "Setting": "Setting",
