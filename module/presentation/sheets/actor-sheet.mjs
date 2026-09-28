@@ -24,7 +24,7 @@ import { consumeResource, isMpCostTarget } from "../../services/resource-consump
 import { useAlchemy } from "../../use-cases/use-alchemy.mjs";
 import { preparePhaseareaUse } from "../../services/phasearea.mjs";
 import { assignActionTableEntry } from "../../services/action-table.mjs";
-import { bookmarkItem, toggleItemBookmark } from "../../services/item-bookmarks.mjs";
+import { bookmarkItem, toggleItemBookmark } from "../../use-cases/item-bookmarks.mjs";
 import { applyItemEffects, applyEffectsToTokens, applyPreparedEffectsToTokens } from "../../services/effect-application.mjs";
 import { resolveActorCheck } from "../../use-cases/actor-checks.mjs";
 import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../../use-cases/actor-check-requests.mjs";
