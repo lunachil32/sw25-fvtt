@@ -8,7 +8,7 @@ import { resolveSessionResult } from "../../use-cases/session-results.mjs";
 import {
   applyPropertyElements,
   applyWeaponTypeElements,
-} from "../../services/item-elements.mjs";
+} from "../../use-cases/item-elements.mjs";
 import {
   addCustomField,
   removeCustomField,
