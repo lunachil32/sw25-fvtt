@@ -1,7 +1,9 @@
+import { calculateReturnCheckTarget } from "../rules/checks.mjs";
+
 /** Build a requested check, including the return-check target adjustment. */
 export function createActorCheckRequest(checkName, targetValue) {
   if (checkName == game.i18n.localize("SW25.Monster.Return")) {
-    targetValue = Number(targetValue) + 1;
+    targetValue = calculateReturnCheckTarget(targetValue);
   }
   return createRequest(checkName, targetValue);
 }

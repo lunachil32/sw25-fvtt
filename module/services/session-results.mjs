@@ -1,3 +1,5 @@
+import { calculateSessionRewards, addSwordShardHonor } from "../rules/session-rewards.mjs";
+
 /** Resolve session rewards and rolls without requiring an item sheet. */
 export async function resolveSessionResult(item) {
   let roll = null;
@@ -7,26 +9,9 @@ export async function resolveSessionResult(item) {
   let isRoll = false;
 
   const title = item.name;
-  const pcNum = Number(item.system.session.pcnum);
-
-  const gamel =
-    Number(item.system.session.mission.gamel) +
-    Number(item.system.session.middle.gamel);
-  const keepGamel = gamel % pcNum;
-  const getGamel = Math.floor((gamel - keepGamel) / pcNum);
-
-  let getExp =
-    Number(item.system.session.mission.exp) +
-    Number(item.system.session.middle.exp);
-
-  const abyss = Number(item.system.session.middle.abyss);
-  const keepAbyss = abyss % pcNum;
-  const getAbyss = Math.floor((abyss - keepAbyss) / pcNum);
-  const getTresure = Number(item.system.session.middle.tresure);
-
-  const getSword = Number(item.system.session.middle.sword);
-
-  let getHonor = Number(item.system.session.mission.honor);
+  const rewards = calculateSessionRewards(item.system.session);
+  const { getGamel, keepGamel, getExp, getAbyss, keepAbyss, getTresure, getSword } = rewards;
+  let getHonor = rewards.getHonor;
 
   // basic info.
   const isBasic = item.system.result.character;
@@ -68,7 +53,7 @@ export async function resolveSessionResult(item) {
     tooltip = await roll.getTooltip();
     total = roll.total;
 
-    getHonor += Number(roll.total);
+    getHonor = addSwordShardHonor(getHonor, roll.total);
   }
   const isGamel = 0 < getGamel || 0 < keepGamel;
   const isHonor = 0 < getHonor || 0 < getSword;

@@ -1,3 +1,4 @@
+import { getCheckOutcome } from "../rules/checks.mjs";
 import { consumeResource } from "./resource-consumption.mjs";
 import { getActorDamageContext } from "./actor-roll-context.mjs";
 
@@ -19,10 +20,7 @@ export async function resolveActorCheck(actor, {
     if (!result.consumed) return { roll, resourceCost };
   }
 
-  let critical = null;
-  let fumble = null;
-  if (roll.terms[0].total == 12) critical = 1;
-  if (roll.terms[0].total == 2) fumble = 1;
+  const { critical, fumble } = getCheckOutcome(roll.terms[0].total);
 
   const context = getActorDamageContext(actor, itemId);
 

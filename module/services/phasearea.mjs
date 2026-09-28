@@ -1,3 +1,5 @@
+import { calculateUnboundedConsumption } from "../rules/resource-consumption.mjs";
+
 /** Prepare an effect and spend its lifeline, reporting a missing resource without aborting. */
 export async function preparePhaseareaUse(actor, phasearea, cost, name) {
   const effects = [buildPhaseareaEffect(actor, phasearea, name)];
@@ -18,8 +20,8 @@ export async function spendLifeline(actor, phasearea, cost) {
   );
   if (!resource) return false;
 
-  const previousQuantity = resource.system.quantity ? resource.system.quantity : 0;
-  await resource.update({ "system.quantity": previousQuantity - cost });
+  const { remainingQuantity } = calculateUnboundedConsumption(resource.system.quantity, cost);
+  await resource.update({ "system.quantity": remainingQuantity });
   return true;
 }
 

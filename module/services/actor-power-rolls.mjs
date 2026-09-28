@@ -1,3 +1,4 @@
+import { calculatePowerModifier } from "../rules/checks.mjs";
 import { powerRoll } from "../helpers/powerroll.mjs";
 import { getActorDamageContext } from "./actor-roll-context.mjs";
 
@@ -45,9 +46,7 @@ function preparePowerRollDetails(roll) {
   let chatPowup = null;
   let chatResult = roll.eachPowerResult;
   let chatMod = roll.powMod;
-  let chatModTotal = roll.powMod;
-  if (roll.halfPow == 0 && roll.halfPowMod && roll.halfPowMod != 0)
-    chatModTotal += roll.halfPowMod;
+  const chatModTotal = calculatePowerModifier(roll.powMod, roll.halfPow, roll.halfPowMod);
   let chatHalf = null;
   let chatResults = roll.rawPowerResult;
   let chatTotal = roll.powerResult;

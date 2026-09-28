@@ -1,3 +1,6 @@
+import { isMaterialCardRequired, getAlchemyRankAdjustment } from "../rules/alchemy.mjs";
+import { calculateUnboundedConsumption } from "../rules/resource-consumption.mjs";
+
 /** Spend the required cards, apply the rank and refresh the source Actor. */
 export async function useAlchemy(actor, alchemy, rank) {
   const results = await spendMaterialCards(actor, alchemy, rank);
@@ -15,7 +18,7 @@ export async function useAlchemy(actor, alchemy, rank) {
 export async function spendMaterialCards(actor, alchemy, rank) {
   const results = [];
   for (const color of ["red", "green", "black", "white", "gold"]) {
-    if (!isNaN(alchemy.system[color]) && alchemy.system[color] <= 0) {
+    if (!isMaterialCardRequired(alchemy.system[color])) {
       continue;
     }
 
@@ -30,8 +33,7 @@ export async function spendMaterialCards(actor, alchemy, rank) {
     let previousQuantity = null;
     let remainingQuantity = null;
     if (resource) {
-      previousQuantity = resource.system.quantity ? resource.system.quantity : 0;
-      remainingQuantity = previousQuantity - alchemy.system[color];
+      ({ previousQuantity, remainingQuantity } = calculateUnboundedConsumption(resource.system.quantity, alchemy.system[color]));
       await resource.update({ "system.quantity": remainingQuantity });
     }
 
@@ -48,31 +50,29 @@ export async function spendMaterialCards(actor, alchemy, rank) {
 
 /** Apply the selected rank to the alchemy Item's effects or dice formula. */
 export async function applyAlchemyRank(alchemy, rank) {
-  if ((alchemy.system.effectvalue?.type && alchemy.system.effectvalue.type !== "-")
-      && alchemy.effects) {
-    const changeValue = alchemy.system.effectvalue[rank];
-    if (changeValue) {
-      const updates = [];
+  const adjustment = getAlchemyRankAdjustment(alchemy.system.effectvalue, rank);
+  if (adjustment && alchemy.effects) {
+    const { type, value: changeValue } = adjustment;
+    const updates = [];
 
-      if (alchemy.system.effectvalue.type === "diceformula") {
-        await alchemy.update({ "system.customformula": String(changeValue) });
-      } else {
-        for (let effect of alchemy.effects) {
-          const updateData = { _id: effect.id };
+    if (type === "diceformula") {
+      await alchemy.update({ "system.customformula": String(changeValue) });
+    } else {
+      for (let effect of alchemy.effects) {
+        const updateData = { _id: effect.id };
 
-          if (alchemy.system.effectvalue.type === "time") {
-            updateData.duration = { rounds: Number(changeValue) };
-          } else if (alchemy.system.effectvalue.type === "value") {
-            updateData.changes = effect.changes.map((c) => ({
-              ...c,
-              value: Number(changeValue),
-            }));
-          }
-
-          updates.push(updateData);
+        if (type === "time") {
+          updateData.duration = { rounds: Number(changeValue) };
+        } else if (type === "value") {
+          updateData.changes = effect.changes.map((c) => ({
+            ...c,
+            value: Number(changeValue),
+          }));
         }
-        await alchemy.updateEmbeddedDocuments("ActiveEffect", updates);
+
+        updates.push(updateData);
       }
+      await alchemy.updateEmbeddedDocuments("ActiveEffect", updates);
     }
   }
 }

@@ -1,16 +1,15 @@
+import { calculateResourceAdjustment, addResourceQuantity, resetOrAddResourceQuantity, limitResourceQuantity as calculateResourceLimits } from "../rules/resource-quantity.mjs";
+
 /**
  * Update the first matching resource, preserving collection order.
  * @returns {Promise<boolean>} Whether a matching resource was updated.
  */
 export async function updateResourceQuantity(actor, resourceType, modifyValue, multiple = 1) {
-  const result = isNaN(Number(modifyValue))
-    ? 0
-    : Number(modifyValue) * multiple;
+  const result = calculateResourceAdjustment(modifyValue, multiple);
   const resource = actor.items.find(item => matchesResource(item, resourceType));
   if (!resource) return false;
 
-  const oldVal = resource.system.quantity ? resource.system.quantity : 0;
-  const newVal = oldVal + Number(result);
+  const newVal = addResourceQuantity(resource.system.quantity, result);
   await resource.update({ "system.quantity": newVal });
   return true;
 }
@@ -21,15 +20,12 @@ export async function updateResourceQuantity(actor, resourceType, modifyValue, m
  * @returns {Promise<boolean>} Whether matching resources were updated.
  */
 export async function updateAllResourceQuantities(actor, resourceType, modifyValue, multiple = 1) {
-  const result = isNaN(Number(modifyValue))
-    ? 0
-    : Number(modifyValue) * multiple;
+  const result = calculateResourceAdjustment(modifyValue, multiple);
   const resources = actor.items.filter(item => matchesResource(item, resourceType));
   if (resources.length === 0) return false;
 
   const updates = resources.map(resource => {
-    const oldVal = Number(resource.system.quantity ?? 0);
-    const newVal = modifyValue ? oldVal + Number(result) : 0;
+    const newVal = resetOrAddResourceQuantity(resource.system.quantity, result, !modifyValue);
     return {
       _id: resource.id,
       system: { quantity: newVal },
@@ -41,19 +37,8 @@ export async function updateAllResourceQuantities(actor, resourceType, modifyVal
 
 /** Apply resource bounds without updating the item or displaying warnings. */
 export function limitResourceQuantity(item, quantity) {
-  const limits = [];
-  if (item.type === "resource") {
-    // Preserve the existing treatment of numeric zero as an inactive bound.
-    if (item.system.qmax && quantity > item.system.qmax) {
-      quantity = item.system.qmax;
-      limits.push("max");
-    }
-    if (item.system.qmin && quantity < item.system.qmin) {
-      quantity = item.system.qmin;
-      limits.push("min");
-    }
-  }
-  return { quantity, limits };
+  if (item.type !== "resource") return { quantity, limits: [] };
+  return calculateResourceLimits(quantity, { min: item.system.qmin, max: item.system.qmax });
 }
 
 function matchesResource(item, resourceType) {
