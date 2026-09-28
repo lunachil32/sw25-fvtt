@@ -12,4 +12,19 @@
       {{/each}}
     </dl>
   </section>
+  <section>
+    <h3>{{localize "SW25.Resource"}}</h3>
+    <ul class="v2-resources">
+      {{#each resourceItems as |item|}}
+      <li data-item-id="{{item._id}}">
+        <label for="{{@root.rootId}}-quantity-{{item._id}}">{{item.name}}</label>
+        <button type="button" data-action="adjustResource" data-adjustment="decrease" aria-label="{{localize 'SW25.V2.Decrease'}}: {{item.name}}" {{#unless @root.editable}}disabled{{/unless}}>−</button>
+        <input id="{{@root.rootId}}-quantity-{{item._id}}" type="text" inputmode="decimal" data-resource-quantity value="{{item.system.quantity}}" {{#unless @root.editable}}disabled{{/unless}}>
+        <button type="button" data-action="adjustResource" data-adjustment="increase" aria-label="{{localize 'SW25.V2.Increase'}}: {{item.name}}" {{#unless @root.editable}}disabled{{/unless}}>+</button>
+      </li>
+      {{else}}
+      <li>{{localize "SW25.V2.NoResources"}}</li>
+      {{/each}}
+    </ul>
+  </section>
 </section>

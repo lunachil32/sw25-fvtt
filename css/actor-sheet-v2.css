@@ -7,3 +7,8 @@
 .sw25-actor-v2 .v2-abilities { grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; }
 .sw25-actor-v2 .v2-abilities > div { padding: 10px; border: 1px solid var(--color-border-light-primary); border-radius: 4px; }
 .sw25-actor-v2 dd { margin: 6px 0 0; font-size: 1.2em; }
+.sw25-actor-v2 .v2-resources { list-style: none; margin: 0; padding: 0; }
+.sw25-actor-v2 .v2-resources li { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.sw25-actor-v2 .v2-resources label { flex: 1; overflow-wrap: anywhere; }
+.sw25-actor-v2 .v2-resources input { width: 64px; text-align: center; }
+.sw25-actor-v2 .v2-resources button { flex: 0 0 32px; }

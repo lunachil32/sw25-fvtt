@@ -2,7 +2,10 @@
   "SW25": {
     "V2": {
       "Label": "PC Sheet V2 (Preview)",
-      "Scope": "Preview: abilities, HP/MP, resources and a basic check."
+      "Scope": "Preview: abilities, HP/MP, resources and a basic check.",
+      "Decrease": "Decrease",
+      "Increase": "Increase",
+      "NoResources": "No resources. Add resources using the existing sheet."
     },
 
     "Setting": "Setting",
