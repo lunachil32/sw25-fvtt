@@ -1,26 +1,34 @@
+import { showEffectTargetDialog } from "../dialogs/effect-target.mjs";
+import { showPhaseareaCostDialog } from "../dialogs/phasearea-cost.mjs";
+import { postActorCheck } from "../chat/check-roll.mjs";
+import { postActorPower } from "../chat/power-roll.mjs";
+import { postApplyAll } from "../chat/apply-all.mjs";
+import { postAppliedEffects, postPhaseareaEffect } from "../chat/effect-messages.mjs";
+import { postAlchemyCost, postResourceCost } from "../chat/resource-messages.mjs";
+import { postActorCheckRequest, postMonsterCheckRequest, postMonsterReveal } from "../chat/check-requests.mjs";
+import { prepareActorSheetContext } from "../sheet-context/actor-context.mjs";
 import {
   onManageActiveEffect,
-  prepareActiveEffectCategories,
-} from "../helpers/effects.mjs";
-import { mpCost, hpCost } from "../helpers/mpcost.mjs";
-import { lootRoll } from "../helpers/lootroll.mjs";
-import { growthCheck } from "../helpers/growthcheck.mjs";
-import { actionRoll } from "../helpers/actionroll.mjs";
-import { targetRollDialog, targetSelectDialog } from "../helpers/dialogs.mjs";
-import { SW25 } from "../helpers/config.mjs";
-import { Util } from "../helpers/utils.mjs";
-import { updateAllResourceQuantities, limitResourceQuantity } from "../services/resource-quantity.mjs";
-import { gainNotes, gainAdditionalNotes, spendNotes } from "../services/notes.mjs";
-import { gainTacspower, spendTacspower } from "../services/tacspower.mjs";
-import { consumeResource, isMpCostTarget } from "../services/resource-consumption.mjs";
-import { useAlchemy } from "../services/alchemy.mjs";
-import { preparePhaseareaUse } from "../services/phasearea.mjs";
-import { assignActionTableEntry } from "../services/action-table.mjs";
-import { bookmarkItem, toggleItemBookmark } from "../services/item-bookmarks.mjs";
-import { applyItemEffects, applyEffectsToTokens, applyPreparedEffectsToTokens } from "../services/effect-application.mjs";
-import { resolveActorCheck } from "../services/actor-checks.mjs";
-import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../services/actor-check-requests.mjs";
-import { resolveActorPower } from "../services/actor-power-rolls.mjs";
+} from "../../helpers/effects.mjs";
+import { mpCost, hpCost } from "../../helpers/mpcost.mjs";
+import { lootRoll } from "../../helpers/lootroll.mjs";
+import { growthCheck } from "../../helpers/growthcheck.mjs";
+import { actionRoll } from "../../helpers/actionroll.mjs";
+import { targetRollDialog, targetSelectDialog } from "../../helpers/dialogs.mjs";
+import { SW25 } from "../../helpers/config.mjs";
+import { Util } from "../../helpers/utils.mjs";
+import { updateAllResourceQuantities, limitResourceQuantity } from "../../services/resource-quantity.mjs";
+import { gainNotes, gainAdditionalNotes, spendNotes } from "../../services/notes.mjs";
+import { gainTacspower, spendTacspower } from "../../services/tacspower.mjs";
+import { consumeResource, isMpCostTarget } from "../../services/resource-consumption.mjs";
+import { useAlchemy } from "../../services/alchemy.mjs";
+import { preparePhaseareaUse } from "../../services/phasearea.mjs";
+import { assignActionTableEntry } from "../../services/action-table.mjs";
+import { bookmarkItem, toggleItemBookmark } from "../../services/item-bookmarks.mjs";
+import { applyItemEffects, applyEffectsToTokens, applyPreparedEffectsToTokens } from "../../services/effect-application.mjs";
+import { resolveActorCheck } from "../../services/actor-checks.mjs";
+import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../../services/actor-check-requests.mjs";
+import { resolveActorPower } from "../../services/actor-power-rolls.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -57,639 +65,8 @@ export class SW25ActorSheet extends ActorSheet {
 
   /** @override */
   getData() {
-    // Retrieve the data structure from the base sheet. You can inspect or log
-    // the context variable to see the structure, but some key properties for
-    // sheets are the actor object, the data object, whether or not it's
-    // editable, the items array, and the effects array.
-    const context = super.getData();
-
-    // Use a safe clone of the actor data for further operations.
-    const actorData = context.data;
-
-    // Add the actor's data to context.data for easier access, as well as flags.
-    context.system = actorData.system;
-    context.flags = actorData.flags;
-    context.isOwner = this.actor.isOwner;
-
-    context.config = CONFIG.SW25;
-
-    // Prepare character data and items.
-    if (actorData.type == "character") {
-      this._prepareItems(context);
-      this._prepareCharacterData(context);
-    }
-
-    // Prepare NPC data and items.
-    if (actorData.type == "npc") {
-      this._prepareItems(context);
-      this._prepareNpcData(context);
-    }
-
-    // Prepare Monster data and items.
-    if (actorData.type == "monster") {
-      this._prepareItems(context);
-      this._prepareMonsterData(context);
-    }
-
-    // Add roll data for TinyMCE editors.
-    context.rollData = context.actor.getRollData();
-
-    // Prepare active effects
-    context.effects = prepareActiveEffectCategories(
-      // A generator that returns all effects stored on the actor
-      // as well as any items
-      this.actor.allApplicableEffects()
-    );
-
-    const colorSetting = actorData.system.color
-    ? {
-        main: {
-          bg: Util.hexToRgb(actorData.system.color.main.bg),
-          text: Util.hexToRgb(actorData.system.color.main.text)
-        },
-        sub: {
-          bg: Util.hexToRgb(actorData.system.color.sub.bg),
-          text: Util.hexToRgb(actorData.system.color.sub.text)
-        }
-      }
-    : {
-        main: {
-          bg: {r:239, g:230, b:216},
-          text: {r:0, g:0, b:0},
-        },
-        sub: {
-          bg: {r:247, g:243, b:232},
-          text: {r:0, g:0, b:0},
-        }
-      }
-    context.colorSetting = colorSetting;
-
-    return context;
+    return prepareActorSheetContext(this.actor, super.getData());
   }
-
-  /**
-   * Organize and classify Items for Character sheets.
-   *
-   * @param {Object} actorData The actor to prepare.
-   *
-   * @return {undefined}
-   */
-  _prepareCharacterData(context) {
-    // Handle ability scores.
-    for (let [k, v] of Object.entries(context.system.abilities)) {
-      v.label = game.i18n.localize(CONFIG.SW25.abilities[k]) ?? k;
-    }
-  }
-
-  _prepareNpcData(context) {}
-
-  _prepareMonsterData(context) {}
-
-  /**
-   * Organize and classify Items for Character sheets.
-   *
-   * @param {Object} actorData The actor to prepare.
-   *
-   * @return {undefined}
-   */
-  _prepareItems(context) {
-    // Initialize containers.
-    const skills = [];
-    const checks = [];
-    const battlechecks = [];
-    const resources = [];
-    const weapons = [];
-    const battleweapons = [];
-    const armors = [];
-    const battlearmors = [];
-    const accessories = [];
-    const battleaccessories = [];
-    const gear = [];
-    const combatabilities = [];
-    const enhancearts = [];
-    const magicalsongs = [];
-    const ridingtricks = [];
-    const alchemytechs = [];
-    const phaseareas = [];
-    const tactics = [];
-    const infusion = [];
-    const barbarousskill = [];
-    const essenceweave = [];
-    const otherfeature = [];
-    const raceabilities = [];
-    const languages = [];
-    const spells = [];
-    const sorcerer = [];
-    const conjurer = [];
-    const wizard = [];
-    const priest = [];
-    const magitech = [];
-    const fairy = [];
-    const druid = [];
-    const daemon = [];
-    const abyssal = [];
-    const bibliomancer = [];
-    const monsterabilities = [];
-    const actions = [];
-    const actionsf17 = [];
-    const actionsf16 = [];
-    const actionsf38 = [];
-    const actionsf35 = [];
-    const actionsf59 = [];
-    const actionsf54 = [];
-    const actionsf610 = [];
-    const actionsf63 = [];
-    const actionsd18 = [];
-    const actionsd28 = [];
-    const actionsd49 = [];
-    const actionsd610 = [];
-    const notes = [];
-    const materials = {
-      red: { b: [], a: [], s: [], ss: [] },
-      green: { b: [], a: [], s: [], ss: [] },
-      black: { b: [], a: [], s: [], ss: [] },
-      white: { b: [], a: [], s: [], ss: [] },
-      gold: { b: [], a: [], s: [], ss: [] },
-    };
-    const lifelines = [];
-    const tacspowers = [];
-    const magitechrs = [];
-    const abyssexs = [];
-    const otherfeatureresources = [];
-    let materialshow = {
-      all: false,
-      red: false,
-      green: false,
-      black: false,
-      white: false,
-      gold: false,
-    };
-    let contentItem = {
-      vitRes: null,
-      mndRes: null,
-      monRes: null,
-      monAtk: null,
-    };
-    const bookmarks = [];
-
-    // Iterate through items, allocating to containers
-    for (let i of context.items) {
-      i.img = i.img || Item.DEFAULT_ICON;
-      // Append to skill.
-      if (i.type === "skill") {
-        skills.push(i);
-      }
-      // Append to check & battlecheck.
-      if (i.type === "check") {
-        checks.push(i);
-        if (i.system.showbtcheck === true) {
-          battlechecks.push(i);
-        }
-        if (i.name === game.i18n.localize("SW25.Config.ResVit")){
-          contentItem.vitRes = i;
-        } else if (i.name === game.i18n.localize("SW25.Config.ResMnd")){
-          contentItem.mndRes = i;
-        }
-      }
-      // Append to resource.
-      if (i.type === "resource") {
-        if (
-          i.system?.resource?.type == null ||
-          i.system?.resource?.type == "none" ||
-          !i.system?.resource?.isNotBattle
-        ) {
-          resources.push(i);
-        }
-
-        if (i.system?.resource?.type == "note") {
-          notes.push(i);
-        } else if (i.system?.resource?.type == "material") {
-          let materialtype = i.system?.resource?.materialtype;
-          let materialrank = i.system?.resource?.materialrank;
-          materials[materialtype][materialrank].push(i);
-          materialshow.all = true;
-          materialshow[materialtype] = true;
-        } else if (i.system?.resource?.type == "lifeline") {
-          lifelines.push(i);
-        } else if (i.system?.resource?.type == "tacspower") {
-          tacspowers.push(i);
-        } else if (i.system?.resource?.type == "magitech") {
-          magitechrs.push(i);
-        } else if (i.system?.resource?.type == "abyssex") {
-          abyssexs.push(i);
-        } else if (i.system?.resource?.type == "otherfeature") {
-          otherfeatureresources.push(i);
-        }
-      }
-      // Append to weapon.
-      else if (i.type === "weapon") {
-        weapons.push(i);
-        if (i.system.equip === true) {
-          battleweapons.push(i);
-        }
-      }
-      // Append to armor.
-      else if (i.type === "armor") {
-        armors.push(i);
-        if (i.system.equip === true) {
-          battlearmors.push(i);
-        }
-      }
-      // Append to accessory.
-      else if (i.type === "accessory") {
-        accessories.push(i);
-        if (i.system.equip === true) {
-          battleaccessories.push(i);
-        }
-      }
-      // Append to gear.
-      else if (i.type === "item") {
-        gear.push(i);
-      }
-
-      // Append to combatability.
-      else if (i.type === "combatability") {
-        combatabilities.push(i);
-      }
-
-      // Append to enhancearts.
-      else if (i.type === "enhancearts") {
-        enhancearts.push(i);
-      }
-
-      // Append to magicalsong.
-      else if (i.type === "magicalsong") {
-        magicalsongs.push(i);
-      }
-
-      // Append to ridingtrick.
-      else if (i.type === "ridingtrick") {
-        ridingtricks.push(i);
-      }
-
-      // Append to alchemytech.
-      else if (i.type === "alchemytech") {
-        alchemytechs.push(i);
-      }
-
-      // Append to phasearea.
-      else if (i.type === "phasearea") {
-        phaseareas.push(i);
-      }
-
-      // Append to tactics.
-      else if (i.type === "tactics") {
-        tactics.push(i);
-      }
-
-      // Append to infusion.
-      else if (i.type === "infusion") {
-        infusion.push(i);
-      }
-
-      // Append to barbarousskill.
-      else if (i.type === "barbarousskill") {
-        barbarousskill.push(i);
-      }
-
-      // Append to essenceweave.
-      else if (i.type === "essenceweave") {
-        essenceweave.push(i);
-      }
-
-      // Append to otherfeeature.
-      else if (i.type === "otherfeature") {
-        otherfeature.push(i);
-      }
-
-      // Append to raceability.
-      else if (i.type === "raceability") {
-        raceabilities.push(i);
-      }
-
-      // Append to languages.
-      else if (i.type === "language") {
-        languages.push(i);
-      }
-
-      // Append to spells.
-      else if (i.type === "spell") {
-        spells.push(i);
-        if (i.system.type === "sorcerer") {
-          sorcerer.push(i);
-        }
-        if (i.system.type === "conjurer") {
-          conjurer.push(i);
-        }
-        if (i.system.type === "wizard") {
-          wizard.push(i);
-        }
-        if (i.system.type === "priest") {
-          priest.push(i);
-        }
-        if (i.system.type === "magitech") {
-          magitech.push(i);
-        }
-        if (i.system.type === "fairy") {
-          fairy.push(i);
-        }
-        if (i.system.type === "druid") {
-          druid.push(i);
-        }
-        if (i.system.type === "daemon") {
-          daemon.push(i);
-        }
-        if (i.system.type === "abyssal") {
-          abyssal.push(i);
-        }        
-        if (i.system.type === "bibliomancer") {
-          bibliomancer.push(i);
-        }
-      }
-
-      // Append to monsterability.
-      else if (i.type === "monsterability") {
-        monsterabilities.push(i);
-        if (i.name === game.i18n.localize("SW25.Config.MonRes")) {
-          contentItem.monRes = i;
-        }
-        if (
-          contentItem.monAtk == null &&
-          i.system.label1 == game.i18n.localize("SW25.Config.MonHit") &&
-          i.system.label2 == game.i18n.localize("SW25.Config.MonDmg") &&
-          i.system.label3 == game.i18n.localize("SW25.Config.MonDge") 
-        ) {
-          contentItem.monAtk = i;
-        }
-      }
-
-      // Append to action.
-      else if (i.type === "action") {
-        actions.push(i);
-        if (i.system.actiondice == "f1") {
-          if (i.system.actionresult == "7") {
-            actionsf17.push(i);
-          }
-          if (i.system.actionresult == "6") {
-            actionsf16.push(i);
-          }
-        }
-        if (i.system.actiondice == "f3") {
-          if (i.system.actionresult == "8") {
-            actionsf38.push(i);
-          }
-          if (i.system.actionresult == "5") {
-            actionsf35.push(i);
-          }
-        }
-        if (i.system.actiondice == "f5") {
-          if (i.system.actionresult == "9") {
-            actionsf59.push(i);
-          }
-          if (i.system.actionresult == "4") {
-            actionsf54.push(i);
-          }
-        }
-        if (i.system.actiondice == "f6") {
-          if (i.system.actionresult == "10") {
-            actionsf610.push(i);
-          }
-          if (i.system.actionresult == "3") {
-            actionsf63.push(i);
-          }
-        }
-        if (i.system.actiondice == "d1") {
-          if (i.system.actionresult == "8") {
-            actionsd18.push(i);
-          }
-        }
-        if (i.system.actiondice == "d2") {
-          if (i.system.actionresult == "8") {
-            actionsd28.push(i);
-          }
-        }
-        if (i.system.actiondice == "d4") {
-          if (i.system.actionresult == "9") {
-            actionsd49.push(i);
-          }
-        }
-        if (i.system.actiondice == "d6") {
-          if (i.system.actionresult == "10") {
-            actionsd610.push(i);
-          }
-        }
-      }
-
-      // Append to bookmarks.
-      if (i.system.bookmark) {
-        bookmarks.push(i);
-      }
-
-    }
-
-    let eashow = true;
-    if (enhancearts.length == 0) {
-      eashow = false;
-    } else eashow = true;
-
-    let msshow = true;
-    if (magicalsongs.length == 0) {
-      msshow = false;
-    } else msshow = true;
-
-    let rtshow = true;
-    if (ridingtricks.length == 0) {
-      rtshow = false;
-    } else rtshow = true;
-
-    let atshow = true;
-    if (alchemytechs.length == 0) {
-      atshow = false;
-    } else atshow = true;
-
-    let pashow = true;
-    if (phaseareas.length == 0) {
-      pashow = false;
-    } else pashow = true;
-
-    let tcshow = true;
-    if (tactics.length == 0) {
-      tcshow = false;
-    } else tcshow = true;
-
-    let ifshow = true;
-    if (infusion.length == 0) {
-      ifshow = false;
-    } else ifshow = true;
-
-    let bsshow = true;
-    if (barbarousskill.length == 0) {
-      bsshow = false;
-    } else bsshow = true;
-
-    let ewshow = true;
-    if (essenceweave.length == 0) {
-      ewshow = false;
-    } else ewshow = true;
-
-    let ofshow = true;
-    if (otherfeature.length == 0) {
-      ofshow = false;
-    } else ofshow = true;
-
-    let scshow = true;
-    if (sorcerer.length == 0) {
-      scshow = false;
-    } else scshow = true;
-
-    let cnshow = true;
-    if (conjurer.length == 0) {
-      cnshow = false;
-    } else cnshow = true;
-
-    let wzshow = true;
-    if (wizard.length == 0) {
-      wzshow = false;
-    } else wzshow = true;
-
-    let prshow = true;
-    if (priest.length == 0) {
-      prshow = false;
-    } else prshow = true;
-
-    let mtshow = true;
-    if (magitech.length == 0) {
-      mtshow = false;
-    } else mtshow = true;
-
-    let frshow = true;
-    if (fairy.length == 0) {
-      frshow = false;
-    } else frshow = true;
-
-    let drshow = true;
-    if (druid.length == 0) {
-      drshow = false;
-    } else drshow = true;
-
-    let dmshow = true;
-    if (daemon.length == 0) {
-      dmshow = false;
-    } else dmshow = true;
-
-    let abshow = true;
-    if (abyssal.length == 0) {
-      abshow = false;
-    } else abshow = true;
-
-    let bmshow = true;
-    if (bibliomancer.length == 0) {
-      bmshow = false;
-    } else bmshow = true;
-
-    const typeOrder = CONFIG.SW25.itemTypeList.map(e => e.type);
-
-    const sortedBookmarks = bookmarks.sort((a, b) => {
-      const ai = typeOrder.indexOf(a.type);
-      const bi = typeOrder.indexOf(b.type);
-
-      const aOrder = ai === -1 ? Infinity : ai;
-      const bOrder = bi === -1 ? Infinity : bi;
-
-      if (aOrder !== bOrder) return aOrder - bOrder;
-      return a.name.localeCompare(b.name, "ja");
-    });
-
-    
-    // Assign and return
-    context.skills = skills;
-    context.checks = checks;
-    context.battlechecks = battlechecks;
-    context.resources = resources;
-    context.weapons = weapons;
-    context.battleweapons = battleweapons;
-    context.armors = armors;
-    context.battlearmors = battlearmors;
-    context.accessories = accessories;
-    context.battleaccessories = battleaccessories;
-    context.gear = gear;
-    context.combatabilities = combatabilities;
-    context.enhancearts = enhancearts;
-    context.eashow = eashow;
-    context.magicalsongs = magicalsongs;
-    context.msshow = msshow;
-    context.ridingtricks = ridingtricks;
-    context.rtshow = rtshow;
-    context.alchemytechs = alchemytechs;
-    context.atshow = atshow;
-    context.phaseareas = phaseareas;
-    context.pashow = pashow;
-    context.tactics = tactics;
-    context.tcshow = tcshow;
-    context.infusion = infusion;
-    context.ifshow = ifshow;
-    context.barbarousskill = barbarousskill;
-    context.bsshow = bsshow;
-    context.essenceweave = essenceweave;
-    context.ewshow = ewshow;
-    context.otherfeature = otherfeature;
-    context.ofshow = ofshow;
-    context.raceabilities = raceabilities;
-    context.languages = languages;
-    context.spells = spells;
-    context.sorcerer = sorcerer;
-    context.scshow = scshow;
-    context.conjurer = conjurer;
-    context.cnshow = cnshow;
-    context.wizard = wizard;
-    context.wzshow = wzshow;
-    context.priest = priest;
-    context.prshow = prshow;
-    context.magitech = magitech;
-    context.mtshow = mtshow;
-    context.fairy = fairy;
-    context.frshow = frshow;
-    context.druid = druid;
-    context.drshow = drshow;
-    context.daemon = daemon;
-    context.dmshow = dmshow;
-    context.abyssal = abyssal;
-    context.abshow = abshow;
-    context.bibliomancer = bibliomancer;
-    context.bmshow = bmshow;
-    context.monsterabilities = monsterabilities;
-    context.actions = actions;
-    context.actionsf17 = actionsf17;
-    context.actionsf16 = actionsf16;
-    context.actionsf38 = actionsf38;
-    context.actionsf35 = actionsf35;
-    context.actionsf59 = actionsf59;
-    context.actionsf54 = actionsf54;
-    context.actionsf610 = actionsf610;
-    context.actionsf63 = actionsf63;
-    context.actionsd18 = actionsd18;
-    context.actionsd28 = actionsd28;
-    context.actionsd49 = actionsd49;
-    context.actionsd610 = actionsd610;
-    context.notes = notes;
-    context.materials = materials;
-    context.lifelines = lifelines;
-    context.tacspowers = tacspowers;
-    context.magitechrs = magitechrs;
-    context.abyssexs = abyssexs;
-    context.otherfeatureresources = otherfeatureresources;
-    context.noteshow = notes.length > 0;
-    context.materialshow = materialshow;
-    context.lifelineshow = lifelines.length > 0;
-    context.tacspowershow = tacspowers.length > 0;
-    context.magitechrshow = magitechrs.length > 0;
-    context.abyssexshow = abyssexs.length > 0;
-    context.otherfeaturershow = otherfeatureresources.length > 0;
-    context.contentItem = contentItem;
-    context.bookmarks = sortedBookmarks;
-  }
-
-  /* -------------------------------------------- */
 
   /** @override */
   activateListeners(html) {
@@ -950,27 +327,7 @@ export class SW25ActorSheet extends ActorSheet {
           });
         }
 
-        // rendar apply all message
-        const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-        const checktype = dataset.checktype ? dataset.checktype.split(",") : "";
-        let chatData = {
-          speaker: speaker,
-          flavor: `${label} - <b>${game.i18n.localize("SW25.Applyall")}</b>`,
-        };
-        chatData.flags = {
-          sw25: {
-            targetMessage: chatMessageId,
-          },
-        };
-        chatData.content = await renderTemplate(
-          "systems/sw25-lunachil-maintained/templates/roll/roll-applyall.hbs",
-          {
-            apply: dataset.apply,
-            checktype: checktype,
-          }
-        );
-
-        ChatMessage.create(chatData);
+        await postApplyAll(this.actor, dataset, label, chatMessageId, "checktype");
         return;
       }
     }
@@ -997,14 +354,13 @@ export class SW25ActorSheet extends ActorSheet {
 
     // Handle rolls that supply the formula directly.
     if (dataset.roll) {
-      const checktype = dataset.checktype ? dataset.checktype.split(",") : "";
       const result = await resolveActorCheck(this.actor, {
         formula: dataset.roll,
         itemId,
         resourceId: dataset.resuse,
         resourceAmount: dataset.resusequantity,
       });
-      const { roll, resourceCost, critical, fumble, elements, damage, tags } = result;
+      const { resourceCost } = result;
       if (resourceCost && !resourceCost.consumed) {
         ui.notifications.warn(
           game.i18n.localize("SW25.Item.Noresquantitiywarn") + resourceCost.name
@@ -1012,87 +368,7 @@ export class SW25ActorSheet extends ActorSheet {
         return;
       }
 
-      const label = dataset.label ? `${dataset.label}` : "";
-      const chatresuse = resourceCost
-        ? `<div style="text-align: right;">${resourceCost.name}: ${resourceCost.previousQuantity} >>> ${resourceCost.remainingQuantity}</div>`
-        : undefined;
-
-      let chatData = {
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        flavor: label,
-        rollMode: game.settings.get("core", "rollMode"),
-        rolls: [roll],
-      };
-
-      let chatapply = dataset.apply;
-      let chatspell = dataset.spell;
-
-      // when selected target
-      let target = null;
-      let targetName = null;
-      if (targetTokens) {
-        const targetArray = Array.from(targetTokens);
-        target = targetArray.map((target) => target.id);
-        let targetNames = targetArray.map((target) => target.document.name);
-        targetName = ``;
-        for (let i = 0; i < targetNames.length; i++) {
-          if (i != 0) targetName = targetName + `<br>`;
-          targetName = targetName + `>>> ${targetNames[i]}`;
-        }
-        targetName = targetName + ``;
-      }
-
-      let resistData = null;
-      if (dataset.resist && dataset.resistresult != "none") {
-        resistData = {
-          name: dataset.resist,
-          result: dataset.resistresult,
-        };
-      }
-
-      chatData.flags = {
-        sw25: {
-          total: roll.total,
-          orgtotal: roll.total,
-          formula: roll.formula,
-          rolls: roll,
-          tooltip: await roll.getTooltip(),
-          apply: chatapply,
-          spell: chatspell,
-          checktype: checktype,
-          target,
-          targetName: targetName,
-          resist: resistData,
-          elements: elements,
-          damage: damage,
-          tags: tags,
-        },
-      };
-
-      chatData.content = await renderTemplate(
-        "systems/sw25-lunachil-maintained/templates/roll/roll-check.hbs",
-        {
-          formula: roll.formula,
-          tooltip: await roll.getTooltip(),
-          critical,
-          fumble,
-          total: roll.total,
-          apply: chatapply,
-          spell: chatspell,
-          checktype: checktype,
-          resusetext: chatresuse,
-          targetName: targetName,
-          resist: resistData,
-          tags: tags,
-        }
-      );
-
-      let chatMessageId;
-      await ChatMessage.create(chatData).then((chatMessage) => {
-        chatMessageId = chatMessage.id;
-      });
-
-      return { roll, chatMessageId };
+      return postActorCheck(this.actor, dataset, result, targetTokens);
     }
   }
 
@@ -1125,27 +401,7 @@ export class SW25ActorSheet extends ActorSheet {
           });
         }
 
-        // rendar apply all message
-        const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-        const powertype = dataset.powertype ? dataset.powertype.split(",") : "";
-        let chatData = {
-          speaker: speaker,
-          flavor: `${label} - <b>${game.i18n.localize("SW25.Applyall")}</b>`,
-        };
-        chatData.flags = {
-          sw25: {
-            targetMessage: chatMessageId,
-          },
-        };
-        chatData.content = await renderTemplate(
-          "systems/sw25-lunachil-maintained/templates/roll/roll-applyall.hbs",
-          {
-            apply: dataset.apply,
-            powertype: powertype,
-          }
-        );
-
-        ChatMessage.create(chatData);
+        await postApplyAll(this.actor, dataset, label, chatMessageId, "powertype");
         return;
       }
     }
@@ -1159,72 +415,13 @@ export class SW25ActorSheet extends ActorSheet {
       dataset.itemid ??
       event.currentTarget.closest("[data-item-id]")?.dataset.itemId ??
       null;
-    const powertype = dataset.powertype ? dataset.powertype.split(",") : "";
-    const { roll, details, elements, damage, tags } = await resolveActorPower(this.actor, {
+    const result = await resolveActorPower(this.actor, {
       formula: dataset.roll,
       powerTable: dataset.pt.split(","),
       itemId,
     });
 
-    const chatData = {
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `${dataset.label}`,
-      rollMode: game.settings.get("core", "rollMode"),
-      rolls: [roll.fakeResult],
-    };
-    const chatapply = dataset.apply;
-
-    // when selected target
-    let target = null;
-    let targetName = null;
-    if (targetTokens) {
-      const targetArray = Array.from(targetTokens);
-      target = targetArray.map((target) => target.id);
-      let targetNames = targetArray.map((target) => target.document.name);
-      targetName = ``;
-      for (let i = 0; i < targetNames.length; i++) {
-        if (i != 0) targetName = targetName + `<br>`;
-        targetName = targetName + `>>> ${targetNames[i]}`;
-      }
-      targetName = targetName + ``;
-    }
-
-    chatData.flags = {
-      sw25: {
-        ...details,
-        tooltip: await roll.fakeResult.getTooltip(),
-        orghalf: roll.halfPowMod,
-        orgtotal: details.total,
-        orgextraRoll: details.extraRoll,
-        apply: chatapply,
-        powertype,
-        target,
-        targetName,
-        elements,
-        damage,
-        tags,
-      },
-    };
-
-    const { modTotal, ...display } = details;
-    chatData.content = await renderTemplate(
-      "systems/sw25-lunachil-maintained/templates/roll/roll-power.hbs",
-      {
-        ...display,
-        tooltip: await roll.fakeResult.getTooltip(),
-        mod: modTotal,
-        apply: chatapply,
-        powertype,
-        targetName,
-        tags,
-      }
-    );
-
-    let chatMessageId;
-    await ChatMessage.create(chatData).then((chatMessage) => {
-      chatMessageId = chatMessage.id;
-    });
-    return { roll, chatMessageId };
+    return postActorPower(this.actor, dataset, result, targetTokens);
   }
 
   async _onApplyEffect(event) {
@@ -1254,32 +451,7 @@ export class SW25ActorSheet extends ActorSheet {
     // reset target
     game.user.targets.forEach((target) => target.setTarget(false));
 
-    // Chat message
-    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-    let label = game.i18n.localize("SW25.Effectslong");
-    let chatActorName = "";
-    let chatEffectName = "";
-
-    for (let i = 0; i < targetNames.length; i++) {
-      chatActorName += ">>> " + targetNames[i] + "<br>";
-    }
-    for (let i = 0; i < effectNames.length; i++) {
-      chatEffectName += effectNames[i] + "<br>";
-    }
-
-    let chatData = {
-      speaker: speaker,
-      flavor: label,
-    };
-    chatData.content = await renderTemplate(
-      "systems/sw25-lunachil-maintained/templates/roll/effect-apply.hbs",
-      {
-        targetActorName: chatActorName,
-        transferEffectName: chatEffectName,
-      }
-    );
-
-    ChatMessage.create(chatData);
+    await postAppliedEffects(this.actor, targetNames, effectNames);
   }
 
   async _onMpCost(event) {
@@ -1346,10 +518,7 @@ export class SW25ActorSheet extends ActorSheet {
       return;
     }
 
-    ChatMessage.create({
-      speaker,
-      content: `<div style="text-align: right;">${resource.name}: ${result.previousQuantity} >>> ${result.remainingQuantity}</div>`,
-    });
+    postResourceCost(speaker, resource.name, result);
   }
 
   async _onLootRoll(event) {
@@ -1361,11 +530,7 @@ export class SW25ActorSheet extends ActorSheet {
     event.preventDefault();
     const dataset = event.currentTarget.dataset;
     const request = createActorCheckRequest(dataset.label, dataset.value);
-    await this._postCheckRequest(request, {
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      message: dataset.label + game.i18n.localize("SW25.Check"),
-      difficulty: game.i18n.localize("SW25.Difficulty"),
-    });
+    await postActorCheckRequest(this.actor, request);
   }
 
   async _onPopularityRoll(event) {
@@ -1381,45 +546,15 @@ export class SW25ActorSheet extends ActorSheet {
   async _onChangePermission(event) {
     event.preventDefault();
     await revealMonsterData(this.actor);
-    ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: game.i18n.localize("SW25.RevealMonsterData"),
-      flags: {},
-      content: `@UUID[Actor.${this.actor.id}]`,
-    });
+    postMonsterReveal(this.actor);
   }
 
   async _requestMonsterCheck(kind) {
     const { request, isView } = await prepareMonsterCheckRequest(this.actor, kind);
-    const classType = this.actor.system.classType;
-    const typeName = !classType || classType === "Other"
-      ? this.actor.system.type
-      : game.i18n.localize(`SW25.Actor.Class.${classType}`);
-    const message = kind === "knowledge"
-      ? `${game.i18n.localize("SW25.Monster.Popularity")}/${game.i18n.localize("SW25.Monster.Weakpoint")}`
-      : game.i18n.localize("SW25.Monster.Preemptive");
-    await this._postCheckRequest(request, {
-      speaker: isView
-        ? ChatMessage.getSpeaker({ actor: this.actor })
-        : ChatMessage.getSpeaker({ alias: "Gamemaster" }),
-      message,
-      difficulty: `@UUID[Actor.${this.actor.id}](${typeName})`,
-    });
+    await postMonsterCheckRequest(this.actor, kind, request, isView);
   }
 
-  async _postCheckRequest(request, { speaker, message, difficulty }) {
-    const content = await renderTemplate(
-      "systems/sw25-lunachil-maintained/templates/roll/rollreq-card.hbs",
-      {
-        checkName: request.checkName,
-        message,
-        difficulty,
-        targetValue: request.targetValue,
-        mod: request.modifier,
-      }
-    );
-    ChatMessage.create({ speaker, flavor: request.checkName, flags: { sw25: request }, content });
-  }
+
 
   async _showItemDetails(event) {
     event.preventDefault();
@@ -1757,126 +892,8 @@ export class SW25ActorSheet extends ActorSheet {
   }
 
   async _selectApplyTarget(event, item, targetEffects, orgActor, orgId) {
-    const tokens = canvas.tokens.placeables;
-
-    if (tokens.length === 0) {
-      return ui.notifications.warn(game.i18n.localize("SW25.NotTokenwarn"));
-    }
-
-    const categories = {
-      friendly: [],
-      neutral: [],
-      hostile: [],
-    };
-
-    tokens.forEach((token) => {
-      switch (token.document.disposition) {
-        case 1:
-          categories.friendly.push(token);
-          break;
-        case 0:
-          categories.neutral.push(token);
-          break;
-        case -1:
-          categories.hostile.push(token);
-          break;
-      }
-    });
-
-    for (const key in categories) {
-      categories[key].sort((a, b) => a.name.localeCompare(b.name));
-    }
-
-    const createCategoryBox = (category, title, categoryId) => {
-      let box = `<fieldset class="target-select">
-        <legend id="${categoryId}-toggle" style="cursor: pointer;">
-          <span class="selectable">${title}</span>
-        </legend>`;
-      category.forEach((token) => {
-        box += `
-          <div>
-            <input type="checkbox" id="token-${token.id}" name="${categoryId}" value="${token.id}" />
-            <label for="token-${token.id}" style="font-weight: normal;">${token.name}</label>
-          </div>`;
-      });
-      box += `</fieldset>`;
-      return box;
-    };
-
-    const content = `
-      <div style="width: 100%;">
-        ${createCategoryBox(
-          categories.friendly,
-          game.i18n.localize("SW25.Disposition.Friendly"),
-          "friendly"
-        )}
-        ${createCategoryBox(
-          categories.neutral,
-          game.i18n.localize("SW25.Disposition.Neutral"),
-          "neutral"
-        )}
-        ${createCategoryBox(
-          categories.hostile,
-          game.i18n.localize("SW25.Disposition.Hostile"),
-          "hostile"
-        )}
-      </div>`;
-
-    const dialog = new Dialog({
-      title: game.i18n.localize("SW25.TargetSelect") + `(${item.name})`,
-      content: content,
-      buttons: {
-        process: {
-          label: game.i18n.localize("SW25.Item.EffectB"),
-          callback: (html) => {
-            const selectedIds = html
-              .find('input[type="checkbox"]:checked')
-              .map((_, el) => el.value)
-              .get();
-
-            if (selectedIds.length === 0) {
-              return ui.notifications.warn(
-                game.i18n.localize("SW25.Notargetwarn")
-              );
-            }
-
-            const selectedTokens = canvas.tokens.placeables.filter((token) =>
-              selectedIds.includes(token.id)
-            );
-            applyEffectsToTokens(selectedTokens, targetEffects, orgActor, orgId);
-          },
-        },
-        cancel: {
-          label: game.i18n.localize("SW25.Item.Spell.Cancel"),
-        },
-      },
-      default: "cancel",
-    });
-
-    dialog.render(true);
-
-    Hooks.once("renderDialog", (app, html) => {
-      const addToggleHandler = (categoryId) => {
-        const toggle = html.find(`#${categoryId}-toggle`);
-        const checkboxes = html.find(`input[name="${categoryId}"]`);
-
-        toggle.on("click", () => {
-          const allChecked = checkboxes.toArray().every((cb) => cb.checked);
-          checkboxes.prop("checked", !allChecked).trigger("change");
-        });
-
-        checkboxes.on("change", (event) => {
-          const checkbox = $(event.currentTarget);
-          const label = checkbox.next("label");
-          label.css("font-weight", checkbox.is(":checked") ? "bold" : "normal");
-        });
-      };
-
-      addToggleHandler("friendly");
-      addToggleHandler("neutral");
-      addToggleHandler("hostile");
-
-      html[0].style.width = "500px";
+    return showEffectTargetDialog(item.name, (tokens) => {
+      applyEffectsToTokens(tokens, targetEffects, orgActor, orgId);
     });
   }
 
@@ -1944,65 +961,13 @@ export class SW25ActorSheet extends ActorSheet {
 
     applyPreparedEffectsToTokens(selectedTokens, effects, orgActor, orgId);
 
-    // Chat message
-    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-    let label = game.i18n.localize("SW25.Effectslong");
-    let chatActorName = ">>> " + selectedTokens[0].actor.name + "<br>";
-    let chatEffectName =
-      effects[0].name +
-      "(" +
-      game.i18n.localize(`SW25.Item.Phasearea.${lifeline}`) +
-      ")<br>";
-
-    let chatData = {
-      speaker: speaker,
-      flavor: label,
-    };
-    chatData.content = await renderTemplate(
-      "systems/sw25-lunachil-maintained/templates/roll/effect-apply.hbs",
-      {
-        targetActorName: chatActorName,
-        transferEffectName: chatEffectName,
-      }
-    );
-
-    ChatMessage.create(chatData);
+    await postPhaseareaEffect(this.actor, selectedTokens[0].actor.name, effects[0].name, lifeline);
   }
 
   async _inputUsePhaseareaCost(item) {
-    const title = game.i18n.localize("SW25.InputPhaseareaPoint");
-    new Dialog({
-      title: `${title} (${item.name})`,
-      content: `
-        <form>
-          <div class="form-group">
-            <label for="number">${title} (${item.system.mincost}-${item.system.maxcost})</label>
-          </div>
-          <div class="form-group">
-            <input id="number" name="number" type="number" value="0" />
-          </div>
-        </form>
-      `,
-      buttons: {
-        ok: {
-          label: game.i18n.localize("SW25.Use"),
-          callback: (html) => {
-            const cost = parseInt(html.find("#number").val());
-            if (isNaN(cost)) {
-              ui.notifications.error(
-                game.i18n.localize("SW25.Item.Spell.Cancel")
-              );
-              return;
-            }
-            this._applyPhasearea(item, cost);
-          },
-        },
-        cancel: {
-          label: game.i18n.localize("SW25.Item.Spell.Cancel"),
-        },
-      },
-      default: "ok",
-    }).render(true);
+    showPhaseareaCostDialog({
+      name: item.name, minimum: item.system.mincost, maximum: item.system.maxcost,
+    }, (cost) => this._applyPhasearea(item, cost));
   }
 
   async _onMaterialcardCost(event) {
@@ -2024,47 +989,8 @@ export class SW25ActorSheet extends ActorSheet {
 
     const rankLabel = event.target.textContent.trim();
     const useRank = rankLabel.toLowerCase();
-    const marks = {
-      red: "fa-paw",
-      green: "fa-leaf",
-      black: "fa-gem",
-      white: "fa-heart",
-      gold: "fa-sun",
-    };
-    const name = `${item.name}(${rankLabel})`;
     const results = await useAlchemy(this.actor, item, useRank);
-    const materialcards = results.map((card) => ({
-      key: card.cost,
-      name:
-        game.i18n.localize(`SW25.Item.Alchemytech.${card.color.capitalize()}`) +
-        rankLabel,
-      color: card.color,
-      ...(card.resource ? { mark: marks[card.color] } : {}),
-      cost: card.cost,
-      resource: card.resource,
-      oldVal: card.previousQuantity,
-      newVal: card.remainingQuantity,
-    }));
-
-    // Chat message
-    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-    let label =
-      game.i18n.localize("SW25.Item.Alchemytech.MaterialCard") +
-      game.i18n.localize("SW25.Cost");
-
-    let chatData = {
-      speaker: speaker,
-      flavor: label,
-    };
-    chatData.content = await renderTemplate(
-      "systems/sw25-lunachil-maintained/templates/roll/card-apply.hbs",
-      {
-        name: name,
-        materialcards: materialcards,
-      }
-    );
-
-    ChatMessage.create(chatData);
+    await postAlchemyCost(this.actor, item.name, rankLabel, results);
   }
 
   async _onNotesGet(event) {

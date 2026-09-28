@@ -1,3 +1,5 @@
+import { prepareEffectContextV2 } from "../sheet-context/effect-context.mjs";
+
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActiveEffectConfig}
@@ -22,50 +24,7 @@ export class SW25ActiveEffectConfigV2 extends ActiveEffectConfig {
 
   /** @override */
   async _prepareContext() {
-    const context = await super._prepareContext();
-
-    const systemPrefixedEffects = {};
-    for (const [category, entries] of Object.entries(CONFIG.SW25.Effect)) {
-      if (category === "keyClassifications") {
-        systemPrefixedEffects[category] = entries;
-        continue;
-      }
-
-      systemPrefixedEffects[category] = Object.fromEntries(
-        Object.entries(entries).map(([key, value]) => [`system.${key}`, value])
-      );
-    }
-
-    context.effectOptions = systemPrefixedEffects;
-
-    // checkinput , input 
-    if (context.source?.changes) {
-      context.source.changes = context.source.changes.map((change) => {
-        if (!change.key) return change;
-
-        const match = change.key.match(/^system\.effect\.checkinputmod\.(.+)$/);
-
-        if (match) {
-          const [, checkname] = match;
-          change.keyClassification = "checkinput";
-          change.checkname = checkname;
-        } else {
-          let isInput = true;
-
-          const categories = Object.keys(systemPrefixedEffects).filter(k => k !== "keyClassifications");
-          for (const category of categories) {
-            const keys = Object.keys(systemPrefixedEffects[category]);
-            if (keys.includes(change.key)) isInput = false;
-          }
-          if (isInput) {
-            change.keyClassification = "input";
-          }
-        }
-        return change;
-      });
-    }
-
-    return context;
+    return prepareEffectContextV2(await super._prepareContext());
   }
 
   /** override render */

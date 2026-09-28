@@ -4,10 +4,10 @@ import { SW25Item } from "./documents/item.mjs";
 import { SW25ActiveEffect } from "./documents/active-effect.mjs";
 import { SW25Combat } from "./documents/combat.mjs";
 // Import sheet classes.
-import { SW25ActorSheet } from "./sheets/actor-sheet.mjs";
-import { SW25ItemSheet } from "./sheets/item-sheet.mjs";
-import { SW25ActiveEffectConfigV1 } from "./sheets/active-effect-config-V1.mjs";
-import { SW25ActiveEffectConfigV2 } from "./sheets/active-effect-config-V2.mjs";
+import { SW25ActorSheet } from "./presentation/sheets/actor-sheet.mjs";
+import { SW25ItemSheet } from "./presentation/sheets/item-sheet.mjs";
+import { SW25ActiveEffectConfigV1 } from "./presentation/sheets/active-effect-config-V1.mjs";
+import { SW25ActiveEffectConfigV2 } from "./presentation/sheets/active-effect-config-V2.mjs";
 let SW25ActiveEffectConfig;
 
 // Import helper/utility classes and constants.
