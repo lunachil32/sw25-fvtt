@@ -8,6 +8,12 @@ import {
   applyPropertyElements,
   applyWeaponTypeElements,
 } from "../services/item-elements.mjs";
+import {
+  addCustomField,
+  removeCustomField,
+  moveCustomFieldUp,
+  moveCustomFieldDown,
+} from "../services/item-custom-fields.mjs";
 
 /**
  * Extend the basic ItemSheet with some very simple modifications
@@ -384,53 +390,28 @@ export class SW25ItemSheet extends ItemSheet {
     // Add Field.
     html.find(".add-field").click((ev) => {
       ev.preventDefault();
-
-      let fieldsRaw = this.item.system.customFields ?? [];
-      let fields = Array.isArray(fieldsRaw)
-        ? foundry.utils.duplicate(fieldsRaw)
-        : Object.values(foundry.utils.duplicate(fieldsRaw));
-      fields.push({ label: "", value: "" });
-      this.item.update({ "system.customFields": fields });
+      addCustomField(this.item);
     });
 
     // Delete Field.
     html.find(".remove-field").click((ev) => {
       ev.preventDefault();
       const idx = Number(ev.currentTarget.dataset.idx);
-      let fieldsRaw = this.item.system.customFields;
-      let fields = Array.isArray(fieldsRaw)
-        ? foundry.utils.duplicate(fieldsRaw)
-        : Object.values(foundry.utils.duplicate(fieldsRaw));
-      fields.splice(idx, 1);
-      this.item.update({ "system.customFields": fields });
+      removeCustomField(this.item, idx);
     });
 
     // Move up.
     html.find(".move-up").click((ev) => {
       ev.preventDefault();
       const idx = Number(ev.currentTarget.dataset.idx);
-      let fieldsRaw = this.item.system.customFields;
-      let fields = Array.isArray(fieldsRaw)
-        ? foundry.utils.duplicate(fieldsRaw)
-        : Object.values(foundry.utils.duplicate(fieldsRaw));
-      if (idx > 0) {
-        [fields[idx - 1], fields[idx]] = [fields[idx], fields[idx - 1]];
-        this.item.update({ "system.customFields": fields });
-      }
+      moveCustomFieldUp(this.item, idx);
     });
 
     // Move down.
     html.find(".move-down").click((ev) => {
       ev.preventDefault();
       const idx = Number(ev.currentTarget.dataset.idx);
-      let fieldsRaw = this.item.system.customFields;
-      let fields = Array.isArray(fieldsRaw)
-        ? foundry.utils.duplicate(fieldsRaw)
-        : Object.values(foundry.utils.duplicate(fieldsRaw));
-      if (idx < fields.length - 1) {
-        [fields[idx], fields[idx + 1]] = [fields[idx + 1], fields[idx]];
-        this.item.update({ "system.customFields": fields });
-      }
+      moveCustomFieldDown(this.item, idx);
     });
 
     html.find('[name="system.prop"]').on("change", async (event) => {
