@@ -642,25 +642,15 @@ export class SW25ActorSheet extends ActorSheet {
       changeItem.parents(".item")[0].dataset.itemId
     );
 
-    let skilllevel = parseInt(input.value);
-    if (isNaN(skilllevel)) skilllevel = 0;
-    if (action === "decrease") skilllevel -= 1;
-    else if (action === "increase") skilllevel += 1;
+    const { value: skilllevel } = prepareItemFieldAdjustment(item, input.value, action);
 
     input.value = skilllevel;
 
     if (item) {
-      const data = {};
-      data[property] = skilllevel;
-      await item.update(data);
-      this._updateSkilllevel(item, skilllevel);
+      await saveItemFieldAdjustment(item, property, skilllevel, "system.skilllevel");
     }
 
     this.submit();
-  }
-
-  async _updateSkilllevel(item, skilllevel) {
-    await item.update({ "system.skilllevel": skilllevel });
   }
 
   async _onCheckmodButton(event) {
@@ -673,29 +663,18 @@ export class SW25ActorSheet extends ActorSheet {
       changeItem.parents(".item")[0].dataset.itemId
     );
 
-    let checkmod = parseInt(input.value);
-    if (isNaN(checkmod)) checkmod = 0;
-    if (action === "decrease") checkmod -= 1;
-    else if (action === "increase") checkmod += 1;
+    const { value: checkmod } = prepareItemFieldAdjustment(item, input.value, action);
 
     input.value = checkmod;
 
     if (item) {
-      const data = {};
-      data[property] = checkmod;
-      await item.update(data);
-      this._updateCheckmod(item, checkmod);
+      await saveItemFieldAdjustment(item, property, checkmod, "system.checkmod3");
     }
 
     this.submit();
   }
 
   
-  // Preserve the effective legacy button update (earlier duplicate methods were shadowed).
-  async _updateCheckmod(item, checkmod) {
-    await item.update({ "system.checkmod3": checkmod });
-  }
-
   async _onGrowthCheck(event) {
     event.preventDefault();
     growthCheck(this.actor);
