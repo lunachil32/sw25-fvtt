@@ -1,3 +1,10 @@
+/** Prepare an effect and spend its lifeline, reporting a missing resource without aborting. */
+export async function preparePhaseareaUse(actor, phasearea, cost, name) {
+  const effects = [buildPhaseareaEffect(actor, phasearea, name)];
+  const consumed = await spendLifeline(actor, phasearea, cost);
+  return { effects, consumed };
+}
+
 /**
  * Spend the first lifeline resource matching the phasearea's type.
  * Returns false when absent. Existing rules allow a negative remaining quantity.
