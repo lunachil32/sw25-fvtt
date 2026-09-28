@@ -19,6 +19,7 @@ import { assignActionTableEntry } from "../services/action-table.mjs";
 import { bookmarkItem, toggleItemBookmark } from "../services/item-bookmarks.mjs";
 import { transferEffects } from "../services/effect-transfer.mjs";
 import { resolveActorCheck } from "../services/actor-checks.mjs";
+import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../services/actor-check-requests.mjs";
 import { resolveActorPower } from "../services/actor-power-rolls.mjs";
 
 /**
@@ -1406,222 +1407,66 @@ export class SW25ActorSheet extends ActorSheet {
 
   async _onRollRequest(event) {
     event.preventDefault();
-
     const dataset = event.currentTarget.dataset;
-    const checkName = dataset.label;
-    const inputName = "";
-    const refAbility = "";
-    const modifier = "";
-    let targetValue = dataset.value;
-    const method = "check";
-    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-
-    if( checkName == game.i18n.localize("SW25.Monster.Return") ){
-      targetValue = Number(targetValue) + 1;
-    }
-
-    const message = dataset.label+game.i18n.localize("SW25.Check")
-    
-    let chatData = {
-      speaker: speaker,
-      flavor: checkName,
-    };
-    chatData.flags = {
-      sw25: {
-        checkName: checkName,
-        inputName: inputName,
-        refAbility: refAbility,
-        modifier: modifier,
-        targetValue: targetValue,
-        method: method,
-      },
-    };
-    chatData.content = await renderTemplate(
-      "systems/sw25-lunachil-maintained/templates/roll/rollreq-card.hbs",
-      {
-        checkName: checkName,
-        message: message,
-        difficulty: game.i18n.localize("SW25.Difficulty"),
-        targetValue: targetValue,
-        mod: modifier,
-      }
-    );
-
-    ChatMessage.create(chatData);
+    const request = createActorCheckRequest(dataset.label, dataset.value);
+    await this._postCheckRequest(request, {
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      message: dataset.label + game.i18n.localize("SW25.Check"),
+      difficulty: game.i18n.localize("SW25.Difficulty"),
+    });
   }
 
   async _onPopularityRoll(event) {
     event.preventDefault();
-
-    const actorId = this.actor.id;
-    const actor = game.actors.get(actorId);
-
-    let checkName = game.settings.get(game.system.id, "effectMKnowPC");
-    let inputName = "";
-    let refAbility = "";
-    let modifier = "";
-    let targetValue = 0;
-    let method = "check";
-
-    let isView = false;
-    if (CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER <= actor.ownership.default) {
-      isView = true;
-    } else {
-      await actor.update({"ownership.default": CONST.DOCUMENT_OWNERSHIP_LEVELS.LIMITED});
-    }
-
-    let monsterName = isView
-      ? this.actor.name
-      : this.actor.system.udname
-      ? this.actor.system.udname
-      : game.i18n.localize("SW25.Monster.Unidentifiedmon");
-
-    let typeName;
-    const classType = this.actor.system.classType;
-    const type = this.actor.system.type;
-
-    if (!classType || classType === "Other") {
-      typeName = type;
-    } else {
-      typeName = game.i18n.localize(`SW25.Actor.Class.${classType}`);
-    }
-    monsterName += `(${typeName})`;
-    targetValue = this.actor.system.popularity;
-    targetValue += !isNaN(Number(this.actor.system.weakpoint))
-      ? "/" + this.actor.system.weakpoint
-      : "";
-
-    let message = `${game.i18n.localize(
-      "SW25.Monster.Popularity"
-    )}/${game.i18n.localize("SW25.Monster.Weakpoint")}`;
-
-    const speaker = isView
-      ? ChatMessage.getSpeaker({ actor: this.actor })
-      : ChatMessage.getSpeaker({ alias: "Gamemaster" });
-
-    let chatData = {
-      speaker: speaker,
-      flavor: checkName,
-    };
-    chatData.flags = {
-      sw25: {
-        checkName: checkName,
-        inputName: inputName,
-        refAbility: refAbility,
-        modifier: modifier,
-        targetValue: targetValue,
-        method: method,
-      },
-    };
-    chatData.content = await renderTemplate(
-      "systems/sw25-lunachil-maintained/templates/roll/rollreq-card.hbs",
-      {
-        checkName: checkName,
-        message: message,
-        difficulty: `@UUID[Actor.${actorId}](${typeName})`,
-        targetValue: targetValue,
-        mod: modifier,
-      }
-    );
-
-    ChatMessage.create(chatData);
+    await this._requestMonsterCheck("knowledge");
   }
 
   async _onPreEmptiveRoll(event) {
     event.preventDefault();
-
-    const actorId = this.actor.id;
-    const actor = game.actors.get(actorId);
-
-    let checkName = game.settings.get(game.system.id, "effectInitPC");
-    let inputName = "";
-    let refAbility = "";
-    let modifier = "";
-    let targetValue = 0;
-    let method = "check";
-
-    let isView = false;
-    if (CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER <= actor.ownership.default) {
-      isView = true;
-    } else {
-      await actor.update({"ownership.default": CONST.DOCUMENT_OWNERSHIP_LEVELS.LIMITED});
-    }
-
-    let monsterName = isView
-      ? this.actor.name
-      : this.actor.system.udname
-      ? this.actor.system.udname
-      : game.i18n.localize("SW25.Monster.Unidentifiedmon");
-
-    let typeName;
-    const classType = this.actor.system.classType;
-    const type = this.actor.system.type;
-
-    if (!classType || classType === "Other") {
-      typeName = type;
-    } else {
-      typeName = game.i18n.localize(`SW25.Actor.Class.${classType}`);
-    }
-    monsterName += `(${typeName})`;
-
-    targetValue = this.actor.system.preemptive;
-    let message = game.i18n.localize("SW25.Monster.Preemptive");
-
-    const speaker = isView
-      ? ChatMessage.getSpeaker({ actor: this.actor })
-      : ChatMessage.getSpeaker({ alias: "Gamemaster" });
-
-    let chatData = {
-      speaker: speaker,
-      flavor: checkName,
-    };
-    chatData.flags = {
-      sw25: {
-        checkName: checkName,
-        inputName: inputName,
-        refAbility: refAbility,
-        modifier: modifier,
-        targetValue: targetValue,
-        method: method,
-      },
-    };
-    chatData.content = await renderTemplate(
-      "systems/sw25-lunachil-maintained/templates/roll/rollreq-card.hbs",
-      {
-        checkName: checkName,
-        message: message,
-        difficulty: `@UUID[Actor.${actorId}](${typeName})`,
-        targetValue: targetValue,
-        mod: modifier,
-      }
-    );
-
-    ChatMessage.create(chatData);
+    await this._requestMonsterCheck("initiative");
   }
 
   async _onChangePermission(event) {
     event.preventDefault();
-
-    const actorId = this.actor.id;
-    const actor = game.actors.get(actorId);
-    if (
-      CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER > this.actor.ownership.default
-    ) {
-      await actor.update({
-        "ownership.default": CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
-      });
-    }
-
-    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-
-    let chatData = {
-      speaker: speaker,
+    await revealMonsterData(this.actor);
+    ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       flavor: game.i18n.localize("SW25.RevealMonsterData"),
-    };
-    chatData.flags = {};
-    chatData.content = `@UUID[Actor.${this.actor.id}]`;
+      flags: {},
+      content: `@UUID[Actor.${this.actor.id}]`,
+    });
+  }
 
-    ChatMessage.create(chatData);
+  async _requestMonsterCheck(kind) {
+    const { request, isView } = await prepareMonsterCheckRequest(this.actor, kind);
+    const classType = this.actor.system.classType;
+    const typeName = !classType || classType === "Other"
+      ? this.actor.system.type
+      : game.i18n.localize(`SW25.Actor.Class.${classType}`);
+    const message = kind === "knowledge"
+      ? `${game.i18n.localize("SW25.Monster.Popularity")}/${game.i18n.localize("SW25.Monster.Weakpoint")}`
+      : game.i18n.localize("SW25.Monster.Preemptive");
+    await this._postCheckRequest(request, {
+      speaker: isView
+        ? ChatMessage.getSpeaker({ actor: this.actor })
+        : ChatMessage.getSpeaker({ alias: "Gamemaster" }),
+      message,
+      difficulty: `@UUID[Actor.${this.actor.id}](${typeName})`,
+    });
+  }
+
+  async _postCheckRequest(request, { speaker, message, difficulty }) {
+    const content = await renderTemplate(
+      "systems/sw25-lunachil-maintained/templates/roll/rollreq-card.hbs",
+      {
+        checkName: request.checkName,
+        message,
+        difficulty,
+        targetValue: request.targetValue,
+        mod: request.modifier,
+      }
+    );
+    ChatMessage.create({ speaker, flavor: request.checkName, flags: { sw25: request }, content });
   }
 
   async _showItemDetails(event) {
