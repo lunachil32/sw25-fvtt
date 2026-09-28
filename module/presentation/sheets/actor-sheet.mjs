@@ -23,7 +23,7 @@ import { gainTacspower, spendTacspower } from "../../use-cases/tacspower.mjs";
 import { consumeResource, isMpCostTarget } from "../../services/resource-consumption.mjs";
 import { useAlchemy } from "../../use-cases/use-alchemy.mjs";
 import { preparePhaseareaUse } from "../../services/phasearea.mjs";
-import { assignActionTableEntry } from "../../services/action-table.mjs";
+import { assignActionTableEntry } from "../../use-cases/action-table.mjs";
 import { bookmarkItem, toggleItemBookmark } from "../../use-cases/item-bookmarks.mjs";
 import { applyItemEffects, applyEffectsToTokens, applyPreparedEffectsToTokens } from "../../services/effect-application.mjs";
 import { resolveActorCheck } from "../../use-cases/actor-checks.mjs";
