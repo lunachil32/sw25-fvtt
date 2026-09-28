@@ -1,6 +1,7 @@
 import { postActorCheck } from "../presentation/chat/check-roll.mjs";
 import { postActorPower } from "../presentation/chat/power-roll.mjs";
 import { postApplyAll } from "../presentation/chat/apply-all.mjs";
+import { postActorCheckRequest, postMonsterCheckRequest, postMonsterReveal } from "../presentation/chat/check-requests.mjs";
 import { prepareActorSheetContext } from "../presentation/sheet-context/actor-context.mjs";
 import {
   onManageActiveEffect,
@@ -553,11 +554,7 @@ export class SW25ActorSheet extends ActorSheet {
     event.preventDefault();
     const dataset = event.currentTarget.dataset;
     const request = createActorCheckRequest(dataset.label, dataset.value);
-    await this._postCheckRequest(request, {
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      message: dataset.label + game.i18n.localize("SW25.Check"),
-      difficulty: game.i18n.localize("SW25.Difficulty"),
-    });
+    await postActorCheckRequest(this.actor, request);
   }
 
   async _onPopularityRoll(event) {
@@ -573,45 +570,15 @@ export class SW25ActorSheet extends ActorSheet {
   async _onChangePermission(event) {
     event.preventDefault();
     await revealMonsterData(this.actor);
-    ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: game.i18n.localize("SW25.RevealMonsterData"),
-      flags: {},
-      content: `@UUID[Actor.${this.actor.id}]`,
-    });
+    postMonsterReveal(this.actor);
   }
 
   async _requestMonsterCheck(kind) {
     const { request, isView } = await prepareMonsterCheckRequest(this.actor, kind);
-    const classType = this.actor.system.classType;
-    const typeName = !classType || classType === "Other"
-      ? this.actor.system.type
-      : game.i18n.localize(`SW25.Actor.Class.${classType}`);
-    const message = kind === "knowledge"
-      ? `${game.i18n.localize("SW25.Monster.Popularity")}/${game.i18n.localize("SW25.Monster.Weakpoint")}`
-      : game.i18n.localize("SW25.Monster.Preemptive");
-    await this._postCheckRequest(request, {
-      speaker: isView
-        ? ChatMessage.getSpeaker({ actor: this.actor })
-        : ChatMessage.getSpeaker({ alias: "Gamemaster" }),
-      message,
-      difficulty: `@UUID[Actor.${this.actor.id}](${typeName})`,
-    });
+    await postMonsterCheckRequest(this.actor, kind, request, isView);
   }
 
-  async _postCheckRequest(request, { speaker, message, difficulty }) {
-    const content = await renderTemplate(
-      "systems/sw25-lunachil-maintained/templates/roll/rollreq-card.hbs",
-      {
-        checkName: request.checkName,
-        message,
-        difficulty,
-        targetValue: request.targetValue,
-        mod: request.modifier,
-      }
-    );
-    ChatMessage.create({ speaker, flavor: request.checkName, flags: { sw25: request }, content });
-  }
+
 
   async _showItemDetails(event) {
     event.preventDefault();
