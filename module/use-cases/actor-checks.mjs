@@ -1,6 +1,6 @@
 import { getCheckOutcome } from "../rules/checks.mjs";
-import { consumeResource } from "./resource-consumption.mjs";
-import { getActorDamageContext } from "./actor-roll-context.mjs";
+import { consumeResource } from "../services/resource-consumption.mjs";
+import { getActorDamageContext } from "../services/actor-roll-context.mjs";
 
 /** Evaluate a check and its automatic cost without opening a sheet or posting chat. */
 export async function resolveActorCheck(actor, {

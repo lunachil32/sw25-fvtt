@@ -26,7 +26,7 @@ import { preparePhaseareaUse } from "../../services/phasearea.mjs";
 import { assignActionTableEntry } from "../../services/action-table.mjs";
 import { bookmarkItem, toggleItemBookmark } from "../../services/item-bookmarks.mjs";
 import { applyItemEffects, applyEffectsToTokens, applyPreparedEffectsToTokens } from "../../services/effect-application.mjs";
-import { resolveActorCheck } from "../../services/actor-checks.mjs";
+import { resolveActorCheck } from "../../use-cases/actor-checks.mjs";
 import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../../services/actor-check-requests.mjs";
 import { resolveActorPower } from "../../services/actor-power-rolls.mjs";
 
