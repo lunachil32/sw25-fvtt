@@ -4,7 +4,7 @@ import {
   onManageActiveEffect,
 } from "../../helpers/effects.mjs";
 import { SW25 } from "../../helpers/config.mjs";
-import { resolveSessionResult } from "../../services/session-results.mjs";
+import { resolveSessionResult } from "../../use-cases/session-results.mjs";
 import {
   applyPropertyElements,
   applyWeaponTypeElements,
