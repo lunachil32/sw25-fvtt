@@ -1,3 +1,4 @@
+import { postSessionResult } from "../presentation/chat/session-messages.mjs";
 import { prepareItemSheetContext } from "../presentation/sheet-context/item-context.mjs";
 import {
   onManageActiveEffect,
@@ -109,20 +110,8 @@ export class SW25ItemSheet extends ItemSheet {
 
   async _onSessionResult(event) {
     event.preventDefault();
-
     const label = game.i18n.localize("SW25.Item.Session.Result.Label");
-    const { roll, result } = await resolveSessionResult(this.item);
-    const chatData = {
-      speaker: ChatMessage.getSpeaker(),
-      flavor: label,
-    };
-    if (roll) chatData.rolls = [roll];
-
-    chatData.content = await renderTemplate(
-      "systems/sw25-lunachil-maintained/templates/roll/session-info.hbs",
-      result
-    );
-
-    ChatMessage.create(chatData);
+    const result = await resolveSessionResult(this.item);
+    await postSessionResult(result, label);
   }
 }
