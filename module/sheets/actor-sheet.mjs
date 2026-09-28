@@ -17,7 +17,7 @@ import { spendMaterialCards, applyAlchemyRank } from "../services/alchemy.mjs";
 import { spendLifeline, buildPhaseareaEffect } from "../services/phasearea.mjs";
 import { assignActionTableEntry } from "../services/action-table.mjs";
 import { bookmarkItem, toggleItemBookmark } from "../services/item-bookmarks.mjs";
-import { transferEffects } from "../services/effect-transfer.mjs";
+import { applyItemEffects, applyEffectsToTokens } from "../services/effect-application.mjs";
 import { resolveActorCheck } from "../services/actor-checks.mjs";
 import { createActorCheckRequest, prepareMonsterCheckRequest, revealMonsterData } from "../services/actor-check-requests.mjs";
 import { resolveActorPower } from "../services/actor-power-rolls.mjs";
@@ -1235,9 +1235,6 @@ export class SW25ActorSheet extends ActorSheet {
     );
     const orgActor = this.actor.name;
     const orgId = this.actor._id;
-    const targetEffects = item.effects;
-    const targetActorName = [];
-    const transferEffectName = [];
     const targetedToken = game.user.targets;
 
     // if no target,show dialog
@@ -1250,54 +1247,9 @@ export class SW25ActorSheet extends ActorSheet {
       }
     }
 
-    // Effect name stock for chat message
-    targetEffects.forEach((effect) => {
-      const effectName = effect.name;
-      transferEffectName.push({ effectName });
-    });
-
-    // Apply
-    const targetTokens = game.user.targets;
-    let targetTokenId = Array.from(targetTokens, (target) => target.id);
-
-    // Target Actor
-    let targetActors = [];
-    if (item.system.selfbuff) {
-      if (game.user.isGM) {
-        const actorName = this.actor.name;
-        targetActorName.push({ actorName });
-        targetActors.push(this.actor);
-      } else {
-        const actorName = this.actor.name;
-        targetActorName.push({ actorName });
-        targetTokenId = this.actor.token
-          ? this.actor.token.id
-          : [this.actor.getActiveTokens()[0]?.id];
-      }
-    } else {
-      targetedToken.forEach((token) => {
-        targetActors.push(token.actor);
-
-        // Actor name stock for chat message
-        const actorName = token.actor.name;
-        targetActorName.push({ actorName });
-      });
-      targetTokenId = Array.from(targetTokens, (target) => target.id);
-    }
-
-    if (game.user.isGM) {
-      targetActors.forEach((targetActor) => {
-        transferEffects(targetActor, targetEffects, orgActor, orgId);
-      });
-    } else {
-      game.socket.emit(`system.${game.system.id}`, {
-        method: "applyEffect",
-        targetTokens: targetTokenId,
-        targetEffects: targetEffects,
-        orgActor: orgActor,
-        orgId: orgId,
-      });
-    }
+    const { targetNames, effectNames } = applyItemEffects(
+      this.actor, item, game.user.targets, orgActor, orgId
+    );
 
     // reset target
     game.user.targets.forEach((target) => target.setTarget(false));
@@ -1308,11 +1260,11 @@ export class SW25ActorSheet extends ActorSheet {
     let chatActorName = "";
     let chatEffectName = "";
 
-    for (let i = 0; i < targetActorName.length; i++) {
-      chatActorName += ">>> " + targetActorName[i].actorName + "<br>";
+    for (let i = 0; i < targetNames.length; i++) {
+      chatActorName += ">>> " + targetNames[i] + "<br>";
     }
-    for (let i = 0; i < transferEffectName.length; i++) {
-      chatEffectName += transferEffectName[i].effectName + "<br>";
+    for (let i = 0; i < effectNames.length; i++) {
+      chatEffectName += effectNames[i] + "<br>";
     }
 
     let chatData = {
@@ -1891,24 +1843,7 @@ export class SW25ActorSheet extends ActorSheet {
             const selectedTokens = canvas.tokens.placeables.filter((token) =>
               selectedIds.includes(token.id)
             );
-            const targetTokenId = Array.from(
-              selectedTokens,
-              (target) => target.id
-            );
-
-            if (game.user.isGM) {
-              selectedTokens.forEach((targetActor) => {
-                transferEffects(targetActor.actor, targetEffects, orgActor, orgId);
-              });
-            } else {
-              game.socket.emit(`system.${game.system.id}`, {
-                method: "applyEffect",
-                targetTokens: targetTokenId,
-                targetEffects: targetEffects,
-                orgActor: orgActor,
-                orgId: orgId,
-              });
-            }
+            applyEffectsToTokens(selectedTokens, targetEffects, orgActor, orgId);
           },
         },
         cancel: {
