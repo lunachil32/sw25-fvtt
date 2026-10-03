@@ -1,5 +1,9 @@
 <section class="v2-profile">
   <h2>{{localize "SW25.V2.Profile"}}</h2>
+  <div class="v2-image-field">
+    <img src="{{actor.img}}" alt="{{actor.name}}" width="64" height="64">
+    <label>{{localize "Image"}}<file-picker name="img" type="image" value="{{actor.img}}" {{#unless editable}}disabled{{/unless}}></file-picker></label>
+  </div>
   <div class="v2-fields">{{#each profileFields as |field|}}
       <label>{{localize field.label}}<input name="{{field.name}}" type="{{field.type}}" data-dtype="{{field.dtype}}" value="{{field.value}}" {{#unless @root.editable}}disabled{{/unless}}></label>
       {{/each}}</div>
