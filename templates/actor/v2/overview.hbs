@@ -4,6 +4,18 @@
     <div><strong>{{localize "SW25.Hp"}}</strong><span>{{system.hp.value}} / {{system.hp.max}}</span></div>
     <div><strong>{{localize "SW25.Mp"}}</strong><span>{{system.mp.value}} / {{system.mp.max}}</span></div>
   </div>
+  <div class="v2-fields">
+    <div>{{localize "SW25.Attributes.Advlevel"}}: {{system.attributes.advlevel.value}}</div>
+    <label>{{localize "SW25.Attributes.Grace"}}<input type="checkbox" name="system.attributes.grace" data-dtype="Boolean" {{checked system.attributes.grace}} {{#unless editable}}disabled{{/unless}}></label>
+  </div>
+  <section aria-label="{{localize 'SW25.Attributes.Move'}}">
+    <h3>{{localize "SW25.Attributes.Move"}}</h3>
+    <dl class="v2-abilities">
+      <div><dt>{{localize "SW25.Attributes.Limitedmove"}}</dt><dd>{{system.attributes.move.limited}}</dd></div>
+      <div><dt>{{localize "SW25.Attributes.Normalmove"}}</dt><dd>{{system.attributes.move.normal}}</dd></div>
+      <div><dt>{{localize "SW25.Attributes.Maxmove"}}</dt><dd>{{system.attributes.move.max}}</dd></div>
+    </dl>
+  </section>
   <section aria-label="{{localize 'SW25.Abilityname'}}">
     <h3>{{localize "SW25.Abilityname"}}</h3>
     <dl class="v2-abilities">
