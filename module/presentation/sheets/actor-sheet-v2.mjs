@@ -1,3 +1,4 @@
+import { gainTacspower, spendTacspower } from "../../use-cases/tacspower.mjs";
 import { showPhaseareaCostDialog } from "../dialogs/phasearea-cost.mjs";
 import { usePhasearea } from "../../use-cases/use-phasearea.mjs";
 import { postPhaseareaEffect } from "../chat/effect-messages.mjs";
@@ -31,6 +32,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
       createItem: SW25ActorSheetV2._onCreateItem,
       useAlchemy: SW25ActorSheetV2._onUseAlchemy,
       updateNotes: SW25ActorSheetV2._onUpdateNotes,
+      updateTacspower: SW25ActorSheetV2._onUpdateTacspower,
       usePhasearea: SW25ActorSheetV2._onUsePhasearea,
       applyItemEffects: SW25ActorSheetV2._onApplyItemEffects,
       payItemCost: SW25ActorSheetV2._onPayItemCost,
@@ -154,6 +156,19 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
       return showPhaseareaCostDialog({ name: item.name, minimum: item.system.mincost, maximum: item.system.maxcost }, apply);
     }
     return apply(item.system.mincost || 0);
+  }
+
+  static async _onUpdateTacspower(event, button) {
+    if (!this.isEditable) return;
+    const item = this.actor.items.get(button.closest("[data-item-id]").dataset.itemId);
+    const operation = { get: gainTacspower, cost: spendTacspower }[button.dataset.tacspower];
+    if (item?.type !== "tactics" || !operation) return;
+    const tokens = await Util.getControlledActor(this.actor);
+    if (tokens.length !== 1) {
+      return ui.notifications.warn(game.i18n.localize(tokens.length ? "SW25.Multiselectwarn" : "SW25.Noselectwarn"));
+    }
+    const missing = await operation(this.actor, item);
+    for (const resource of missing) ui.notifications.warn(game.i18n.localize("SW25.NotResource"));
   }
 
   static async _onUpdateNotes(event, button) {

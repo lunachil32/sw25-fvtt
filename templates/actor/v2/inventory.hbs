@@ -9,6 +9,10 @@
     <li data-item-id="{{item._id}}"><span>{{item.name}}</span>
       {{#if item.system.hpcost}}<button type="button" data-action="payItemCost" data-resource="hp" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Hpcost"}}: {{item.system.hpcost}}</button>{{/if}}
       {{#if item.system.mpcost}}<button type="button" data-action="payItemCost" data-resource="mp" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Mpcost"}}: {{item.system.mpcost}}</button>{{/if}}
+      {{#if (eq item.type "tactics")}}
+      <button type="button" data-action="updateTacspower" data-tacspower="get" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Tactics.Tacspower"}} {{localize "SW25.Item.Tactics.Get"}}</button>
+      <button type="button" data-action="updateTacspower" data-tacspower="cost" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Tactics.Tacspower"}} {{localize "SW25.Cost"}}</button>
+      {{/if}}
       {{#if (eq item.type "phasearea")}}<button type="button" data-action="usePhasearea" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Phasearea.Point"}}</button>{{/if}}
       {{#if (eq item.type "magicalsong")}}
       {{#if (eq item.system.type "song")}}
