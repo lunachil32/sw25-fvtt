@@ -30,6 +30,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     form: { submitOnChange: true, closeOnSubmit: false },
     actions: {
       create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2,
+      gainLifeline: SW25ActorSheetV2._onGainLifeline,
       resetResources: SW25ActorSheetV2._onResetResources,
       createItem: SW25ActorSheetV2._onCreateItem,
       useAlchemy: SW25ActorSheetV2._onUseAlchemy,
@@ -158,6 +159,12 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
       return showPhaseareaCostDialog({ name: item.name, minimum: item.system.mincost, maximum: item.system.maxcost }, apply);
     }
     return apply(item.system.mincost || 0);
+  }
+
+  static async _onGainLifeline() {
+    if (!this.actor.isOwner) return;
+    const updated = await updateAllResourceQuantities(this.actor, { type: "lifeline" }, 1);
+    if (!updated) ui.notifications.warn(game.i18n.localize("SW25.NotResource"));
   }
 
   static async _onResetResources(event, button) {
