@@ -1,11 +1,9 @@
+import { presentPhaseareaUse } from "../use-phasearea.mjs";
 import { toggleItemBookmark } from "../../use-cases/item-bookmarks.mjs";
 import { actionRoll } from "../../helpers/actionroll.mjs";
 import { growthCheck } from "../../helpers/growthcheck.mjs";
 import { updateAllResourceQuantities } from "../../services/resource-quantity.mjs";
 import { gainTacspower, spendTacspower } from "../../use-cases/tacspower.mjs";
-import { showPhaseareaCostDialog } from "../dialogs/phasearea-cost.mjs";
-import { usePhasearea } from "../../use-cases/use-phasearea.mjs";
-import { postPhaseareaEffect } from "../chat/effect-messages.mjs";
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../../use-cases/notes.mjs";
 import { useAlchemy } from "../../use-cases/use-alchemy.mjs";
 import { postAlchemyCost } from "../chat/resource-messages.mjs";
@@ -162,26 +160,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
   static async _onUsePhasearea(event, button) {
     if (!this.isEditable) return;
     const item = this.actor.items.get(button.closest("[data-item-id]").dataset.itemId);
-    if (item?.type !== "phasearea") return;
-    const tokens = await Util.getControlledActor(this.actor);
-    if (tokens.length !== 1) {
-      return ui.notifications.warn(game.i18n.localize(tokens.length ? "SW25.Multiselectwarn" : "SW25.Noselectwarn"));
-    }
-    const apply = async cost => {
-      const currentTokens = await Util.getControlledActor(this.actor);
-      if (currentTokens.length !== 1) {
-        return ui.notifications.warn(game.i18n.localize(currentTokens.length ? "SW25.Multiselectwarn" : "SW25.Noselectwarn"));
-      }
-      const name = item.name + game.i18n.localize("SW25.Use") + " " + cost + game.i18n.localize("SW25.Item.Phasearea.Point");
-      const { effects, consumed } = await usePhasearea(this.actor, item, cost, name, currentTokens);
-      const lifeline = { ten: "Ten", chi: "Chi", jin: "Jin" }[item.system.type] ?? "";
-      if (!consumed) ui.notifications.warn(game.i18n.localize("SW25.NotResource") + ":" + game.i18n.localize("SW25.Item.Phasearea." + lifeline));
-      return postPhaseareaEffect(this.actor, currentTokens[0].actor.name, effects[0].name, lifeline);
-    };
-    if (item.system.maxcost && item.system.mincost != item.system.maxcost) {
-      return showPhaseareaCostDialog({ name: item.name, minimum: item.system.mincost, maximum: item.system.maxcost }, apply);
-    }
-    return apply(item.system.mincost || 0);
+    return presentPhaseareaUse(this.actor, item);
   }
 
   static async _onRollActionTable(event, button) {
