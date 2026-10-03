@@ -14,7 +14,7 @@ export function prepareItemV2Fields(item) {
 /** Group editable roll configuration without duplicating document calculations. */
 export function prepareItemV2FieldGroups(item, context) {
   const groups = [{ label: "SW25.Details", fields: prepareItemV2Fields(item) }];
-  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check"].includes(item.type)) {
+  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check", "enhancearts", "ridingtrick"].includes(item.type)) {
     const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
     options.resources = Object.fromEntries((Array.isArray(item.system.itemlist) ? item.system.itemlist : []).map(resource => [resource.itemId, resource.itemName]));
     if (!["item", "check"].includes(item.type)) groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
@@ -35,7 +35,7 @@ function prepareFields(item, definitions, context = {}) {
   }));
 }
 
-export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check"];
+export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick"];
 
 const common = [["name", "Name"], ["system.overview", "SW25.Item.Overview"]];
 const skill = [
@@ -184,7 +184,21 @@ const language = [
   ["system.conversation", "SW25.Item.Language.Conversation", "checkbox"],
   ["system.reading", "SW25.Item.Language.Reading", "checkbox"],
 ];
-const fieldsByType = { skill, resource, armor, weapon, accessory, item, spell, combatability, raceability, language };
+const technique = [
+  ...feature,
+  ["system.level", "SW25.Level", "number"],
+  ["system.constant", "SW25.Item.Constant", "checkbox"],
+  ["system.main", "SW25.Item.Main", "checkbox"],
+  ["system.decla", "SW25.Item.Declaabbr", "checkbox"],
+];
+const enhancearts = [...technique, ["system.time", "SW25.Time"]];
+const ridingtrick = [
+  ...technique,
+  ["system.premise", "SW25.Item.Premise"],
+  ["system.support", "SW25.Item.Ridingtrick.Support"],
+  ["system.rtpart", "SW25.Item.Part"],
+];
+const fieldsByType = { skill, resource, armor, weapon, accessory, item, spell, combatability, raceability, language, enhancearts, ridingtrick };
 
 const check = [
   ["system.clickitem", "SW25.Item.Clickitem", "select", "clickitemOptions"],
