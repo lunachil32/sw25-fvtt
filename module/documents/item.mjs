@@ -150,12 +150,11 @@ export class SW25Item extends Item {
     this._prepareSessionData(itemData);
   }
 
-  async _prepareSkillData(itemData, actor) {
+  _prepareSkillData(itemData, actor) {
     if (itemData.type !== "skill") return;
 
     // Make modifications to data here. For example:
     const systemData = itemData.system;
-    await actor.update({});
     const actorData = itemData.actor.system;
 
     // Calculate Skill check & Action check
@@ -327,10 +326,6 @@ export class SW25Item extends Item {
       systemData.skillexp = expB[systemData.skilllevel];
     }
 
-    // Sheet refresh
-    await itemData.update({});
-    if (itemData.sheet.rendered)
-      await itemData.sheet.render(false, { focus: false });
   }
 
   async _prepareCheckData(itemData, actor) {
