@@ -1,5 +1,8 @@
 <section>
   <h2>{{item.name}}</h2>
+  <fieldset class="v2-description"><legend>{{localize "SW25.Description"}}</legend>
+    <prose-mirror name="system.description" value="{{system.description}}" data-document-uuid="{{item.uuid}}" toggled {{#unless editable}}disabled{{/unless}}>{{{descriptionHTML}}}</prose-mirror>
+  </fieldset>
   {{#each itemFieldGroups as |group|}}
   <fieldset><legend>{{localize group.label}}</legend>
   <div class="v2-item-fields">

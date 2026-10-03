@@ -25,3 +25,5 @@
 .sw25-actor-v2 .v2-inventory ul { list-style: none; padding: 0; }
 .sw25-actor-v2 .v2-inventory li span { flex: 1; overflow-wrap: anywhere; }
 .sw25-actor-v2 .v2-inventory button { flex: 0 0 auto; }
+
+.sw25-item-v2 .v2-description prose-mirror { min-height: 160px; }

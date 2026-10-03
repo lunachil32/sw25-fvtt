@@ -19,6 +19,9 @@ export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicat
     const prepared = prepareItemSheetContext(this.item, {
       ...context, item: this.item, data: this.item.toObject(false),
     });
+    prepared.descriptionHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(this.item.system.description ?? "", {
+      secrets: this.item.isOwner, rollData: prepared.rollData, relativeTo: this.item,
+    });
     prepared.itemFieldGroups = prepareItemV2FieldGroups(this.item, prepared);
     return prepared;
   }
