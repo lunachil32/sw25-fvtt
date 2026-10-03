@@ -14,6 +14,11 @@
   </section>
   <section>
     <h3>{{localize "SW25.Resource"}}</h3>
+    <div class="v2-resource-resets">
+      <button type="button" data-action="resetResources" data-resource-type="note" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.Reset" type=(localize "SW25.Item.Resource.Types.Note")}}</button>
+      <button type="button" data-action="resetResources" data-resource-type="lifeline" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.Reset" type=(localize "SW25.Item.Resource.Types.Lifeline")}}</button>
+      <button type="button" data-action="resetResources" data-resource-type="tacspower" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.Reset" type=(localize "SW25.Item.Resource.Types.Tacspower")}}</button>
+    </div>
     <ul class="v2-resources">
       {{#each resourceItems as |item|}}
       <li data-item-id="{{item._id}}">

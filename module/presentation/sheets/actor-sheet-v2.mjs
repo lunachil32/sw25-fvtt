@@ -1,3 +1,4 @@
+import { updateAllResourceQuantities } from "../../services/resource-quantity.mjs";
 import { gainTacspower, spendTacspower } from "../../use-cases/tacspower.mjs";
 import { showPhaseareaCostDialog } from "../dialogs/phasearea-cost.mjs";
 import { usePhasearea } from "../../use-cases/use-phasearea.mjs";
@@ -29,6 +30,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     form: { submitOnChange: true, closeOnSubmit: false },
     actions: {
       create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2,
+      resetResources: SW25ActorSheetV2._onResetResources,
       createItem: SW25ActorSheetV2._onCreateItem,
       useAlchemy: SW25ActorSheetV2._onUseAlchemy,
       updateNotes: SW25ActorSheetV2._onUpdateNotes,
@@ -156,6 +158,14 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
       return showPhaseareaCostDialog({ name: item.name, minimum: item.system.mincost, maximum: item.system.maxcost }, apply);
     }
     return apply(item.system.mincost || 0);
+  }
+
+  static async _onResetResources(event, button) {
+    if (!this.actor.isOwner) return;
+    const type = button.dataset.resourceType;
+    if (!["note", "lifeline", "tacspower"].includes(type)) return;
+    const updated = await updateAllResourceQuantities(this.actor, { type }, null);
+    if (!updated) ui.notifications.warn(game.i18n.localize("SW25.NotResource"));
   }
 
   static async _onUpdateTacspower(event, button) {
