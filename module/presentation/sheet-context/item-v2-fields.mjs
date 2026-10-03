@@ -14,7 +14,7 @@ export function prepareItemV2Fields(item) {
 /** Group editable roll configuration without duplicating document calculations. */
 export function prepareItemV2FieldGroups(item, context) {
   const groups = [{ label: "SW25.Details", fields: prepareItemV2Fields(item) }];
-  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong"].includes(item.type)) {
+  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics"].includes(item.type)) {
     const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
     options.resources = Object.fromEntries((Array.isArray(item.system.itemlist) ? item.system.itemlist : []).map(resource => [resource.itemId, resource.itemName]));
     if (!["item", "check"].includes(item.type)) groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
@@ -40,7 +40,7 @@ function prepareFields(item, definitions, context = {}) {
   }));
 }
 
-export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong"];
+export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics"];
 
 const common = [["name", "Name"], ["system.overview", "SW25.Item.Overview"]];
 const skill = [
@@ -220,7 +220,25 @@ const magicalsong = [
   ["system.pet", "SW25.Item.Magicalsong.Pet"],
   ["system.singpoint", "SW25.Item.Magicalsong.Singpoint", "number"],
 ];
-const fieldsByType = { skill, resource, armor, weapon, accessory, item, spell, combatability, raceability, language, enhancearts, ridingtrick, alchemytech, magicalsong };
+const phasearea = [
+  ...technique,
+  ["system.type", "SW25.Item.Prop", "select", "phaseareaTypes"],
+  ["system.prop", "SW25.Item.Prop", "select", "phaseareaProps"],
+  ["system.time", "SW25.Time"],
+  ["system.mincost", "SW25.Min", "number"],
+  ["system.maxcost", "SW25.Max", "number"],
+];
+const tactics = [
+  ...technique,
+  ["system.type", "SW25.Item.Prop", "select", "tacticsTypes"],
+  ["system.line", "SW25.Item.Tactics.Line", "select", "tacticsLines"],
+  ["system.rank", "SW25.Item.Tactics.Rank", "number"],
+  ["system.cond", "SW25.Condition"],
+  ["system.premise", "SW25.Item.Premise"],
+  ["system.get", "SW25.Item.Tactics.Get", "number"],
+  ["system.cost", "SW25.Cost", "number"],
+];
+const fieldsByType = { skill, resource, armor, weapon, accessory, item, spell, combatability, raceability, language, enhancearts, ridingtrick, alchemytech, magicalsong, phasearea, tactics };
 
 const check = [
   ["system.clickitem", "SW25.Item.Clickitem", "select", "clickitemOptions"],
