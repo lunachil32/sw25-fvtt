@@ -1,3 +1,5 @@
+import { payItemVitalCost } from "../../use-cases/item-vital-cost.mjs";
+import { Util } from "../../helpers/utils.mjs";
 import { createActorItem, deleteActorItem } from "../../use-cases/actor-items.mjs";
 import { openItemSheetV2 } from "./item-sheet-v2.mjs";
 import { supportedItemTypesV2 } from "../sheet-context/item-v2-fields.mjs";
@@ -15,6 +17,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     form: { submitOnChange: true, closeOnSubmit: false },
     actions: {
       createItem: SW25ActorSheetV2._onCreateItem,
+      payItemCost: SW25ActorSheetV2._onPayItemCost,
       useItem: SW25ActorSheetV2._onUseItem,
       editItem: SW25ActorSheetV2._onEditItem,
       deleteItem: SW25ActorSheetV2._onDeleteItem,
@@ -98,6 +101,14 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     if (!supportedItemTypesV2.includes(type)) return;
     const item = await createActorItem(this.actor, type);
     await openItemSheetV2(item);
+  }
+
+  static async _onPayItemCost(event, button) {
+    if (!this.isEditable) return;
+    const itemId = button.closest("[data-item-id]").dataset.itemId;
+    const tokens = await Util.getControlledActor(this.actor);
+    const result = await payItemVitalCost(this.actor, itemId, button.dataset.resource, tokens);
+    if (result.warning) ui.notifications.warn(game.i18n.localize(result.warning));
   }
 
   static async _onUseItem(event, button) {
