@@ -1,3 +1,5 @@
+import { useAlchemy } from "../../use-cases/use-alchemy.mjs";
+import { postAlchemyCost } from "../chat/resource-messages.mjs";
 import { applyItemEffects } from "../../use-cases/apply-item-effects.mjs";
 import { targetSelectDialog } from "../../helpers/dialogs.mjs";
 import { postAppliedEffects } from "../chat/effect-messages.mjs";
@@ -23,6 +25,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     actions: {
       create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2,
       createItem: SW25ActorSheetV2._onCreateItem,
+      useAlchemy: SW25ActorSheetV2._onUseAlchemy,
       applyItemEffects: SW25ActorSheetV2._onApplyItemEffects,
       payItemCost: SW25ActorSheetV2._onPayItemCost,
       useItem: SW25ActorSheetV2._onUseItem,
@@ -120,6 +123,19 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     const tokens = await Util.getControlledActor(this.actor);
     const result = await payItemVitalCost(this.actor, itemId, button.dataset.resource, tokens);
     if (result.warning) ui.notifications.warn(game.i18n.localize(result.warning));
+  }
+
+  static async _onUseAlchemy(event, button) {
+    if (!this.isEditable) return;
+    const item = this.actor.items.get(button.closest("[data-item-id]").dataset.itemId);
+    const rank = button.dataset.rank;
+    if (item?.type !== "alchemytech" || !["b", "a", "s", "ss"].includes(rank)) return;
+    const tokens = await Util.getControlledActor(this.actor);
+    if (tokens.length !== 1) {
+      return ui.notifications.warn(game.i18n.localize(tokens.length ? "SW25.Multiselectwarn" : "SW25.Noselectwarn"));
+    }
+    const results = await useAlchemy(this.actor, item, rank);
+    return postAlchemyCost(this.actor, item.name, rank.toUpperCase(), results);
   }
 
   static async _onApplyItemEffects(event, button) {

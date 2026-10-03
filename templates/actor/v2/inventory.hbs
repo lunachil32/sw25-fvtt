@@ -9,6 +9,13 @@
     <li data-item-id="{{item._id}}"><span>{{item.name}}</span>
       {{#if item.system.hpcost}}<button type="button" data-action="payItemCost" data-resource="hp" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Hpcost"}}: {{item.system.hpcost}}</button>{{/if}}
       {{#if item.system.mpcost}}<button type="button" data-action="payItemCost" data-resource="mp" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Mpcost"}}: {{item.system.mpcost}}</button>{{/if}}
+      {{#if (eq item.type "alchemytech")}}
+      <span>{{localize "SW25.Item.Alchemytech.MaterialCard"}}</span>
+      <button type="button" data-action="useAlchemy" data-rank="b" {{#unless @root.editable}}disabled{{/unless}}>B</button>
+      <button type="button" data-action="useAlchemy" data-rank="a" {{#unless @root.editable}}disabled{{/unless}}>A</button>
+      <button type="button" data-action="useAlchemy" data-rank="s" {{#unless @root.editable}}disabled{{/unless}}>S</button>
+      <button type="button" data-action="useAlchemy" data-rank="ss" {{#unless @root.editable}}disabled{{/unless}}>SS</button>
+      {{/if}}
       {{#if item.effects.length}}<button type="button" data-action="applyItemEffects" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Effectslong"}}</button>{{/if}}
       <button type="button" data-action="useItem" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Use"}}</button>
       <button type="button" data-action="editItem">{{localize "SW25.V2.EditItem"}}</button>
