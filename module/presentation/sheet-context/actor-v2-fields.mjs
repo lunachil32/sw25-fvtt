@@ -4,6 +4,12 @@ export function prepareActorV2Fields(data) {
     profileFields: fields(profile, data),
     vitalFields: fields(vitals, data),
     baseFields: fields(bases, data),
+    combatFields: fields(combat, data),
+    combatSelections: [
+      ["hitweapon", "SW25.Selecthitweapon", data.items.filter(item => item.type === "weapon" && item.system.equip)],
+      ["attackskill", "SW25.Selectattackskill", data.items.filter(item => item.type === "skill")],
+      ["dodgeskill", "SW25.Selectdodgeskill", data.items.filter(item => item.type === "skill")],
+    ].map(([key, label, items]) => ({ name: "system." + key, label, value: data.system[key], options: { "-": "-", ...Object.fromEntries(items.map(item => [item.name, item.name])) } })),
   };
 }
 
@@ -38,4 +44,16 @@ const bases = [
   ["system.abilities.dex.racevalue", "SW25.V2.SkillBase", "number"],
   ["system.abilities.str.racevalue", "SW25.V2.BodyBase", "number"],
   ["system.abilities.int.racevalue", "SW25.V2.MindBase", "number"],
+];
+
+const combat = [
+  ["system.attributes.hitmod", "SW25.Effect.HitMod", "number"],
+  ["system.attributes.dmod", "SW25.Effect.DamageMod", "number"],
+  ["system.attributes.ltmod", "SW25.Effect.LethalTech", "number"],
+  ["system.attributes.crmod", "SW25.Effect.CriticalRay", "number"],
+  ["system.attributes.dodgemod", "SW25.Effect.DodgeMod", "number"],
+  ["system.attributes.dreduce", "SW25.Effect.Dreduce", "number"],
+  ["system.attributes.ppmod", "SW25.Effect.PpMod", "number"],
+  ["system.attributes.mppmod", "SW25.Effect.MppMod", "number"],
+  ["system.attributes.move.movemod", "SW25.Effect.MoveMod", "number"],
 ];

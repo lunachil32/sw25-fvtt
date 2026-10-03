@@ -22,6 +22,17 @@
       </tr>{{/each}}
     </tbody>
   </table>
+  <fieldset class="v2-combat"><legend>{{localize "SW25.Battle"}}</legend>
+    <div class="v2-fields">
+      {{#each combatSelections as |field|}}
+      <label>{{localize field.label}}<select name="{{field.name}}" {{#unless @root.editable}}disabled{{/unless}}>{{selectOptions field.options selected=field.value}}</select></label>
+      {{/each}}
+      {{#each combatFields as |field|}}
+      <label>{{localize field.label}}<input name="{{field.name}}" type="{{field.type}}" data-dtype="{{field.dtype}}" value="{{field.value}}" {{#unless @root.editable}}disabled{{/unless}}></label>
+      {{/each}}
+    </div>
+    <p>{{localize "SW25.Attributes.Protectionpoint.long"}}: {{system.attributes.protectionpoint}} / {{localize "SW25.Attributes.Magicprotection.long"}}: {{system.attributes.magicprotection}}</p>
+  </fieldset>
   <fieldset class="v2-biography"><legend>{{localize "SW25.Description"}}</legend>
     <prose-mirror name="system.biography" value="{{system.biography}}" data-document-uuid="{{actor.uuid}}" toggled {{#unless editable}}disabled{{/unless}}>{{{biographyHTML}}}</prose-mirror>
   </fieldset>
