@@ -1,3 +1,6 @@
+import { showPhaseareaCostDialog } from "../dialogs/phasearea-cost.mjs";
+import { usePhasearea } from "../../use-cases/use-phasearea.mjs";
+import { postPhaseareaEffect } from "../chat/effect-messages.mjs";
 import { gainNotes, gainAdditionalNotes, spendNotes } from "../../use-cases/notes.mjs";
 import { useAlchemy } from "../../use-cases/use-alchemy.mjs";
 import { postAlchemyCost } from "../chat/resource-messages.mjs";
@@ -28,6 +31,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
       createItem: SW25ActorSheetV2._onCreateItem,
       useAlchemy: SW25ActorSheetV2._onUseAlchemy,
       updateNotes: SW25ActorSheetV2._onUpdateNotes,
+      usePhasearea: SW25ActorSheetV2._onUsePhasearea,
       applyItemEffects: SW25ActorSheetV2._onApplyItemEffects,
       payItemCost: SW25ActorSheetV2._onPayItemCost,
       useItem: SW25ActorSheetV2._onUseItem,
@@ -125,6 +129,31 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     const tokens = await Util.getControlledActor(this.actor);
     const result = await payItemVitalCost(this.actor, itemId, button.dataset.resource, tokens);
     if (result.warning) ui.notifications.warn(game.i18n.localize(result.warning));
+  }
+
+  static async _onUsePhasearea(event, button) {
+    if (!this.isEditable) return;
+    const item = this.actor.items.get(button.closest("[data-item-id]").dataset.itemId);
+    if (item?.type !== "phasearea") return;
+    const tokens = await Util.getControlledActor(this.actor);
+    if (tokens.length !== 1) {
+      return ui.notifications.warn(game.i18n.localize(tokens.length ? "SW25.Multiselectwarn" : "SW25.Noselectwarn"));
+    }
+    const apply = async cost => {
+      const currentTokens = await Util.getControlledActor(this.actor);
+      if (currentTokens.length !== 1) {
+        return ui.notifications.warn(game.i18n.localize(currentTokens.length ? "SW25.Multiselectwarn" : "SW25.Noselectwarn"));
+      }
+      const name = item.name + game.i18n.localize("SW25.Use") + " " + cost + game.i18n.localize("SW25.Item.Phasearea.Point");
+      const { effects, consumed } = await usePhasearea(this.actor, item, cost, name, currentTokens);
+      const lifeline = { ten: "Ten", chi: "Chi", jin: "Jin" }[item.system.type] ?? "";
+      if (!consumed) ui.notifications.warn(game.i18n.localize("SW25.NotResource") + ":" + game.i18n.localize("SW25.Item.Phasearea." + lifeline));
+      return postPhaseareaEffect(this.actor, currentTokens[0].actor.name, effects[0].name, lifeline);
+    };
+    if (item.system.maxcost && item.system.mincost != item.system.maxcost) {
+      return showPhaseareaCostDialog({ name: item.name, minimum: item.system.mincost, maximum: item.system.maxcost }, apply);
+    }
+    return apply(item.system.mincost || 0);
   }
 
   static async _onUpdateNotes(event, button) {
