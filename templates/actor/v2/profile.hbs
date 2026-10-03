@@ -8,6 +8,7 @@
       <label>{{localize field.label}}<input name="{{field.name}}" type="{{field.type}}" data-dtype="{{field.dtype}}" value="{{field.value}}" {{#unless @root.editable}}disabled{{/unless}}></label>
       {{/each}}</div>
   <h3>{{localize "SW25.Abilityname"}}</h3>
+  <button type="button" data-action="growthCheck" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.Ability.Growth"}}</button>
   <div class="v2-fields">{{#each baseFields as |field|}}
       <label>{{localize field.label}}<input name="{{field.name}}" type="{{field.type}}" data-dtype="{{field.dtype}}" value="{{field.value}}" {{#unless @root.editable}}disabled{{/unless}}></label>
       {{/each}}</div>
