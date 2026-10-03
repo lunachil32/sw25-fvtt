@@ -14,7 +14,7 @@ export function prepareItemV2Fields(item) {
 /** Group editable roll configuration without duplicating document calculations. */
 export function prepareItemV2FieldGroups(item, context) {
   const groups = [{ label: "SW25.Details", fields: prepareItemV2Fields(item) }];
-  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics"].includes(item.type)) {
+  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics", "infusion", "barbarousskill", "essenceweave", "otherfeature"].includes(item.type)) {
     const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
     options.resources = Object.fromEntries((Array.isArray(item.system.itemlist) ? item.system.itemlist : []).map(resource => [resource.itemId, resource.itemName]));
     if (!["item", "check"].includes(item.type)) groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
@@ -40,7 +40,7 @@ function prepareFields(item, definitions, context = {}) {
   }));
 }
 
-export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics"];
+export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics", "infusion", "barbarousskill", "essenceweave", "otherfeature"];
 
 const common = [["name", "Name"], ["system.overview", "SW25.Item.Overview"]];
 const skill = [
@@ -238,7 +238,25 @@ const tactics = [
   ["system.get", "SW25.Item.Tactics.Get", "number"],
   ["system.cost", "SW25.Cost", "number"],
 ];
-const fieldsByType = { skill, resource, armor, weapon, accessory, item, spell, combatability, raceability, language, enhancearts, ridingtrick, alchemytech, magicalsong, phasearea, tactics };
+const rangedFeature = [
+  ...technique,
+  ["system.target", "SW25.Target"],
+  ["system.rangeshape", "SW25.Rangeshape"],
+  ["system.time", "SW25.Time"],
+  ["system.prop", "SW25.Item.Prop", "select", "spellProps"],
+];
+const infusion = [
+  ...technique,
+  ["system.type", "SW25.Item.Prop", "select", "infusionTypes"],
+  ["system.race", "SW25.Race"],
+  ["system.premise", "SW25.Item.Premise"],
+  ["system.itpart", "SW25.Item.Part"],
+  ["system.humanoid", "SW25.Item.Infusion.HumanoidForm", "checkbox"],
+];
+const barbarousskill = [...rangedFeature, ["system.race", "SW25.Race"], ["system.rank", "SW25.Item.BarbarousSkill.Rank", "select", "ranks"]];
+const essenceweave = [...rangedFeature, ["system.premise", "SW25.Item.Premise"]];
+const otherfeature = [...rangedFeature, ["system.type", "SW25.Item.Prop"]];
+const fieldsByType = { skill, resource, armor, weapon, accessory, item, spell, combatability, raceability, language, enhancearts, ridingtrick, alchemytech, magicalsong, phasearea, tactics, infusion, barbarousskill, essenceweave, otherfeature };
 
 const check = [
   ["system.clickitem", "SW25.Item.Clickitem", "select", "clickitemOptions"],
