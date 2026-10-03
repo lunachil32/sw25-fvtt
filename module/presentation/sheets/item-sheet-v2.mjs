@@ -52,6 +52,14 @@ export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicat
 
   _processFormData(event, form, formData) {
     const name = event?.type === "change" ? event.target.name : null;
+    const customField = name?.match(/^system\.customFields\.([^.]*)\.(label|value)$/);
+    if (customField) {
+      const fields = foundry.utils.duplicate(this.item.system.customFields ?? []);
+      const [, index, property] = customField;
+      if (!fields[index]) return {};
+      fields[index][property] = formData.object[name];
+      return { system: { customFields: fields } };
+    }
     if (name) return foundry.utils.expandObject({ [name]: formData.object[name] });
     return super._processFormData(event, form, formData);
   }
