@@ -1,3 +1,4 @@
+import { rollCheckItem } from "../rolls/check-item.mjs";
 import { payItemVitalCost } from "../../use-cases/item-vital-cost.mjs";
 import { Util } from "../../helpers/utils.mjs";
 import { createActorItem, deleteActorItem } from "../../use-cases/actor-items.mjs";
@@ -114,6 +115,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
   static async _onUseItem(event, button) {
     if (!this.isEditable) return;
     const item = this.actor.items.get(button.closest("[data-item-id]").dataset.itemId);
+    if (item?.type === "check") return rollCheckItem(this.actor, item, game.user.targets);
     if (item) return item.roll();
   }
 
