@@ -14,13 +14,18 @@ export function prepareItemV2Fields(item) {
 /** Group editable roll configuration without duplicating document calculations. */
 export function prepareItemV2FieldGroups(item, context) {
   const groups = [{ label: "SW25.Details", fields: prepareItemV2Fields(item) }];
-  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check", "enhancearts", "ridingtrick", "alchemytech"].includes(item.type)) {
+  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong"].includes(item.type)) {
     const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
     options.resources = Object.fromEntries((Array.isArray(item.system.itemlist) ? item.system.itemlist : []).map(resource => [resource.itemId, resource.itemName]));
     if (!["item", "check"].includes(item.type)) groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
     groups.push({ label: "SW25.Check", fields: prepareFields(item, item.type === "check" ? checkItem : check, options) });
     groups.push({ label: "SW25.Item.Power", fields: prepareFields(item, item.type === "check" ? power.filter(([name]) => !["system.usepower", "system.powerskill", "system.powerabi", "system.powermod"].includes(name)) : power, options) });
     groups.push({ label: "SW25.Item.Powertable", fields: prepareFields(item, Array.from({ length: 10 }, (_, index) => ["system.pt" + (index + 3), String(index + 3), "number"])) });
+  }
+  if (item.type === "magicalsong") {
+    for (const [suffix, label] of [["get", "SW25.Item.Magicalsong.Get"], ["add", "SW25.Adding"], ["cond", "SW25.Condition"], ["cost", "SW25.Item.Magicalsong.Cost"]]) {
+      groups.push({ label, fields: prepareFields(item, ["up", "down", "charm"].map(type => ["system." + type + suffix, CONFIG.SW25.noteTypes[type], "number"])) });
+    }
   }
   return groups;
 }
@@ -35,7 +40,7 @@ function prepareFields(item, definitions, context = {}) {
   }));
 }
 
-export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick", "alchemytech"];
+export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong"];
 
 const common = [["name", "Name"], ["system.overview", "SW25.Item.Overview"]];
 const skill = [
@@ -207,7 +212,15 @@ const alchemytech = [
   ["system.effectvalue.type", "SW25.Item.Alchemytech.EffectiveValue", "select", "alchemyEffecive"],
   ...["b", "a", "s", "ss"].map(rank => ["system.effectvalue." + rank, "SW25.Item.Alchemytech." + rank.toUpperCase(), "number"]),
 ];
-const fieldsByType = { skill, resource, armor, weapon, accessory, item, spell, combatability, raceability, language, enhancearts, ridingtrick, alchemytech };
+const magicalsong = [
+  ...technique,
+  ["system.type", "SW25.Item.Prop", "select", "magicalsongTypes"],
+  ["system.prop", "SW25.Item.Prop", "select", "magicalsongProps"],
+  ["system.sing", "SW25.Item.Magicalsong.Sing", "checkbox"],
+  ["system.pet", "SW25.Item.Magicalsong.Pet"],
+  ["system.singpoint", "SW25.Item.Magicalsong.Singpoint", "number"],
+];
+const fieldsByType = { skill, resource, armor, weapon, accessory, item, spell, combatability, raceability, language, enhancearts, ridingtrick, alchemytech, magicalsong };
 
 const check = [
   ["system.clickitem", "SW25.Item.Clickitem", "select", "clickitemOptions"],
