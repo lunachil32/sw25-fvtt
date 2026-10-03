@@ -1,6 +1,16 @@
 /** Describe editable PC fields without duplicating Actor calculations. */
 export function prepareActorV2Fields(data) {
+  const skillOptions = Object.fromEntries(data.items.filter(item => item.type === "skill").map(item => [item.name, item.name]));
   return {
+    spellFields: spellSchools.map(([key, school]) => ({
+      label: "SW25.Item.Spell." + school, name: "system." + key + "skill",
+      value: data.system[key + "skill"], options: skillOptions,
+      modifierName: "system.attributes." + key + "mod", modifier: data.system.attributes[key + "mod"],
+      power: Number.isFinite(data.system.attributes[key + "power"]) ? data.system.attributes[key + "power"] : "—",
+    })),
+    itemSkillFields: ["herb", "potion", "repair"].map(key => ({
+      name: "system." + key + "skill", label: "SW25.Select" + key + "skill", value: data.system[key + "skill"], options: skillOptions,
+    })),
     profileFields: fields(profile, data),
     vitalFields: fields(vitals, data),
     baseFields: fields(bases, data),
@@ -57,3 +67,5 @@ const combat = [
   ["system.attributes.mppmod", "SW25.Effect.MppMod", "number"],
   ["system.attributes.move.movemod", "SW25.Effect.MoveMod", "number"],
 ];
+
+const spellSchools = [["sc", "Sorcerer"], ["cn", "Conjurer"], ["wz", "Wizard"], ["pr", "Priest"], ["mt", "Magitech"], ["fr", "Fairy"], ["dr", "Druid"], ["dm", "Daemon"], ["ab", "Abyssal"], ["bm", "Bibliomancer"]];

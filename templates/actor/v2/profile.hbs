@@ -33,6 +33,20 @@
     </div>
     <p>{{localize "SW25.Attributes.Protectionpoint.long"}}: {{system.attributes.protectionpoint}} / {{localize "SW25.Attributes.Magicprotection.long"}}: {{system.attributes.magicprotection}}</p>
   </fieldset>
+  <fieldset class="v2-spell-settings"><legend>{{localize "SW25.Selectspellskill"}}</legend>
+    {{#each spellFields as |field|}}
+    <fieldset><legend>{{localize field.label}}</legend><div class="v2-fields">
+      <label>{{localize "SW25.Selectspellskill"}}<select name="{{field.name}}" {{#unless @root.editable}}disabled{{/unless}}>{{selectOptions field.options selected=field.value blank="-"}}</select></label>
+      <label>{{localize "SW25.Modifier"}}<input type="number" name="{{field.modifierName}}" value="{{field.modifier}}" data-dtype="Number" {{#unless @root.editable}}disabled{{/unless}}></label>
+      <span>{{localize "SW25.Attributes.Magicpower"}}: {{field.power}}</span>
+    </div></fieldset>
+    {{/each}}
+  </fieldset>
+  <fieldset class="v2-item-skill-settings"><legend>{{localize "SW25.Defaultitemskill"}}</legend><div class="v2-fields">
+    {{#each itemSkillFields as |field|}}
+    <label>{{localize field.label}}<select name="{{field.name}}" {{#unless @root.editable}}disabled{{/unless}}>{{selectOptions field.options selected=field.value blank="-"}}</select></label>
+    {{/each}}
+  </div></fieldset>
   <fieldset class="v2-biography"><legend>{{localize "SW25.Description"}}</legend>
     <prose-mirror name="system.biography" value="{{system.biography}}" data-document-uuid="{{actor.uuid}}" toggled {{#unless editable}}disabled{{/unless}}>{{{biographyHTML}}}</prose-mirror>
   </fieldset>
