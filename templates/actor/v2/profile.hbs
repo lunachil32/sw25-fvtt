@@ -54,6 +54,27 @@
     <label>{{localize field.label}}<select name="{{field.name}}" {{#unless @root.editable}}disabled{{/unless}}>{{selectOptions field.options selected=field.value blank="-"}}</select></label>
     {{/each}}
   </div></fieldset>
+  <fieldset class="v2-fellow-settings"><legend>{{localize "SW25.ActionTable"}}</legend>
+    <div class="v2-fields">
+      <label>{{localize "SW25.Item.Action.TableType"}}<select name="system.tabletype" {{#unless editable}}disabled{{/unless}}>{{selectOptions config.fellowTypes selected=system.tabletype localize=true}}</select></label>
+      <label>{{localize "SW25.Attributes.Exp"}}<input type="checkbox" name="system.attributes.fellowexp" data-dtype="Boolean" {{checked system.attributes.fellowexp}} {{#unless editable}}disabled{{/unless}}></label>
+      <label>{{localize "SW25.Reward"}}<input type="checkbox" name="system.attributes.fellowreward" data-dtype="Boolean" {{checked system.attributes.fellowreward}} {{#unless editable}}disabled{{/unless}}></label>
+      <label>{{localize "SW25.CancelDialog"}}<input name="system.canceldialog" value="{{system.canceldialog}}" {{#unless editable}}disabled{{/unless}}></label>
+    </div>
+    <label>{{localize "SW25.Fellowmemo"}}<textarea name="system.fellowmemo" {{#unless editable}}disabled{{/unless}}>{{system.fellowmemo}}</textarea></label>
+    <table class="v2-action-table">
+      <thead><tr><th>{{localize "SW25.ActionTable"}}</th><th>{{localize "SW25.Item.Action.Action"}}</th><th>{{localize "SW25.Item.Action.ActionValue"}}</th><th>{{localize "SW25.Item.Action.ActionEffect"}}</th></tr></thead>
+      <tbody>{{#each actionRows as |row|}}
+        {{#each row.items as |item|}}
+        <tr data-item-id="{{item._id}}"><th>{{row.range}}</th><td>{{item.name}}<p>{{item.system.action}}</p>
+          <button type="button" data-action="editItem">{{localize "SW25.V2.EditItem"}}</button>
+          <button type="button" data-action="useItem" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Use"}}</button>
+        </td><td>{{item.system.actionvalue}}</td><td>{{item.system.actioneffect}}</td></tr>
+        {{else}}<tr><th>{{row.range}}</th><td colspan="3">—</td></tr>{{/each}}
+      {{/each}}</tbody>
+    </table>
+    <button type="button" data-action="rollActionTable" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.ActionRoll"}} (1d6)</button>
+  </fieldset>
   <fieldset class="v2-biography"><legend>{{localize "SW25.Description"}}</legend>
     <prose-mirror name="system.biography" value="{{system.biography}}" data-document-uuid="{{actor.uuid}}" toggled {{#unless editable}}disabled{{/unless}}>{{{biographyHTML}}}</prose-mirror>
   </fieldset>

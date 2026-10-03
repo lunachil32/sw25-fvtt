@@ -1,3 +1,4 @@
+import { actionRoll } from "../../helpers/actionroll.mjs";
 import { growthCheck } from "../../helpers/growthcheck.mjs";
 import { updateAllResourceQuantities } from "../../services/resource-quantity.mjs";
 import { gainTacspower, spendTacspower } from "../../use-cases/tacspower.mjs";
@@ -31,6 +32,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     form: { submitOnChange: true, closeOnSubmit: false },
     actions: {
       create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2,
+      rollActionTable: SW25ActorSheetV2._onRollActionTable,
       growthCheck: SW25ActorSheetV2._onGrowthCheck,
       gainLifeline: SW25ActorSheetV2._onGainLifeline,
       resetResources: SW25ActorSheetV2._onResetResources,
@@ -161,6 +163,11 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
       return showPhaseareaCostDialog({ name: item.name, minimum: item.system.mincost, maximum: item.system.maxcost }, apply);
     }
     return apply(item.system.mincost || 0);
+  }
+
+  static async _onRollActionTable(event, button) {
+    if (!this.actor.isOwner) return;
+    return actionRoll(button, this.actor);
   }
 
   static async _onGrowthCheck() {
