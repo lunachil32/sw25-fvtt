@@ -1,3 +1,4 @@
+import { addCustomField, removeCustomField, moveCustomFieldUp, moveCustomFieldDown } from "../../use-cases/item-custom-fields.mjs";
 import { resolveSessionResult } from "../../use-cases/session-results.mjs";
 import { postSessionResult } from "../chat/session-messages.mjs";
 import { manageEffectV2 } from "./effect-controls-v2.mjs";
@@ -6,7 +7,7 @@ import { prepareItemV2FieldGroups } from "../sheet-context/item-v2-fields.mjs";
 
 export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
   static DEFAULT_OPTIONS = {
-    actions: { sessionResult: SW25ItemSheetV2._onSessionResult, create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2 },
+    actions: { customField: SW25ItemSheetV2._onCustomField, sessionResult: SW25ItemSheetV2._onSessionResult, create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2 },
     classes: ["sw25-item-v2"],
     position: { width: 580, height: 620 },
     window: { resizable: true },
@@ -30,6 +31,17 @@ export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicat
     prepared.isSession = this.item.type === "session";
     prepared.itemFieldGroups = prepareItemV2FieldGroups(this.item, prepared);
     return prepared;
+  }
+
+  static async _onCustomField(event, button) {
+    if (!this.item.isOwner) return;
+    const operation = button.dataset.operation;
+    if (operation === "add") return addCustomField(this.item);
+    const index = Number(button.dataset.index);
+    const count = Object.values(this.item.system.customFields ?? {}).length;
+    if (!Number.isInteger(index) || index < 0 || index >= count) return;
+    const action = { remove: removeCustomField, up: moveCustomFieldUp, down: moveCustomFieldDown }[operation];
+    if (action) return action(this.item, index);
   }
 
   static async _onSessionResult() {

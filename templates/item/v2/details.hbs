@@ -23,4 +23,18 @@
   </div>
   </fieldset>
   {{/each}}
+  {{#if isSession}}
+  <fieldset class="v2-custom-fields"><legend>{{localize "SW25.Customs"}}</legend>
+    <button type="button" data-action="customField" data-operation="add" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.Adding"}}</button>
+    {{#each system.customFields as |field index|}}
+    <div class="v2-item-fields">
+      <label>{{localize "SW25.Custom.Name"}}<input name="system.customFields.{{index}}.label" value="{{field.label}}" {{#unless @root.editable}}disabled{{/unless}}></label>
+      <label>{{localize "SW25.Custom.Value"}}<input name="system.customFields.{{index}}.value" value="{{field.value}}" {{#unless @root.editable}}disabled{{/unless}}></label>
+      <button type="button" data-action="customField" data-operation="up" data-index="{{index}}" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Custom.MoveUp"}}</button>
+      <button type="button" data-action="customField" data-operation="down" data-index="{{index}}" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Custom.MoveDown"}}</button>
+      <button type="button" data-action="customField" data-operation="remove" data-index="{{index}}" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Custom.Delete"}}</button>
+    </div>
+    {{/each}}
+  </fieldset>
+  {{/if}}
 </section>
