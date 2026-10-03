@@ -6,7 +6,7 @@
       "Scope": "V2 sheet under development. Character fields, resources and basic checks are available.",
       "Decrease": "Decrease",
       "Increase": "Increase",
-      "NoResources": "No resources. Add resources using the existing sheet.",
+      "NoResources": "No resources. Create a Resource from the Items tab.",
       "BasicCheck": "Basic Check",
       "Profile": "Character",
       "Vitals": "HP / MP",
