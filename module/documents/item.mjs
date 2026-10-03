@@ -330,7 +330,7 @@ export class SW25Item extends Item {
     // Sheet refresh
     await itemData.update({});
     if (itemData.sheet.rendered)
-      await itemData.sheet.render(true, { focus: false });
+      await itemData.sheet.render(false, { focus: false });
   }
 
   async _prepareCheckData(itemData, actor) {
@@ -591,10 +591,10 @@ export class SW25Item extends Item {
 
     // Sheet refresh
     await actor.update({});
-    if (actor.sheet.rendered) await actor.sheet.render(true, { focus: false });
+    if (actor.sheet.rendered) await actor.sheet.render(false, { focus: false });
     await itemData.update({});
     if (itemData.sheet.rendered)
-      await itemData.sheet.render(true, { focus: false });
+      await itemData.sheet.render(false, { focus: false });
   }
 
   async _prepareItemRollData(itemData, actor) {
@@ -1957,10 +1957,10 @@ export class SW25Item extends Item {
 
     // Sheet refresh
     await actor.update({});
-    if (actor.sheet.rendered) await actor.sheet.render(true, { focus: false });
+    if (actor.sheet.rendered) await actor.sheet.render(false, { focus: false });
     await itemData.update({});
     if (itemData.sheet.rendered)
-      await itemData.sheet.render(true, { focus: false });
+      await itemData.sheet.render(false, { focus: false });
   }
 
   _prepareItemData(itemData) {
@@ -2105,10 +2105,10 @@ export class SW25Item extends Item {
 
     // Sheet refresh
     await actor.update({});
-    if (actor.sheet.rendered) await actor.sheet.render(true, { focus: false });
+    if (actor.sheet.rendered) await actor.sheet.render(false, { focus: false });
     await itemData.update({});
     if (itemData.sheet.rendered)
-      await itemData.sheet.render(true, { focus: false });
+      await itemData.sheet.render(false, { focus: false });
   }
 
   _prepareWeaponData(itemData) {
