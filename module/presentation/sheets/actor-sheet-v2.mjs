@@ -39,6 +39,9 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     const data = this.actor.toObject(false);
+    context.biographyHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(this.actor.system.biography ?? "", {
+      secrets: this.actor.isOwner, rollData: this.actor.getRollData(), relativeTo: this.actor,
+    });
     context.selectedItemType = this._itemType ?? supportedItemTypesV2[0];
     context.itemTypes = Object.fromEntries(supportedItemTypesV2.map(type => [type, "TYPES.Item." + type]));
     context.managedItems = data.items.filter(item => supportedItemTypesV2.includes(item.type));

@@ -22,4 +22,7 @@
       </tr>{{/each}}
     </tbody>
   </table>
+  <fieldset class="v2-biography"><legend>{{localize "SW25.Description"}}</legend>
+    <prose-mirror name="system.biography" value="{{system.biography}}" data-document-uuid="{{actor.uuid}}" toggled {{#unless editable}}disabled{{/unless}}>{{{biographyHTML}}}</prose-mirror>
+  </fieldset>
 </section>
