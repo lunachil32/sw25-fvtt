@@ -2,6 +2,10 @@
 export function prepareActorV2Fields(data) {
   const skillOptions = Object.fromEntries(data.items.filter(item => item.type === "skill").map(item => [item.name, item.name]));
   return {
+    fairyContracts: ["Earth", "Water", "Fire", "Wind", "Light", "Dark"].map(element => ({
+      name: "system.attributes.fairy." + element.toLowerCase(), label: "SW25.Item.Spell.FairyContract." + element,
+      value: data.system.attributes.fairy?.[element.toLowerCase()] ?? false,
+    })),
     spellFields: spellSchools.map(([key, school]) => ({
       label: "SW25.Item.Spell." + school, name: "system." + key + "skill",
       value: data.system[key + "skill"], options: skillOptions,

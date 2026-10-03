@@ -42,6 +42,12 @@
     </div></fieldset>
     {{/each}}
   </fieldset>
+  <fieldset class="v2-fairy-contracts"><legend>{{localize "SW25.Item.Spell.Fairy"}}</legend>
+    <div class="v2-fields">{{#each fairyContracts as |field|}}
+      <label>{{localize field.label}}<input type="checkbox" name="{{field.name}}" data-dtype="Boolean" {{checked field.value}} {{#unless @root.editable}}disabled{{/unless}}></label>
+    {{/each}}</div>
+    <p>{{localize "SW25.Item.Spell.FairyContract.Rank"}}: {{system.frRank}}</p>
+  </fieldset>
   <fieldset class="v2-item-skill-settings"><legend>{{localize "SW25.Defaultitemskill"}}</legend><div class="v2-fields">
     {{#each itemSkillFields as |field|}}
     <label>{{localize field.label}}<select name="{{field.name}}" {{#unless @root.editable}}disabled{{/unless}}>{{selectOptions field.options selected=field.value blank="-"}}</select></label>
