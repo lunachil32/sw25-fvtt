@@ -28,6 +28,7 @@
       {{#each combatSelections as |field|}}
       <label>{{localize field.label}}<select name="{{field.name}}" {{#unless @root.editable}}disabled{{/unless}}>{{selectOptions field.options selected=field.value}}</select></label>
       {{/each}}
+      <label>{{localize "SW25.Monster.Loot"}} {{localize "SW25.Modifier"}}<input type="number" name="system.lootmod" value="{{system.lootmod}}" data-dtype="Number" {{#unless editable}}disabled{{/unless}}></label>
       {{#each combatFields as |field|}}
       <label>{{localize field.label}}<input name="{{field.name}}" type="{{field.type}}" data-dtype="{{field.dtype}}" value="{{field.value}}" {{#unless @root.editable}}disabled{{/unless}}></label>
       {{/each}}
