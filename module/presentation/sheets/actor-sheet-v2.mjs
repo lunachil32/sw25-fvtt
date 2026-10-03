@@ -1,3 +1,6 @@
+import { applyItemEffects } from "../../use-cases/apply-item-effects.mjs";
+import { targetSelectDialog } from "../../helpers/dialogs.mjs";
+import { postAppliedEffects } from "../chat/effect-messages.mjs";
 import { manageEffectV2 } from "./effect-controls-v2.mjs";
 import { rollCheckItem } from "../rolls/check-item.mjs";
 import { payItemVitalCost } from "../../use-cases/item-vital-cost.mjs";
@@ -20,6 +23,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     actions: {
       create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2,
       createItem: SW25ActorSheetV2._onCreateItem,
+      applyItemEffects: SW25ActorSheetV2._onApplyItemEffects,
       payItemCost: SW25ActorSheetV2._onPayItemCost,
       useItem: SW25ActorSheetV2._onUseItem,
       editItem: SW25ActorSheetV2._onEditItem,
@@ -116,6 +120,21 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     const tokens = await Util.getControlledActor(this.actor);
     const result = await payItemVitalCost(this.actor, itemId, button.dataset.resource, tokens);
     if (result.warning) ui.notifications.warn(game.i18n.localize(result.warning));
+  }
+
+  static async _onApplyItemEffects(event, button) {
+    if (!this.isEditable) return;
+    const item = this.actor.items.get(button.closest("[data-item-id]").dataset.itemId);
+    if (!item?.effects.size) return;
+    let targets = game.user.targets;
+    if (!item.system.selfbuff && !targets.size) {
+      const selected = await targetSelectDialog(item.name + " (" + game.i18n.localize("SW25.Effectslong") + ")");
+      if (!selected?.length) return;
+      targets = new Set(selected);
+    }
+    const result = applyItemEffects(this.actor, item, targets);
+    for (const target of Array.from(game.user.targets)) target.setTarget(false);
+    return postAppliedEffects(this.actor, result.targetNames, result.effectNames);
   }
 
   static async _onUseItem(event, button) {

@@ -9,6 +9,7 @@
     <li data-item-id="{{item._id}}"><span>{{item.name}}</span>
       {{#if item.system.hpcost}}<button type="button" data-action="payItemCost" data-resource="hp" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Hpcost"}}: {{item.system.hpcost}}</button>{{/if}}
       {{#if item.system.mpcost}}<button type="button" data-action="payItemCost" data-resource="mp" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Mpcost"}}: {{item.system.mpcost}}</button>{{/if}}
+      {{#if item.effects.length}}<button type="button" data-action="applyItemEffects" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Effectslong"}}</button>{{/if}}
       <button type="button" data-action="useItem" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Use"}}</button>
       <button type="button" data-action="editItem">{{localize "SW25.V2.EditItem"}}</button>
       <button type="button" data-action="deleteItem" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.V2.DeleteItem"}}</button>
