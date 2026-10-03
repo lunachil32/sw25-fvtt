@@ -1,10 +1,12 @@
+import { resolveSessionResult } from "../../use-cases/session-results.mjs";
+import { postSessionResult } from "../chat/session-messages.mjs";
 import { manageEffectV2 } from "./effect-controls-v2.mjs";
 import { prepareItemSheetContext } from "../sheet-context/item-context.mjs";
 import { prepareItemV2FieldGroups } from "../sheet-context/item-v2-fields.mjs";
 
 export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
   static DEFAULT_OPTIONS = {
-    actions: { create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2 },
+    actions: { sessionResult: SW25ItemSheetV2._onSessionResult, create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2 },
     classes: ["sw25-item-v2"],
     position: { width: 580, height: 620 },
     window: { resizable: true },
@@ -25,8 +27,15 @@ export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicat
     prepared.descriptionHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(this.item.system.description ?? "", {
       secrets: this.item.isOwner, rollData: prepared.rollData, relativeTo: this.item,
     });
+    prepared.isSession = this.item.type === "session";
     prepared.itemFieldGroups = prepareItemV2FieldGroups(this.item, prepared);
     return prepared;
+  }
+
+  static async _onSessionResult() {
+    if (!this.item.isOwner || this.item.type !== "session") return;
+    const result = await resolveSessionResult(this.item);
+    await postSessionResult(result, game.i18n.localize("SW25.Item.Session.Result.Label"));
   }
 
   _processFormData(event, form, formData) {

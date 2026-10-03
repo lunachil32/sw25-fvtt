@@ -1,5 +1,6 @@
 <section>
   <h2>{{item.name}}</h2>
+  {{#if isSession}}<button type="button" data-action="sessionResult" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.Item.Session.OutputResult"}}</button>{{/if}}
   <fieldset class="v2-description"><legend>{{localize "SW25.Description"}}</legend>
     <prose-mirror name="system.description" value="{{system.description}}" data-document-uuid="{{item.uuid}}" toggled {{#unless editable}}disabled{{/unless}}>{{{descriptionHTML}}}</prose-mirror>
   </fieldset>

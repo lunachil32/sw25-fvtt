@@ -309,6 +309,7 @@ const costs = [
 ];
 
 const sessionFields = {
+  OutputResult: [["basic", "BasicResult"], ["sword", "SwordResult"], ["character", "CharaResult"], ["custom", "CustomResult"]].map(([key, label]) => ["system.result." + key, "SW25.Item.Session." + label, "checkbox"]),
   Information: [
     ["system.session.date", "SW25.Item.Session.Date"],
     ["system.session.gamemaster", "SW25.Item.Session.GM"],
