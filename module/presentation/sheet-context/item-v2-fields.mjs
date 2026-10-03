@@ -14,12 +14,12 @@ export function prepareItemV2Fields(item) {
 /** Group editable roll configuration without duplicating document calculations. */
 export function prepareItemV2FieldGroups(item, context) {
   const groups = [{ label: "SW25.Details", fields: prepareItemV2Fields(item) }];
-  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability"].includes(item.type)) {
+  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check"].includes(item.type)) {
     const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
-    options.resources = Object.fromEntries((item.system.itemlist ?? []).map(resource => [resource.itemId, resource.itemName]));
-    if (item.type !== "item") groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
-    groups.push({ label: "SW25.Check", fields: prepareFields(item, check, options) });
-    groups.push({ label: "SW25.Item.Power", fields: prepareFields(item, power, options) });
+    options.resources = Object.fromEntries((Array.isArray(item.system.itemlist) ? item.system.itemlist : []).map(resource => [resource.itemId, resource.itemName]));
+    if (!["item", "check"].includes(item.type)) groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
+    groups.push({ label: "SW25.Check", fields: prepareFields(item, item.type === "check" ? checkItem : check, options) });
+    groups.push({ label: "SW25.Item.Power", fields: prepareFields(item, item.type === "check" ? power.filter(([name]) => !["system.usepower", "system.powerskill", "system.powerabi", "system.powermod"].includes(name)) : power, options) });
     groups.push({ label: "SW25.Item.Powertable", fields: prepareFields(item, Array.from({ length: 10 }, (_, index) => ["system.pt" + (index + 3), String(index + 3), "number"])) });
   }
   return groups;
@@ -35,7 +35,7 @@ function prepareFields(item, definitions, context = {}) {
   }));
 }
 
-export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language"];
+export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check"];
 
 const common = [["name", "Name"], ["system.overview", "SW25.Item.Overview"]];
 const skill = [
@@ -196,6 +196,14 @@ const check = [
   ["system.customdice", "SW25.Item.Customdice", "checkbox"],
   ["system.customformula", "SW25.Item.Formula"],
   ...["pd", "md", "cd", "hr", "mr"].map(type => ["system.ck" + type + "bt", "SW25.Item." + type, "checkbox"]),
+];
+const checkItem = [
+  ["system.checkmethod", "SW25.Check", "select", "checkmethodOptions"],
+  ["system.checkpackage", "SW25.Item.Check.Package", "select", "checkpackages"],
+  ["system.showbtcheck", "SW25.Battle", "checkbox"],
+  ["system.checkfixmod", "SW25.Fixmodifier", "number"],
+  ...check.filter(([name]) => !["system.clickitem", "system.usedice", "system.customdice"].includes(name)),
+  ...feature.filter(([name]) => name.startsWith("system.resistinfo.")),
 ];
 const power = [
   ["system.usepower", "SW25.Item.Usepower", "checkbox"],
