@@ -14,7 +14,7 @@ export function prepareItemV2Fields(item) {
 /** Group editable roll configuration without duplicating document calculations. */
 export function prepareItemV2FieldGroups(item, context) {
   const groups = [{ label: "SW25.Details", fields: prepareItemV2Fields(item) }];
-  if (["weapon", "armor", "accessory", "item", "spell"].includes(item.type)) {
+  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability"].includes(item.type)) {
     const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
     options.resources = Object.fromEntries((item.system.itemlist ?? []).map(resource => [resource.itemId, resource.itemName]));
     if (item.type !== "item") groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
@@ -35,7 +35,7 @@ function prepareFields(item, definitions, context = {}) {
   }));
 }
 
-export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell"];
+export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language"];
 
 const common = [["name", "Name"], ["system.overview", "SW25.Item.Overview"]];
 const skill = [
@@ -143,7 +143,48 @@ const spellSubtypes = {
     ["system.expansion" + index, "SW25.Item.Spell.Expansion", "textarea"],
   ]),
 };
-const fieldsByType = { skill, resource, armor, weapon, accessory, item, spell };
+const feature = [
+  ["system.equip", "SW25.Item.Activation", "checkbox"],
+  ["system.selfbuff", "SW25.Item.Selfbuff", "checkbox"],
+  ["system.aux", "SW25.Item.Aux", "checkbox"],
+  ["system.prep", "SW25.Item.Prep", "checkbox"],
+  ["system.resistinfo.type", "SW25.Item.Resisttype", "select", "resistCheck"],
+  ["system.resistinfo.input", "SW25.Item.Resisttype"],
+  ["system.resistinfo.result", "SW25.Item.Resist", "select", "resistResult"],
+];
+const combatability = [
+  ...feature,
+  ["system.type", "SW25.Item.Combatability.Type", "select", "combatabilityTypes"],
+  ["system.vag", "SW25.Item.Combatability.Vag", "checkbox"],
+  ["system.dancer", "SW25.Item.Combatability.Dancer", "checkbox"],
+  ["system.condtype", "SW25.Condition", "select", "combatabilityCondTypes"],
+  ["system.cond", "SW25.Condition"],
+  ["system.use", "SW25.Item.Combatability.Use"],
+  ["system.app", "SW25.Item.Combatability.App"],
+  ["system.risk", "SW25.Item.Combatability.Risk"],
+  ["system.secret", "SW25.Item.Combatability.Secret", "checkbox"],
+  ["system.school", "SW25.Item.Combatability.Scholl"],
+  ["system.honercost", "SW25.Item.Combatability.Honercost", "number"],
+  ["system.sectype", "SW25.Item.Combatability.Sectype"],
+  ["system.limcond", "SW25.Item.Combatability.Limcond"],
+];
+const raceability = [
+  ...feature,
+  ["system.level", "SW25.Level", "number"],
+  ["system.race", "SW25.Race"],
+  ["system.target", "SW25.Target"],
+  ["system.rangeshape", "SW25.Rangeshape"],
+  ["system.time", "SW25.Time"],
+  ["system.prop", "SW25.Item.Prop", "select", "spellProps"],
+  ["system.constant", "SW25.Item.Constant", "checkbox"],
+  ["system.main", "SW25.Item.Main", "checkbox"],
+  ["system.decla", "SW25.Item.Declaabbr", "checkbox"],
+];
+const language = [
+  ["system.conversation", "SW25.Item.Language.Conversation", "checkbox"],
+  ["system.reading", "SW25.Item.Language.Reading", "checkbox"],
+];
+const fieldsByType = { skill, resource, armor, weapon, accessory, item, spell, combatability, raceability, language };
 
 const check = [
   ["system.clickitem", "SW25.Item.Clickitem", "select", "clickitemOptions"],
