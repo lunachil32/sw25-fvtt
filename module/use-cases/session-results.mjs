@@ -14,7 +14,7 @@ export async function resolveSessionResult(item) {
   let getHonor = rewards.getHonor;
 
   // basic info.
-  const isBasic = item.system.result?.character;
+  const isBasic = item.system.result?.basic;
   const date = item.system.session.date;
   const gm = item.system.session.gamemaster;
   const player = item.system.session.player;
