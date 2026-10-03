@@ -19,8 +19,7 @@ import { createActorItem, deleteActorItem } from "../../use-cases/actor-items.mj
 import { openItemSheetV2 } from "./item-sheet-v2.mjs";
 import { supportedItemTypesV2 } from "../sheet-context/item-v2-fields.mjs";
 import { prepareActorV2Fields } from "../sheet-context/actor-v2-fields.mjs";
-import { resolveActorCheck } from "../../use-cases/actor-checks.mjs";
-import { postActorCheck } from "../chat/check-roll.mjs";
+import { rollActorQuickCheck } from "../rolls/actor-quick-check.mjs";
 import { editItemField, prepareItemFieldAdjustment, saveItemFieldAdjustment } from "../../use-cases/edit-item-field.mjs";
 import { prepareActorSheetContext } from "../sheet-context/actor-context.mjs";
 
@@ -47,7 +46,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
       editItem: SW25ActorSheetV2._onEditItem,
       deleteItem: SW25ActorSheetV2._onDeleteItem,
       adjustResource: SW25ActorSheetV2._onAdjustResource,
-      rollBasicCheck: SW25ActorSheetV2._onRollBasicCheck,
+      rollQuickCheck: SW25ActorSheetV2._onRollQuickCheck,
     },
     position: { width: 700, height: 760 },
     window: { resizable: true },
@@ -138,10 +137,9 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     await saveItemFieldAdjustment(item, "item.system.quantity", result.value, "system.quantity");
   }
 
-  static async _onRollBasicCheck() {
+  static async _onRollQuickCheck(event, button) {
     if (!this.isEditable) return;
-    const result = await resolveActorCheck(this.actor, { formula: "2d6" });
-    return postActorCheck(this.actor, { label: game.i18n.localize("SW25.V2.BasicCheck") }, result);
+    return rollActorQuickCheck(this.actor, button.dataset.check);
   }
   static async _onCreateItem() {
     if (!this.isEditable) return;

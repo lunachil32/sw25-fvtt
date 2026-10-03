@@ -34,6 +34,7 @@
     </ul>
   </section>
   <section>
-    <button type="button" data-action="rollBasicCheck" {{#unless editable}}disabled{{/unless}}><i class="fa-solid fa-dice" aria-hidden="true"></i> {{localize "SW25.V2.BasicCheck"}} (2d6)</button>
+    <button type="button" data-action="rollQuickCheck" data-check="dodge" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.Item.Armor.Dodge"}} (2d6 + {{system.dodgebase}})</button>
+    <button type="button" data-action="rollQuickCheck" data-check="basic" {{#unless editable}}disabled{{/unless}}><i class="fa-solid fa-dice" aria-hidden="true"></i> {{localize "SW25.V2.BasicCheck"}} (2d6)</button>
   </section>
 </section>
