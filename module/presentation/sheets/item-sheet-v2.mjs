@@ -1,8 +1,10 @@
+import { manageEffectV2 } from "./effect-controls-v2.mjs";
 import { prepareItemSheetContext } from "../sheet-context/item-context.mjs";
 import { prepareItemV2FieldGroups } from "../sheet-context/item-v2-fields.mjs";
 
 export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
   static DEFAULT_OPTIONS = {
+    actions: { create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2 },
     classes: ["sw25-item-v2"],
     position: { width: 580, height: 620 },
     window: { resizable: true },
@@ -11,6 +13,7 @@ export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicat
   };
 
   static PARTS = {
+    effects: { template: "systems/sw25-lunachil-maintained/templates/shared/v2/effects.hbs" },
     details: { template: "systems/sw25-lunachil-maintained/templates/item/v2/details.hbs" },
   };
 

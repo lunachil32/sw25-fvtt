@@ -1,3 +1,4 @@
+import { manageEffectV2 } from "./effect-controls-v2.mjs";
 import { rollCheckItem } from "../rolls/check-item.mjs";
 import { payItemVitalCost } from "../../use-cases/item-vital-cost.mjs";
 import { Util } from "../../helpers/utils.mjs";
@@ -17,6 +18,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     tag: "form",
     form: { submitOnChange: true, closeOnSubmit: false },
     actions: {
+      create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2,
       createItem: SW25ActorSheetV2._onCreateItem,
       payItemCost: SW25ActorSheetV2._onPayItemCost,
       useItem: SW25ActorSheetV2._onUseItem,
@@ -31,6 +33,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
   };
 
   static PARTS = {
+    effects: { template: "systems/sw25-lunachil-maintained/templates/shared/v2/effects.hbs" },
     profile: { template: "systems/sw25-lunachil-maintained/templates/actor/v2/profile.hbs" },
     inventory: { template: "systems/sw25-lunachil-maintained/templates/actor/v2/inventory.hbs" },
     overview: { template: "systems/sw25-lunachil-maintained/templates/actor/v2/overview.hbs" },
