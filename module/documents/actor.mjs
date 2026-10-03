@@ -44,7 +44,7 @@ export class SW25Actor extends Actor {
   /**
    * Prepare Character type specific data
    */
-  async _prepareCharacterData(actorData) {
+  _prepareCharacterData(actorData) {
     if (actorData.type !== "character") return;
 
     // Make modifications to data here. For example:
@@ -53,9 +53,6 @@ export class SW25Actor extends Actor {
     for (const [key, result] of Object.entries(abilities)) {
       Object.assign(systemData.abilities[key], result);
     }
-
-    // Temporary actors created before persistence do not have an ID to update.
-    if (this.id) await this.update({});
 
     //Calcurate Exp & AdvLevel & MgLevel
     this.items.forEach((item) => {
@@ -540,9 +537,6 @@ export class SW25Actor extends Actor {
     });
     systemData.attributes.langlist = languages.join(", ");
 
-    // Sheet refresh
-    if (actorData.sheet.rendered)
-      await actorData.sheet.render(true, { focus: false });
   }
 
   /**
