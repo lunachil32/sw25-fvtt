@@ -31,3 +31,8 @@
 .sw25-actor-v2 .v2-biography prose-mirror { min-height: 160px; }
 
 .sw25-actor-v2 .tab:not(.active) { display: none; }
+
+.sw25-actor-v2 .v2-bookmarks ul { list-style: none; padding: 0; }
+.sw25-actor-v2 .v2-bookmarks li { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.sw25-actor-v2 .v2-bookmarks li span { flex: 1; overflow-wrap: anywhere; }
+.sw25-actor-v2 .v2-bookmarks button { flex: 0 0 auto; }

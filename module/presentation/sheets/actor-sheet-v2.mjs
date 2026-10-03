@@ -1,3 +1,4 @@
+import { toggleItemBookmark } from "../../use-cases/item-bookmarks.mjs";
 import { actionRoll } from "../../helpers/actionroll.mjs";
 import { growthCheck } from "../../helpers/growthcheck.mjs";
 import { updateAllResourceQuantities } from "../../services/resource-quantity.mjs";
@@ -35,6 +36,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
       growthCheck: SW25ActorSheetV2._onGrowthCheck,
       gainLifeline: SW25ActorSheetV2._onGainLifeline,
       resetResources: SW25ActorSheetV2._onResetResources,
+      toggleBookmark: SW25ActorSheetV2._onToggleBookmark,
       createItem: SW25ActorSheetV2._onCreateItem,
       useAlchemy: SW25ActorSheetV2._onUseAlchemy,
       updateNotes: SW25ActorSheetV2._onUpdateNotes,
@@ -265,6 +267,12 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     const item = this.actor.items.get(button.closest("[data-item-id]").dataset.itemId);
     if (item?.type === "check") return rollCheckItem(this.actor, item, game.user.targets);
     if (item) return item.roll();
+  }
+
+  static async _onToggleBookmark(event, button) {
+    if (!this.isEditable) return;
+    const item = this.actor.items.get(button.closest("[data-item-id]").dataset.itemId);
+    if (item) return toggleItemBookmark(item);
   }
 
   static async _onEditItem(event, button) {

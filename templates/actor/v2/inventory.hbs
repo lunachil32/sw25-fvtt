@@ -7,6 +7,7 @@
   <ul>
     {{#each managedItems as |item|}}
     <li data-item-id="{{item._id}}"><span>{{item.name}}</span>
+      <button type="button" data-action="toggleBookmark" aria-pressed="{{#if item.system.bookmark}}true{{else}}false{{/if}}" aria-label="{{localize 'SW25.Item.Bookmark'}}: {{item.name}}" {{#unless @root.editable}}disabled{{/unless}}><i class="fa-{{#if item.system.bookmark}}solid{{else}}regular{{/if}} fa-bookmark" aria-hidden="true"></i></button>
       {{#if item.system.hpcost}}<button type="button" data-action="payItemCost" data-resource="hp" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Hpcost"}}: {{item.system.hpcost}}</button>{{/if}}
       {{#if item.system.mpcost}}<button type="button" data-action="payItemCost" data-resource="mp" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Mpcost"}}: {{item.system.mpcost}}</button>{{/if}}
       {{#if (eq item.type "tactics")}}

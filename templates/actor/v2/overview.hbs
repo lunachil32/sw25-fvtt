@@ -33,6 +33,20 @@
       {{/each}}
     </ul>
   </section>
+  {{#if bookmarks.length}}
+  <section class="v2-bookmarks">
+    <h3>{{localize "SW25.Item.Bookmark"}}</h3>
+    <ul>
+      {{#each bookmarks as |item|}}
+      <li data-item-id="{{item._id}}"><span>{{item.name}}</span>
+        <button type="button" data-action="useItem" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Use"}}</button>
+        <button type="button" data-action="editItem">{{localize "SW25.V2.EditItem"}}</button>
+      <button type="button" data-action="toggleBookmark" aria-pressed="{{#if item.system.bookmark}}true{{else}}false{{/if}}" aria-label="{{localize 'SW25.Item.Bookmark'}}: {{item.name}}" {{#unless @root.editable}}disabled{{/unless}}><i class="fa-{{#if item.system.bookmark}}solid{{else}}regular{{/if}} fa-bookmark" aria-hidden="true"></i></button>
+      </li>
+      {{/each}}
+    </ul>
+  </section>
+  {{/if}}
   <section>
     <button type="button" data-action="rollQuickCheck" data-check="dodge" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.Item.Armor.Dodge"}} (2d6 + {{system.dodgebase}})</button>
     <button type="button" data-action="rollQuickCheck" data-check="basic" {{#unless editable}}disabled{{/unless}}><i class="fa-solid fa-dice" aria-hidden="true"></i> {{localize "SW25.V2.BasicCheck"}} (2d6)</button>
