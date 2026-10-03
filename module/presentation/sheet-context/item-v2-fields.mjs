@@ -5,13 +5,16 @@ export function prepareItemV2Fields(item) {
     const subtype = subtypes[item.system.resource?.type];
     if (subtype) definitions.push(...subtype);
   }
+  if (item.type === "spell") {
+    definitions.push(...(spellSubtypes[item.system.type] ?? []));
+  }
   return prepareFields(item, definitions);
 }
 
 /** Group editable roll configuration without duplicating document calculations. */
 export function prepareItemV2FieldGroups(item, context) {
   const groups = [{ label: "SW25.Details", fields: prepareItemV2Fields(item) }];
-  if (["weapon", "armor", "accessory", "item"].includes(item.type)) {
+  if (["weapon", "armor", "accessory", "item", "spell"].includes(item.type)) {
     const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
     options.resources = Object.fromEntries((item.system.itemlist ?? []).map(resource => [resource.itemId, resource.itemName]));
     if (item.type !== "item") groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
@@ -27,12 +30,12 @@ function prepareFields(item, definitions, context = {}) {
     name, label, type, value: foundry.utils.getProperty(item, name),
     options: options ? context[options] ?? CONFIG.SW25[options] : null,
     localizeOptions: !["skills", "resources"].includes(options),
-    checkbox: type === "checkbox", select: type === "select",
+    checkbox: type === "checkbox", select: type === "select", textarea: type === "textarea",
     dtype: type === "number" ? "Number" : type === "checkbox" ? "Boolean" : "String",
   }));
 }
 
-export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item"];
+export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell"];
 
 const common = [["name", "Name"], ["system.overview", "SW25.Item.Overview"]];
 const skill = [
@@ -109,7 +112,38 @@ const item = [
   ["system.type", "SW25.Item.Category", "select", "itemTypes"],
   ["system.info.category", "SW25.Item.Category"],
 ];
-const fieldsByType = { skill, resource, armor, weapon, accessory, item };
+const spell = [
+  ["system.equip", "SW25.Equip", "checkbox"],
+  ["system.selfbuff", "SW25.Item.Selfbuff", "checkbox"],
+  ["system.level", "SW25.Level", "number"],
+  ["system.type", "SW25.Item.Category", "select", "spellTypes"],
+  ["system.target", "SW25.Target"],
+  ["system.rangeshape", "SW25.Rangeshape"],
+  ["system.time", "SW25.Time"],
+  ["system.prop", "SW25.Item.Prop", "select", "spellProps"],
+  ["system.aux", "SW25.Item.Aux", "checkbox"],
+  ["system.prep", "SW25.Item.Prep", "checkbox"],
+  ["system.resistinfo.type", "SW25.Item.Resisttype", "select", "resistCheck"],
+  ["system.resistinfo.input", "SW25.Item.Resisttype"],
+  ["system.resistinfo.result", "SW25.Item.Resist", "select", "resistResult"],
+];
+const spellSubtypes = {
+  priest: [
+    ["system.faith", "SW25.Item.Spell.Faith", "select", "faiths"],
+    ["system.sect", "SW25.Item.Spell.Specialpriest"],
+  ],
+  magitech: [["system.magispfere", "SW25.Item.Spell.Magispfere"]],
+  fairy: [
+    ["system.fairytype", "SW25.Item.Spell.Fairytype", "select", "fairyTypes"],
+    ["system.fairyprop", "SW25.Item.Spell.Fairyprop", "select", "fairyProps"],
+  ],
+  abyssal: [1, 2].flatMap(index => [
+    ["system.excost" + index, "SW25.Item.Spell.ExCost"],
+    ["system.extime" + index, "SW25.Item.Spell.ExTime"],
+    ["system.expansion" + index, "SW25.Item.Spell.Expansion", "textarea"],
+  ]),
+};
+const fieldsByType = { skill, resource, armor, weapon, accessory, item, spell };
 
 const check = [
   ["system.clickitem", "SW25.Item.Clickitem", "select", "clickitemOptions"],

@@ -7,6 +7,8 @@
     <label>{{localize field.label}}
       {{#if field.select}}
       <select name="{{field.name}}" {{#unless @root.editable}}disabled{{/unless}}>{{selectOptions field.options selected=field.value localize=field.localizeOptions blank="-"}}</select>
+      {{else if field.textarea}}
+      <textarea name="{{field.name}}" {{#unless @root.editable}}disabled{{/unless}}>{{field.value}}</textarea>
       {{else if field.checkbox}}
       <input type="checkbox" name="{{field.name}}" {{checked field.value}} data-dtype="Boolean" {{#unless @root.editable}}disabled{{/unless}}>
       {{else}}
