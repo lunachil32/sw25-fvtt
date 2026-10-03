@@ -29,3 +29,5 @@
 .sw25-item-v2 .v2-description prose-mirror { min-height: 160px; }
 
 .sw25-actor-v2 .v2-biography prose-mirror { min-height: 160px; }
+
+.sw25-actor-v2 .tab:not(.active) { display: none; }

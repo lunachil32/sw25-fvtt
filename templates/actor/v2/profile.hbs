@@ -1,4 +1,4 @@
-<section class="v2-profile">
+<section class="v2-profile{{#if tab}} tab {{tab.cssClass}}{{/if}}"{{#if tab}} data-tab="{{tab.id}}" data-group="{{tab.group}}"{{/if}}>
   <h2>{{localize "SW25.V2.Profile"}}</h2>
   <div class="v2-image-field">
     <img src="{{actor.img}}" alt="{{actor.name}}" width="64" height="64">

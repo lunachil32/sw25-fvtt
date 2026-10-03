@@ -1,4 +1,4 @@
-<section class="v2-inventory">
+<section class="v2-inventory{{#if tab}} tab {{tab.cssClass}}{{/if}}"{{#if tab}} data-tab="{{tab.id}}" data-group="{{tab.group}}"{{/if}}>
   <h2>{{localize "SW25.V2.Items"}}</h2>
   <div class="v2-item-create">
     <label>{{localize "SW25.V2.ItemType"}}<select data-item-type {{#unless editable}}disabled{{/unless}}>{{selectOptions itemTypes selected=selectedItemType localize=true}}</select></label>

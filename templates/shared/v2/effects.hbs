@@ -1,4 +1,4 @@
-<section class="v2-effects">
+<section class="v2-effects{{#if tab}} tab {{tab.cssClass}}{{/if}}"{{#if tab}} data-tab="{{tab.id}}" data-group="{{tab.group}}"{{/if}}>
   <h2>{{localize "SW25.Effects"}}</h2>
   {{#each effects as |section|}}
   <ul>

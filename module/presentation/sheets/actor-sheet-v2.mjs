@@ -54,7 +54,20 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
   };
 
+  static TABS = {
+    primary: {
+      initial: "overview",
+      tabs: [
+        { id: "overview", label: "SW25.V2.Overview" },
+        { id: "profile", label: "SW25.V2.Profile" },
+        { id: "inventory", label: "SW25.Items" },
+        { id: "effects", label: "SW25.Effects" },
+      ],
+    },
+  };
+
   static PARTS = {
+    tabs: { template: "templates/generic/tab-navigation.hbs" },
     effects: { template: "systems/sw25-lunachil-maintained/templates/shared/v2/effects.hbs" },
     profile: { template: "systems/sw25-lunachil-maintained/templates/actor/v2/profile.hbs" },
     inventory: { template: "systems/sw25-lunachil-maintained/templates/actor/v2/inventory.hbs" },
@@ -74,6 +87,12 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     return prepareActorSheetContext(this.actor, {
       ...context, ...prepareActorV2Fields(data), actor: this.actor, data, items: data.items,
     });
+  }
+
+  async _preparePartContext(partId, context, options) {
+    context = await super._preparePartContext(partId, context, options);
+    if (partId in context.tabs) context.tab = context.tabs[partId];
+    return context;
   }
 
   _onChangeForm(formConfig, event) {
