@@ -14,6 +14,11 @@ export function prepareItemV2Fields(item) {
 /** Group editable roll configuration without duplicating document calculations. */
 export function prepareItemV2FieldGroups(item, context) {
   const groups = [{ label: "SW25.Details", fields: prepareItemV2Fields(item) }];
+  if (item.type === "session") {
+    for (const [section, definitions] of Object.entries(sessionFields)) {
+      groups.push({ label: "SW25.Item.Session." + section, fields: prepareFields(item, definitions) });
+    }
+  }
   if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics", "infusion", "barbarousskill", "essenceweave", "otherfeature"].includes(item.type)) {
     const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
     options.resources = Object.fromEntries((Array.isArray(item.system.itemlist) ? item.system.itemlist : []).map(resource => [resource.itemId, resource.itemName]));
@@ -40,7 +45,7 @@ function prepareFields(item, definitions, context = {}) {
   }));
 }
 
-export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics", "infusion", "barbarousskill", "essenceweave", "otherfeature"];
+export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics", "infusion", "barbarousskill", "essenceweave", "otherfeature", "session"];
 
 const common = [["name", "Name"], ["system.overview", "SW25.Item.Overview"]];
 const skill = [
@@ -302,3 +307,14 @@ const costs = [
   ["system.resusequantity", "SW25.Item.Resquantity", "number"],
   ["system.autouseres", "SW25.Item.AutoUseres", "checkbox"],
 ];
+
+const sessionFields = {
+  Information: [
+    ["system.session.date", "SW25.Item.Session.Date"],
+    ["system.session.gamemaster", "SW25.Item.Session.GM"],
+    ["system.session.player", "SW25.Item.Session.Player"],
+    ["system.session.pcnum", "SW25.Item.Session.PC", "number"],
+  ],
+  Mission: [["exp", "Exp"], ["gamel", "Gamel"], ["honor", "Honor"]].map(([key, label]) => ["system.session.mission." + key, "SW25.Item.Session." + label, "number"]),
+  Middle: [["exp", "Exp"], ["gamel", "Gamel"], ["sword", "Sword"], ["abyss", "Abyss"], ["tresure", "Tresure"]].map(([key, label]) => ["system.session.middle." + key, "SW25.Item.Session." + label, "number"]),
+};
