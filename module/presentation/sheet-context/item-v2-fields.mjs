@@ -14,7 +14,7 @@ export function prepareItemV2Fields(item) {
 /** Group editable roll configuration without duplicating document calculations. */
 export function prepareItemV2FieldGroups(item, context) {
   const groups = [{ label: "SW25.Details", fields: prepareItemV2Fields(item) }];
-  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check", "enhancearts", "ridingtrick"].includes(item.type)) {
+  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check", "enhancearts", "ridingtrick", "alchemytech"].includes(item.type)) {
     const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
     options.resources = Object.fromEntries((Array.isArray(item.system.itemlist) ? item.system.itemlist : []).map(resource => [resource.itemId, resource.itemName]));
     if (!["item", "check"].includes(item.type)) groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
@@ -35,7 +35,7 @@ function prepareFields(item, definitions, context = {}) {
   }));
 }
 
-export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick"];
+export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick", "alchemytech"];
 
 const common = [["name", "Name"], ["system.overview", "SW25.Item.Overview"]];
 const skill = [
@@ -198,7 +198,16 @@ const ridingtrick = [
   ["system.support", "SW25.Item.Ridingtrick.Support"],
   ["system.rtpart", "SW25.Item.Part"],
 ];
-const fieldsByType = { skill, resource, armor, weapon, accessory, item, spell, combatability, raceability, language, enhancearts, ridingtrick };
+const alchemytech = [
+  ...technique,
+  ["system.target", "SW25.Target"],
+  ["system.rangeshape", "SW25.Rangeshape"],
+  ["system.time", "SW25.Time"],
+  ...["red", "green", "black", "white", "gold"].map(color => ["system." + color, "SW25.Item.Alchemytech." + color[0].toUpperCase() + color.slice(1), "number"]),
+  ["system.effectvalue.type", "SW25.Item.Alchemytech.EffectiveValue", "select", "alchemyEffecive"],
+  ...["b", "a", "s", "ss"].map(rank => ["system.effectvalue." + rank, "SW25.Item.Alchemytech." + rank.toUpperCase(), "number"]),
+];
+const fieldsByType = { skill, resource, armor, weapon, accessory, item, spell, combatability, raceability, language, enhancearts, ridingtrick, alchemytech };
 
 const check = [
   ["system.clickitem", "SW25.Item.Clickitem", "select", "clickitemOptions"],
