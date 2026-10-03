@@ -1,3 +1,4 @@
+import { gainNotes, gainAdditionalNotes, spendNotes } from "../../use-cases/notes.mjs";
 import { useAlchemy } from "../../use-cases/use-alchemy.mjs";
 import { postAlchemyCost } from "../chat/resource-messages.mjs";
 import { applyItemEffects } from "../../use-cases/apply-item-effects.mjs";
@@ -26,6 +27,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
       create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2,
       createItem: SW25ActorSheetV2._onCreateItem,
       useAlchemy: SW25ActorSheetV2._onUseAlchemy,
+      updateNotes: SW25ActorSheetV2._onUpdateNotes,
       applyItemEffects: SW25ActorSheetV2._onApplyItemEffects,
       payItemCost: SW25ActorSheetV2._onPayItemCost,
       useItem: SW25ActorSheetV2._onUseItem,
@@ -123,6 +125,19 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     const tokens = await Util.getControlledActor(this.actor);
     const result = await payItemVitalCost(this.actor, itemId, button.dataset.resource, tokens);
     if (result.warning) ui.notifications.warn(game.i18n.localize(result.warning));
+  }
+
+  static async _onUpdateNotes(event, button) {
+    if (!this.isEditable) return;
+    const item = this.actor.items.get(button.closest("[data-item-id]").dataset.itemId);
+    const operation = { get: gainNotes, add: gainAdditionalNotes, cost: spendNotes }[button.dataset.notes];
+    if (item?.type !== "magicalsong" || !operation) return;
+    const tokens = await Util.getControlledActor(this.actor);
+    if (tokens.length !== 1) {
+      return ui.notifications.warn(game.i18n.localize(tokens.length ? "SW25.Multiselectwarn" : "SW25.Noselectwarn"));
+    }
+    const missing = await operation(this.actor, item);
+    for (const resource of missing) ui.notifications.warn(game.i18n.localize("SW25.NotResource"));
   }
 
   static async _onUseAlchemy(event, button) {

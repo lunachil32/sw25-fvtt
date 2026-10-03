@@ -9,6 +9,15 @@
     <li data-item-id="{{item._id}}"><span>{{item.name}}</span>
       {{#if item.system.hpcost}}<button type="button" data-action="payItemCost" data-resource="hp" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Hpcost"}}: {{item.system.hpcost}}</button>{{/if}}
       {{#if item.system.mpcost}}<button type="button" data-action="payItemCost" data-resource="mp" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Mpcost"}}: {{item.system.mpcost}}</button>{{/if}}
+      {{#if (eq item.type "magicalsong")}}
+      {{#if (eq item.system.type "song")}}
+      <button type="button" data-action="updateNotes" data-notes="get" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Magicalsong.Get"}}</button>
+      <button type="button" data-action="updateNotes" data-notes="add" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Adding"}}</button>
+      {{/if}}
+      {{#if (eq item.system.type "final")}}
+      <button type="button" data-action="updateNotes" data-notes="cost" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Magicalsong.Cost"}}</button>
+      {{/if}}
+      {{/if}}
       {{#if (eq item.type "alchemytech")}}
       <span>{{localize "SW25.Item.Alchemytech.MaterialCard"}}</span>
       <button type="button" data-action="useAlchemy" data-rank="b" {{#unless @root.editable}}disabled{{/unless}}>B</button>
