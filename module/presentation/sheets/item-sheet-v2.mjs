@@ -5,7 +5,8 @@ import { manageEffectV2 } from "./effect-controls-v2.mjs";
 import { prepareItemSheetContext } from "../sheet-context/item-context.mjs";
 import { prepareItemV2FieldGroups } from "../sheet-context/item-v2-fields.mjs";
 
-export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
+// V12 has no document sheet V2; use its ApplicationV2 only to load this unregistered class.
+export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets?.ItemSheetV2 ?? foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     actions: { customField: SW25ItemSheetV2._onCustomField, sessionResult: SW25ItemSheetV2._onSessionResult, create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2 },
     classes: ["sw25-item-v2"],

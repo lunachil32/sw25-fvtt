@@ -3,7 +3,10 @@ import { SW25Actor } from "./documents/actor.mjs";
 import { SW25Item } from "./documents/item.mjs";
 import { SW25ActiveEffect } from "./documents/active-effect.mjs";
 import { SW25Combat } from "./documents/combat.mjs";
-// Import sheet classes.
+// Import sheet classes. Load before init so registration cannot miss initializeSheets.
+import { SW25ActorSheetV2 } from "./presentation/sheets/actor-sheet-v2.mjs";
+import { SW25ItemSheetV2 } from "./presentation/sheets/item-sheet-v2.mjs";
+import { supportedItemTypesV2 } from "./presentation/sheet-context/item-v2-fields.mjs";
 import { SW25ActorSheet } from "./presentation/sheets/actor-sheet.mjs";
 import { SW25ItemSheet } from "./presentation/sheets/item-sheet.mjs";
 import { SW25ActiveEffectConfigV1 } from "./presentation/sheets/active-effect-config-V1.mjs";
@@ -90,9 +93,6 @@ Hooks.once("init", async function () {
   });
   // ActorSheetV2 is available in V13; V12 keeps the existing sheet registration.
   if (game.release.generation >= 13) {
-    const { SW25ActorSheetV2 } = await import("./presentation/sheets/actor-sheet-v2.mjs");
-    const { SW25ItemSheetV2 } = await import("./presentation/sheets/item-sheet-v2.mjs");
-    const { supportedItemTypesV2 } = await import("./presentation/sheet-context/item-v2-fields.mjs");
     DocumentSheetConfig.registerSheet(Item, game.system.id, SW25ItemSheetV2, {
       types: supportedItemTypesV2, makeDefault: false, label: "SW25.V2.ItemLabel",
     });

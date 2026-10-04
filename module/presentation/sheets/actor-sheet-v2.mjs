@@ -23,7 +23,8 @@ import { editItemField, prepareItemFieldAdjustment, saveItemFieldAdjustment } fr
 import { prepareActorSheetContext } from "../sheet-context/actor-context.mjs";
 
 /** PC sheet using the shared presentation and use-cases with native V2 events. */
-export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
+// V12 has no document sheet V2; use its ApplicationV2 only to load this unregistered class.
+export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets?.ActorSheetV2 ?? foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     classes: ["sw25", "sheet", "actor", "sw25-actor-v2"],
     tag: "form",
