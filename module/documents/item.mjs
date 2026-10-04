@@ -121,6 +121,8 @@ export class SW25Item extends Item {
     const systemData = itemData.system;
     const flags = itemData.flags || {};
     const actor = itemData.actor ? game.actors.get(itemData.actor._id) : null;
+    // Resolve spell defaults before calculating roll bonuses.
+    this._prepareSpellData(itemData);
     if (actor) {
       this._prepareSkillData(itemData, actor);
       this._prepareCheckData(itemData, actor);
@@ -144,7 +146,6 @@ export class SW25Item extends Item {
     this._prepareEssenceweaveData(itemData);
     this._prepareOtherFeatureData(itemData);
     this._prepareRaceabilityData(itemData);
-    this._prepareSpellData(itemData);
     this._prepareMonsterabilityData(itemData);
     this._prepareActionData(itemData);
     this._prepareSessionData(itemData);
