@@ -1,0 +1,15 @@
+<ol class="items-list">
+  <li class="item flexrow items-header">
+    <div class="item-name">{{localize "TYPES.Item.session"}}</div>
+    {{#if editable}}<div class="item-controls"><a data-action="createItem" data-item-type="session" title="{{localize 'DOCUMENT.Create' type=(localize 'TYPES.Item.session')}}"><i class="fas fa-plus"></i></a></div>{{/if}}
+  </li>
+  {{#each sessions as |item|}}
+  <li class="item flexrow draggable" data-item-id="{{item._id}}">
+    <div class="item-name"><a data-action="rollFormula" data-roll-type="item"><img class="item-image" src="{{item.img}}" title="{{item.name}}"></a><h4>{{item.name}}</h4></div>
+    <div class="item-controls">
+      <a data-action="editItem" title="{{localize 'DOCUMENT.Update' type=(localize 'TYPES.Item.session')}}"><i class="fas fa-edit"></i></a>
+      {{#if ../editable}}<a data-action="deleteItem" title="{{localize 'DOCUMENT.Delete' type=(localize 'TYPES.Item.session')}}"><i class="fas fa-trash"></i></a>{{/if}}
+    </div>
+  </li>
+  {{/each}}
+</ol>
