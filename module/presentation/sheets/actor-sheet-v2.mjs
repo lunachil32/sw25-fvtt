@@ -18,7 +18,7 @@ import { createActorItem, deleteActorItem } from "../../use-cases/actor-items.mj
 import { openItemSheetV2 } from "./item-sheet-v2.mjs";
 import { supportedItemTypesV2 } from "../sheet-context/item-v2-fields.mjs";
 import { prepareActorV2Fields } from "../sheet-context/actor-v2-fields.mjs";
-import { rollActorQuickCheck } from "../rolls/actor-quick-check.mjs";
+import { rollActorQuickCheck, rollActorSkillCheck } from "../rolls/actor-quick-check.mjs";
 import { editItemField, prepareItemFieldAdjustment, saveItemFieldAdjustment } from "../../use-cases/edit-item-field.mjs";
 import { prepareActorSheetContext } from "../sheet-context/actor-context.mjs";
 
@@ -47,6 +47,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
       deleteItem: SW25ActorSheetV2._onDeleteItem,
       adjustResource: SW25ActorSheetV2._onAdjustResource,
       rollQuickCheck: SW25ActorSheetV2._onRollQuickCheck,
+      rollSkillCheck: SW25ActorSheetV2._onRollSkillCheck,
     },
     position: { width: 700, height: 760 },
     window: { resizable: true },
@@ -141,6 +142,12 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
     if (!this.isEditable) return;
     return rollActorQuickCheck(this.actor, button.dataset.check);
   }
+  static async _onRollSkillCheck(event, button) {
+    if (!this.isEditable) return;
+    const item = this.actor.items.get(button.closest("[data-item-id]").dataset.itemId);
+    return rollActorSkillCheck(this.actor, item, button.dataset.ability);
+  }
+
   static async _onCreateItem() {
     if (!this.isEditable) return;
     const type = this.element.querySelector("[data-item-type]").value;

@@ -2,6 +2,13 @@
 export function prepareActorV2Fields(data) {
   const skillOptions = Object.fromEntries(data.items.filter(item => item.type === "skill").map(item => [item.name, item.name]));
   return {
+    skillChecks: data.items.filter(item => item.type === "skill").map(item => ({
+      id: item._id, name: item.name,
+      abilities: ["dex", "agi", "str", "vit", "int", "mnd"].map(ability => ({
+        ability, label: "SW25.Ability." + ability[0].toUpperCase() + ability.slice(1) + ".long",
+        bonus: item.system.skillbase[ability],
+      })),
+    })),
     actionRows: (data.system.tabletype === "daemon" ? [["d1", "1"], ["d2", "2-3"], ["d4", "4-5"], ["d6", "6"]] : [["f1", "1-2"], ["f3", "3-4"], ["f5", "5"], ["f6", "6"]]).map(([slot, range]) => ({
       slot, range, items: data.items.filter(item => item.type === "action" && item.system.actiondice === slot),
     })),

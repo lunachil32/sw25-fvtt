@@ -36,3 +36,5 @@
 .sw25-actor-v2 .v2-bookmarks li { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
 .sw25-actor-v2 .v2-bookmarks li span { flex: 1; overflow-wrap: anywhere; }
 .sw25-actor-v2 .v2-bookmarks button { flex: 0 0 auto; }
+
+.sw25-actor-v2 .v2-skill-checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 6px; margin-bottom: 8px; }

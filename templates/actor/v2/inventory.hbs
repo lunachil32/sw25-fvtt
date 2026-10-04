@@ -4,6 +4,13 @@
     <label>{{localize "SW25.V2.ItemType"}}<select data-item-type {{#unless editable}}disabled{{/unless}}>{{selectOptions itemTypes selected=selectedItemType localize=true}}</select></label>
     <button type="button" data-action="createItem" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.V2.CreateItem"}}</button>
   </div>
+  {{#each skillChecks as |skill|}}
+  <fieldset class="v2-skill-checks" data-item-id="{{skill.id}}"><legend>{{skill.name}}</legend>
+    {{#each skill.abilities as |check|}}
+    <button type="button" data-action="rollSkillCheck" data-ability="{{check.ability}}" {{#unless @root.editable}}disabled{{/unless}}>{{localize check.label}} (2d6 + {{check.bonus}})</button>
+    {{/each}}
+  </fieldset>
+  {{/each}}
   <ul>
     {{#each managedItems as |item|}}
     <li data-item-id="{{item._id}}"><span>{{item.name}}</span>
