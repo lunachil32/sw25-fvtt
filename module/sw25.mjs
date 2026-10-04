@@ -13,7 +13,7 @@ let SW25ActiveEffectConfig;
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
 import { SW25 } from "./helpers/config.mjs";
-import { chatButton } from "./helpers/chatbutton.mjs";
+import { registerChatMessageEvents } from "./presentation/chat/message-events.mjs";
 import { customCommand } from "./helpers/customcommand.mjs";
 import { powerRoll } from "./helpers/powerroll.mjs";
 import { lootRoll } from "./helpers/lootroll.mjs";
@@ -51,6 +51,7 @@ export let effectVitResPC,
 /* -------------------------------------------- */
 
 Hooks.once("init", async function () {
+  registerChatMessageEvents();
   // Add utility classes to the global game object so that they're more easily
   // accessible in global contexts.
   game.sw25 = {
@@ -784,42 +785,6 @@ Hooks.once("ready", async function () {
     type: Boolean,
     default: true,
     requiresReload: true,
-  });
-
-  // Chat message button
-  Hooks.on("renderChatMessage", (chatMessage, html, data) => {
-    html.find(".buttonclick").click(function () {
-      const button = $(this);
-      const buttonType = button.data("buttontype");
-      chatButton(chatMessage, buttonType);
-    });
-    html.find(".flavor-text").on("click", async function (event) {
-      event.preventDefault();
-      const toggler = $(event.currentTarget);
-      const message = toggler.closest(".chat-message");
-      const description = message.find(".chat-tooltip");
-      toggler.toggleClass("open", false);
-      description.slideToggle();
-    });
-  });
-  // Add listener to past message
-  $(".chat-message .buttonclick").each((index, element) => {
-    const messageId = $(element).closest(".message").attr("data-message-id");
-    $(element).on("click", (event) => {
-      const chatMessage = game.messages.get(messageId);
-      const button = $(event.currentTarget);
-      const buttonType = button.data("buttontype");
-      chatButton(chatMessage, buttonType);
-    });
-  });
-  $(".chat-message .flavor-text").each((index, element) => {
-    $(element).on("click", (event) => {
-      const toggler = $(event.currentTarget);
-      const message = toggler.closest(".chat-message");
-      const description = message.find(".chat-tooltip");
-      toggler.toggleClass("open", false);
-      description.slideToggle();
-    });
   });
 
   // Prepare reference data from journal or compendium
