@@ -124,7 +124,7 @@ export class SW25Item extends Item {
     // Resolve spell defaults before calculating roll bonuses.
     this._prepareSpellData(itemData);
     if (actor) {
-      this._prepareSkillData(itemData, actor);
+      this.prepareSkillData();
       this._prepareCheckData(itemData, actor);
       this._prepareItemRollData(itemData, actor);
       this._prepareResourceData(itemData, actor);
@@ -151,7 +151,9 @@ export class SW25Item extends Item {
     this._prepareSessionData(itemData);
   }
 
-  _prepareSkillData(itemData, actor) {
+  /** Recalculate skill values after the owning Actor has applied its effects. */
+  prepareSkillData() {
+    const itemData = this;
     if (itemData.type !== "skill") return;
 
     // Make modifications to data here. For example:

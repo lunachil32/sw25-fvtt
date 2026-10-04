@@ -54,6 +54,11 @@ export class SW25Actor extends Actor {
       Object.assign(systemData.abilities[key], result);
     }
 
+    // Embedded Items prepare before Actor effects; refresh skills before consuming their values.
+    for (const item of this.items) {
+      if (item.type === "skill") item.prepareSkillData();
+    }
+
     //Calcurate Exp & AdvLevel & MgLevel
     this.items.forEach((item) => {
       if (item.type == "skill") {
