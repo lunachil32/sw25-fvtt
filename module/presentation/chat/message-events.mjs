@@ -1,5 +1,7 @@
 import { chatButton } from "../../helpers/chatbutton.mjs";
 
+import { applyGrowthChoice } from "../../helpers/growthcheck.mjs";
+
 const messageListeners = new WeakMap();
 
 /** Register before the initial chat history is rendered, including on V12. */
@@ -27,6 +29,14 @@ function onMessageClick(event, message, element) {
     if (button.matches(":disabled")) return;
     event.preventDefault();
     void chatButton(message, button.dataset.buttontype);
+    return;
+  }
+
+  const growth = target?.closest(".increase-ability");
+  if (growth && element.contains(growth)) {
+    if (growth.matches(":disabled")) return;
+    event.preventDefault();
+    void applyGrowthChoice(message, growth);
     return;
   }
 
