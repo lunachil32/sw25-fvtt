@@ -1,6 +1,7 @@
 {
   "SW25": {
     "V2": {
+      "NpcLabel": "NPC Sheet V2 (Preview)",
       "Image": "Image",
       "CreateEffect": "Create Effect",
       "Overview": "Overview",

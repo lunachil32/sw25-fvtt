@@ -1,5 +1,8 @@
 {
   "SW25": {
+    "V2": {
+      "NpcLabel": "NPC 시트 V2 (미리보기)"
+    },
 
     "Setting": "설정",
     "Message": "메시지",
