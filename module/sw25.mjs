@@ -6,6 +6,7 @@ import { SW25Combat } from "./documents/combat.mjs";
 // Import sheet classes. Load before init so registration cannot miss initializeSheets.
 import { SW25ActorSheetV2 } from "./presentation/sheets/actor-sheet-v2.mjs";
 import { SW25NpcSheetV2 } from "./presentation/sheets/npc-sheet-v2.mjs";
+import { SW25MonsterSheetV2 } from "./presentation/sheets/monster-sheet-v2.mjs";
 import { SW25ItemSheetV2 } from "./presentation/sheets/item-sheet-v2.mjs";
 import { supportedItemTypesV2 } from "./presentation/sheet-context/item-v2-fields.mjs";
 import { SW25ActorSheet } from "./presentation/sheets/actor-sheet.mjs";
@@ -96,6 +97,9 @@ Hooks.once("init", async function () {
   if (game.release.generation >= 13) {
     DocumentSheetConfig.registerSheet(Item, game.system.id, SW25ItemSheetV2, {
       types: supportedItemTypesV2, makeDefault: false, label: "SW25.V2.ItemLabel",
+    });
+    DocumentSheetConfig.registerSheet(Actor, game.system.id, SW25MonsterSheetV2, {
+      types: ["monster"], makeDefault: false, label: "SW25.V2.MonsterLabel",
     });
     DocumentSheetConfig.registerSheet(Actor, game.system.id, SW25NpcSheetV2, {
       types: ["npc"], makeDefault: false, label: "SW25.V2.NpcLabel",
