@@ -121,8 +121,10 @@ export class SW25Item extends Item {
     const systemData = itemData.system;
     const flags = itemData.flags || {};
     const actor = itemData.actor ? game.actors.get(itemData.actor._id) : null;
+    // Resolve spell defaults before calculating roll bonuses.
+    this._prepareSpellData(itemData);
     if (actor) {
-      this._prepareSkillData(itemData, actor);
+      this.prepareSkillData();
       this._prepareCheckData(itemData, actor);
       this._prepareItemRollData(itemData, actor);
       this._prepareResourceData(itemData, actor);
@@ -144,18 +146,18 @@ export class SW25Item extends Item {
     this._prepareEssenceweaveData(itemData);
     this._prepareOtherFeatureData(itemData);
     this._prepareRaceabilityData(itemData);
-    this._prepareSpellData(itemData);
     this._prepareMonsterabilityData(itemData);
     this._prepareActionData(itemData);
     this._prepareSessionData(itemData);
   }
 
-  async _prepareSkillData(itemData, actor) {
+  /** Recalculate skill values after the owning Actor has applied its effects. */
+  prepareSkillData() {
+    const itemData = this;
     if (itemData.type !== "skill") return;
 
     // Make modifications to data here. For example:
     const systemData = itemData.system;
-    await actor.update({});
     const actorData = itemData.actor.system;
 
     // Calculate Skill check & Action check
@@ -327,10 +329,6 @@ export class SW25Item extends Item {
       systemData.skillexp = expB[systemData.skilllevel];
     }
 
-    // Sheet refresh
-    await itemData.update({});
-    if (itemData.sheet.rendered)
-      await itemData.sheet.render(true, { focus: false });
   }
 
   async _prepareCheckData(itemData, actor) {
@@ -591,10 +589,10 @@ export class SW25Item extends Item {
 
     // Sheet refresh
     await actor.update({});
-    if (actor.sheet.rendered) await actor.sheet.render(true, { focus: false });
+    if (actor.sheet.rendered) await actor.sheet.render(false, { focus: false });
     await itemData.update({});
     if (itemData.sheet.rendered)
-      await itemData.sheet.render(true, { focus: false });
+      await itemData.sheet.render(false, { focus: false });
   }
 
   async _prepareItemRollData(itemData, actor) {
@@ -1957,10 +1955,10 @@ export class SW25Item extends Item {
 
     // Sheet refresh
     await actor.update({});
-    if (actor.sheet.rendered) await actor.sheet.render(true, { focus: false });
+    if (actor.sheet.rendered) await actor.sheet.render(false, { focus: false });
     await itemData.update({});
     if (itemData.sheet.rendered)
-      await itemData.sheet.render(true, { focus: false });
+      await itemData.sheet.render(false, { focus: false });
   }
 
   _prepareItemData(itemData) {
@@ -2105,10 +2103,10 @@ export class SW25Item extends Item {
 
     // Sheet refresh
     await actor.update({});
-    if (actor.sheet.rendered) await actor.sheet.render(true, { focus: false });
+    if (actor.sheet.rendered) await actor.sheet.render(false, { focus: false });
     await itemData.update({});
     if (itemData.sheet.rendered)
-      await itemData.sheet.render(true, { focus: false });
+      await itemData.sheet.render(false, { focus: false });
   }
 
   _prepareWeaponData(itemData) {

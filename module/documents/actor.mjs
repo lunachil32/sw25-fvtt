@@ -44,7 +44,7 @@ export class SW25Actor extends Actor {
   /**
    * Prepare Character type specific data
    */
-  async _prepareCharacterData(actorData) {
+  _prepareCharacterData(actorData) {
     if (actorData.type !== "character") return;
 
     // Make modifications to data here. For example:
@@ -54,8 +54,10 @@ export class SW25Actor extends Actor {
       Object.assign(systemData.abilities[key], result);
     }
 
-    // Temporary actors created before persistence do not have an ID to update.
-    if (this.id) await this.update({});
+    // Embedded Items prepare before Actor effects; refresh skills before consuming their values.
+    for (const item of this.items) {
+      if (item.type === "skill") item.prepareSkillData();
+    }
 
     //Calcurate Exp & AdvLevel & MgLevel
     this.items.forEach((item) => {
@@ -540,9 +542,6 @@ export class SW25Actor extends Actor {
     });
     systemData.attributes.langlist = languages.join(", ");
 
-    // Sheet refresh
-    if (actorData.sheet.rendered)
-      await actorData.sheet.render(true, { focus: false });
   }
 
   /**

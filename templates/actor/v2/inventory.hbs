@@ -1,0 +1,48 @@
+<section class="v2-inventory{{#if tab}} tab {{tab.cssClass}}{{/if}}"{{#if tab}} data-tab="{{tab.id}}" data-group="{{tab.group}}"{{/if}}>
+  <h2>{{localize "SW25.V2.Items"}}</h2>
+  <div class="v2-item-create">
+    <label>{{localize "SW25.V2.ItemType"}}<select data-item-type {{#unless editable}}disabled{{/unless}}>{{selectOptions itemTypes selected=selectedItemType localize=true}}</select></label>
+    <button type="button" data-action="createItem" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.V2.CreateItem"}}</button>
+  </div>
+  {{#each skillChecks as |skill|}}
+  <fieldset class="v2-skill-checks" data-item-id="{{skill.id}}"><legend>{{skill.name}}</legend>
+    {{#each skill.abilities as |check|}}
+    <button type="button" data-action="rollSkillCheck" data-ability="{{check.ability}}" {{#unless @root.editable}}disabled{{/unless}}>{{localize check.label}} (2d6 + {{check.bonus}})</button>
+    {{/each}}
+  </fieldset>
+  {{/each}}
+  <ul>
+    {{#each managedItems as |item|}}
+    <li data-item-id="{{item._id}}"><span>{{item.name}}</span>
+      <button type="button" data-action="toggleBookmark" aria-pressed="{{#if item.system.bookmark}}true{{else}}false{{/if}}" aria-label="{{localize 'SW25.Item.Bookmark'}}: {{item.name}}" {{#unless @root.editable}}disabled{{/unless}}><i class="fa-{{#if item.system.bookmark}}solid{{else}}regular{{/if}} fa-bookmark" aria-hidden="true"></i></button>
+      {{#if item.system.hpcost}}<button type="button" data-action="payItemCost" data-resource="hp" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Hpcost"}}: {{item.system.hpcost}}</button>{{/if}}
+      {{#if item.system.mpcost}}<button type="button" data-action="payItemCost" data-resource="mp" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Mpcost"}}: {{item.system.mpcost}}</button>{{/if}}
+      {{#if (eq item.type "tactics")}}
+      <button type="button" data-action="updateTacspower" data-tacspower="get" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Tactics.Tacspower"}} {{localize "SW25.Item.Tactics.Get"}}</button>
+      <button type="button" data-action="updateTacspower" data-tacspower="cost" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Tactics.Tacspower"}} {{localize "SW25.Cost"}}</button>
+      {{/if}}
+      {{#if (eq item.type "phasearea")}}<button type="button" data-action="usePhasearea" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Phasearea.Point"}}</button>{{/if}}
+      {{#if (eq item.type "magicalsong")}}
+      {{#if (eq item.system.type "song")}}
+      <button type="button" data-action="updateNotes" data-notes="get" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Magicalsong.Get"}}</button>
+      <button type="button" data-action="updateNotes" data-notes="add" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Adding"}}</button>
+      {{/if}}
+      {{#if (eq item.system.type "final")}}
+      <button type="button" data-action="updateNotes" data-notes="cost" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Item.Magicalsong.Cost"}}</button>
+      {{/if}}
+      {{/if}}
+      {{#if (eq item.type "alchemytech")}}
+      <span>{{localize "SW25.Item.Alchemytech.MaterialCard"}}</span>
+      <button type="button" data-action="useAlchemy" data-rank="b" {{#unless @root.editable}}disabled{{/unless}}>B</button>
+      <button type="button" data-action="useAlchemy" data-rank="a" {{#unless @root.editable}}disabled{{/unless}}>A</button>
+      <button type="button" data-action="useAlchemy" data-rank="s" {{#unless @root.editable}}disabled{{/unless}}>S</button>
+      <button type="button" data-action="useAlchemy" data-rank="ss" {{#unless @root.editable}}disabled{{/unless}}>SS</button>
+      {{/if}}
+      {{#if item.effects.length}}<button type="button" data-action="applyItemEffects" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Effectslong"}}</button>{{/if}}
+      <button type="button" data-action="useItem" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Use"}}</button>
+      <button type="button" data-action="editItem">{{localize "SW25.V2.EditItem"}}</button>
+      <button type="button" data-action="deleteItem" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.V2.DeleteItem"}}</button>
+    </li>
+    {{/each}}
+  </ul>
+</section>

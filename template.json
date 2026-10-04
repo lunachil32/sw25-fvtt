@@ -798,7 +798,17 @@
     },
     "session": {
       "templates": ["base", "roll"],
-      "character": 1
+      "character": 1,
+      "session": {
+        "date": "",
+        "gamemaster": "",
+        "player": "",
+        "pcnum": 1,
+        "mission": { "exp": 0, "gamel": 0, "honor": 0 },
+        "middle": { "exp": 0, "gamel": 0, "sword": 0, "abyss": 0, "tresure": 0 }
+      },
+      "result": { "basic": false, "sword": false, "character": false, "custom": false },
+      "customFields": []
     },
     "otherfeature": {
       "templates": ["base", "roll"],

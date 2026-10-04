@@ -1,0 +1,19 @@
+<section class="v2-effects{{#if tab}} tab {{tab.cssClass}}{{/if}}"{{#if tab}} data-tab="{{tab.id}}" data-group="{{tab.group}}"{{/if}}>
+  <h2>{{localize "SW25.Effects"}}</h2>
+  {{#each effects as |section|}}
+  <ul>
+    <li data-effect-type="{{section.type}}">
+      <strong>{{section.label}}</strong>
+      <button type="button" data-action="create" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.V2.CreateEffect"}}</button>
+    </li>
+    {{#each section.effects as |effect|}}
+    <li data-effect-id="{{effect.id}}" data-parent-id="{{effect.parent.id}}">
+      <span>{{effect.name}} ({{effect.parent.name}})</span>
+      <button type="button" data-action="toggle" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Effect.Toggle"}}</button>
+      <button type="button" data-action="edit" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.V2.EditItem"}}</button>
+      <button type="button" data-action="delete" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.V2.DeleteItem"}}</button>
+    </li>
+    {{/each}}
+  </ul>
+  {{/each}}
+</section>

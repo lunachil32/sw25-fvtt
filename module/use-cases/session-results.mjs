@@ -14,13 +14,13 @@ export async function resolveSessionResult(item) {
   let getHonor = rewards.getHonor;
 
   // basic info.
-  const isBasic = item.system.result.character;
+  const isBasic = item.system.result?.basic;
   const date = item.system.session.date;
   const gm = item.system.session.gamemaster;
   const player = item.system.session.player;
 
   // character result.
-  let characterNames = item.system.result.character
+  let characterNames = item.system.result?.character
     ? canvas.tokens.placeables
         .filter((token) => token.actor?.type === "character")
         .map((token) => token.name)
@@ -40,12 +40,12 @@ export async function resolveSessionResult(item) {
   }
 
   // custom items.
-  const fieldsRaw = item.system.customFields;
+  const fieldsRaw = item.system.customFields ?? {};
   const customItems = Object.values(fieldsRaw);
-  const isCustom = item.system.result.custom && customItems;
+  const isCustom = item.system.result?.custom && customItems;
 
   // sword shard result.
-  if (item.system.result.sword && 0 < getSword) {
+  if (item.system.result?.sword && 0 < getSword) {
     isRoll = true;
     formula = getSword + "d6";
     roll = new Roll(formula);

@@ -1,0 +1,66 @@
+<section class="v2-overview{{#if tab}} tab {{tab.cssClass}}{{/if}}"{{#if tab}} data-tab="{{tab.id}}" data-group="{{tab.group}}"{{/if}}>
+  <header><h2>{{actor.name}}</h2><p>{{localize "SW25.V2.Scope"}}</p></header>
+  <div class="v2-vitals">
+    <div><strong>{{localize "SW25.Hp"}}</strong><span>{{system.hp.value}} / {{system.hp.max}}</span></div>
+    <div><strong>{{localize "SW25.Mp"}}</strong><span>{{system.mp.value}} / {{system.mp.max}}</span></div>
+  </div>
+  <div class="v2-fields">
+    <div>{{localize "SW25.Attributes.Advlevel"}}: {{system.attributes.advlevel.value}}</div>
+    <label>{{localize "SW25.Attributes.Grace"}}<input type="checkbox" name="system.attributes.grace" data-dtype="Boolean" {{checked system.attributes.grace}} {{#unless editable}}disabled{{/unless}}></label>
+  </div>
+  <section aria-label="{{localize 'SW25.Attributes.Move'}}">
+    <h3>{{localize "SW25.Attributes.Move"}}</h3>
+    <dl class="v2-abilities">
+      <div><dt>{{localize "SW25.Attributes.Limitedmove"}}</dt><dd>{{system.attributes.move.limited}}</dd></div>
+      <div><dt>{{localize "SW25.Attributes.Normalmove"}}</dt><dd>{{system.attributes.move.normal}}</dd></div>
+      <div><dt>{{localize "SW25.Attributes.Maxmove"}}</dt><dd>{{system.attributes.move.max}}</dd></div>
+    </dl>
+  </section>
+  <section aria-label="{{localize 'SW25.Abilityname'}}">
+    <h3>{{localize "SW25.Abilityname"}}</h3>
+    <dl class="v2-abilities">
+      {{#each system.abilities as |ability|}}
+      <div><dt>{{ability.label}}</dt><dd>{{ability.value}} ({{ability.mod}})</dd></div>
+      {{/each}}
+    </dl>
+  </section>
+  <section>
+    <h3>{{localize "SW25.Resource"}}</h3>
+    <div class="v2-resource-resets">
+      <button type="button" data-action="gainLifeline" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.Add" type=(localize "SW25.Item.Resource.Types.Lifeline")}}</button>
+      <button type="button" data-action="resetResources" data-resource-type="note" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.Reset" type=(localize "SW25.Item.Resource.Types.Note")}}</button>
+      <button type="button" data-action="resetResources" data-resource-type="lifeline" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.Reset" type=(localize "SW25.Item.Resource.Types.Lifeline")}}</button>
+      <button type="button" data-action="resetResources" data-resource-type="tacspower" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.Reset" type=(localize "SW25.Item.Resource.Types.Tacspower")}}</button>
+    </div>
+    <ul class="v2-resources">
+      {{#each resourceItems as |item|}}
+      <li data-item-id="{{item._id}}">
+        <label for="{{@root.rootId}}-quantity-{{item._id}}">{{item.name}}</label>
+        <button type="button" data-action="adjustResource" data-adjustment="decrease" aria-label="{{localize 'SW25.V2.Decrease'}}: {{item.name}}" {{#unless @root.editable}}disabled{{/unless}}>−</button>
+        <input id="{{@root.rootId}}-quantity-{{item._id}}" type="text" inputmode="decimal" data-resource-quantity value="{{item.system.quantity}}" {{#unless @root.editable}}disabled{{/unless}}>
+        <button type="button" data-action="adjustResource" data-adjustment="increase" aria-label="{{localize 'SW25.V2.Increase'}}: {{item.name}}" {{#unless @root.editable}}disabled{{/unless}}>+</button>
+      </li>
+      {{else}}
+      <li>{{localize "SW25.V2.NoResources"}}</li>
+      {{/each}}
+    </ul>
+  </section>
+  {{#if bookmarks.length}}
+  <section class="v2-bookmarks">
+    <h3>{{localize "SW25.Item.Bookmark"}}</h3>
+    <ul>
+      {{#each bookmarks as |item|}}
+      <li data-item-id="{{item._id}}"><span>{{item.name}}</span>
+        <button type="button" data-action="useItem" {{#unless @root.editable}}disabled{{/unless}}>{{localize "SW25.Use"}}</button>
+        <button type="button" data-action="editItem">{{localize "SW25.V2.EditItem"}}</button>
+      <button type="button" data-action="toggleBookmark" aria-pressed="{{#if item.system.bookmark}}true{{else}}false{{/if}}" aria-label="{{localize 'SW25.Item.Bookmark'}}: {{item.name}}" {{#unless @root.editable}}disabled{{/unless}}><i class="fa-{{#if item.system.bookmark}}solid{{else}}regular{{/if}} fa-bookmark" aria-hidden="true"></i></button>
+      </li>
+      {{/each}}
+    </ul>
+  </section>
+  {{/if}}
+  <section>
+    <button type="button" data-action="rollQuickCheck" data-check="dodge" {{#unless editable}}disabled{{/unless}}>{{localize "SW25.Item.Armor.Dodge"}} (2d6 + {{system.dodgebase}})</button>
+    <button type="button" data-action="rollQuickCheck" data-check="basic" {{#unless editable}}disabled{{/unless}}><i class="fa-solid fa-dice" aria-hidden="true"></i> {{localize "SW25.V2.BasicCheck"}} (2d6)</button>
+  </section>
+</section>
