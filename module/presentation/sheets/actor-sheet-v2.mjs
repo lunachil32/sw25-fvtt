@@ -361,7 +361,7 @@ const inlineItemFields = {
   checkmod: { property: "system.checkmod", numeric: true, zeroAsNull: true, types: ["check"] },
   conversation: { property: "system.conversation", editMode: true, types: ["language"] },
   reading: { property: "system.reading", editMode: true, types: ["language"] },
-  equip: { property: "system.equip", types: ["weapon", "armor", "accessory", "spell", ...featureItemTypes] },
+  equip: { property: "system.equip", types: ["weapon", "armor", "accessory", "spell", "monsterability", ...featureItemTypes] },
 };
 
 const actorPartials = [
