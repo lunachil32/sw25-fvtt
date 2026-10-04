@@ -2,7 +2,7 @@
   <h2>{{localize "SW25.V2.Profile"}}</h2>
   <div class="v2-image-field">
     <img src="{{actor.img}}" alt="{{actor.name}}" width="64" height="64">
-    <label>{{localize "Image"}}<file-picker name="img" type="image" value="{{actor.img}}" {{#unless editable}}disabled{{/unless}}></file-picker></label>
+    <label>{{localize "SW25.V2.Image"}}<file-picker name="img" type="image" value="{{actor.img}}" {{#unless editable}}disabled{{/unless}}></file-picker></label>
   </div>
   <div class="v2-fields">
     <label>{{localize "SW25.Actor.Type"}}<select name="system.classType" {{#unless editable}}disabled{{/unless}}>{{selectOptions config.actorClasses selected=system.classType localize=true blank="SW25.Item.None"}}</select></label>

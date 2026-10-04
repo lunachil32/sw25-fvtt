@@ -1,6 +1,8 @@
 {
   "SW25": {
     "V2": {
+      "Image": "Image",
+      "CreateEffect": "Create Effect",
       "Overview": "Overview",
       "Label": "PC Sheet V2 (Preview)",
       "Scope": "V2 sheet under development. Character fields, resources and basic checks are available.",
