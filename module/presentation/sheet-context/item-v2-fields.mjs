@@ -24,7 +24,7 @@ export function prepareItemV2FieldGroups(item, context) {
     }
   }
   if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics", "infusion", "barbarousskill", "essenceweave", "otherfeature", "action"].includes(item.type)) {
-    const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((item.system.skilllist ?? []).map(skill => [skill.name, skill.name])) } };
+    const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((Array.isArray(item.system.skilllist) ? item.system.skilllist : []).map(skill => [skill.name, skill.name])) } };
     options.resources = Object.fromEntries((Array.isArray(item.system.itemlist) ? item.system.itemlist : []).map(resource => [resource.itemId, resource.itemName]));
     if (!["item", "check"].includes(item.type)) groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
     if (item.type === "action") {
