@@ -45,3 +45,21 @@
 .sw25-actor-v2 .character .common-toggle input { appearance: none; }
 
 .sw25-actor-v2 .character nav.tabs { gap: 0; line-height: normal; justify-content: space-around; }
+
+/* NPC and monster bodies retain their V1 flow layout inside the native V2 frame. */
+.sw25.sw25-npc-v2 .window-content { display: flex; padding: 0; overflow: hidden; background: #dad8cc; }
+.sw25-npc-v2 .actor-sheet-content { flex: 1; min-height: 0; font: 14px Roboto, sans-serif; color: #191813; }
+.sw25-npc-v2 .sheet-body { flex: 1; min-height: 0; overflow-y: auto; }
+.sw25.sw25-npc-v2 .sheet-header { display: flex; flex: 0 0 auto; position: static; }
+.sw25-npc-v2 nav.tabs { flex: 0 0 32px; gap: 0; line-height: normal; }
+.sw25-npc-v2 .actor-sheet-content :is(input, select, textarea) { --input-background-color: rgba(0, 0, 0, 0.05); --input-text-color: #191813; --input-border-color: #7a7971; --input-height: 26px; font: inherit; }
+.sw25-npc-v2 .actor-sheet-content a { color: inherit; }
+.sw25-npc-v2 .actor-sheet-content input[type="checkbox"] { appearance: auto; width: 20px; height: 20px; }
+.sw25-npc-v2 .actor-sheet-content input[type="checkbox"]::before,
+.sw25-npc-v2 .actor-sheet-content input[type="checkbox"]::after { display: none; }
+.sw25-npc-v2 .actor-sheet-content :is(h1, h2, h3, h4) { font-family: Signika, sans-serif; color: inherit; line-height: normal; font-weight: normal; margin: 0 0 0.5rem; padding: 0; }
+.sw25-npc-v2 .actor-sheet-content h4 { font-size: inherit; }
+.sw25-npc-v2 .sheet-body { padding: 8px; }
+.sw25.sw25-npc-v2 prose-mirror { display: flex; flex-direction: column; height: auto; min-height: 200px; }
+.sw25.sw25-npc-v2 prose-mirror .editor-content { flex: 1; min-height: 140px; }
+.sw25-npc-v2 .overview-text { white-space: pre-wrap; }

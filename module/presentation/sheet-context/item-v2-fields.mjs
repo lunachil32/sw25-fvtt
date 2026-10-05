@@ -11,6 +11,12 @@ export function prepareItemV2Fields(item) {
   const options = item.type === "action" ? {
     actionSlots: Object.fromEntries([["f1", "Fellow", "1-2"], ["f3", "Fellow", "3-4"], ["f5", "Fellow", "5"], ["f6", "Fellow", "6"], ["d1", "Daemon", "1"], ["d2", "Daemon", "2-3"], ["d4", "Daemon", "4-5"], ["d6", "Daemon", "6"]].map(([key, type, range]) => [key, game.i18n.localize("SW25." + type) + ": " + range])),
     actionResults: Object.fromEntries((actionResults[item.system.actiondice] ?? []).map(value => [value, value])),
+  } : item.type === "monsterability" ? {
+    monsterClickOptions: {
+      all: "SW25.Item.All", description: "SW25.Item.Onlydescription",
+      dice1: "SW25.Item.Monsterability.Check1", dice2: "SW25.Item.Monsterability.Check2",
+      dice3: "SW25.Item.Monsterability.Check3", power: "SW25.Item.Powerroll",
+    },
   } : {};
   return prepareFields(item, definitions, options);
 }
@@ -23,7 +29,7 @@ export function prepareItemV2FieldGroups(item, context) {
       groups.push({ label: "SW25.Item.Session." + section, fields: prepareFields(item, definitions) });
     }
   }
-  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics", "infusion", "barbarousskill", "essenceweave", "otherfeature", "action"].includes(item.type)) {
+  if (["weapon", "armor", "accessory", "item", "spell", "combatability", "raceability", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics", "infusion", "barbarousskill", "essenceweave", "otherfeature", "action", "monsterability"].includes(item.type)) {
     const options = { ...context, skills: { adv: game.i18n.localize("SW25.Attributes.Advlevel"), ...Object.fromEntries((Array.isArray(item.system.skilllist) ? item.system.skilllist : []).map(skill => [skill.name, skill.name])) } };
     options.resources = Object.fromEntries((Array.isArray(item.system.itemlist) ? item.system.itemlist : []).map(resource => [resource.itemId, resource.itemName]));
     if (!["item", "check"].includes(item.type)) groups.push({ label: "SW25.Item.Field.Resource", fields: prepareFields(item, costs, options) });
@@ -31,8 +37,14 @@ export function prepareItemV2FieldGroups(item, context) {
       const actionCheck = check.filter(([name]) => name !== "system.clickitem").map(([name, ...definition]) => [name + "1", ...definition]);
       groups.push({ label: "SW25.Item.Action.ActionValue", fields: prepareFields(item, actionCheck, options) });
     }
-    groups.push({ label: "SW25.Check", fields: prepareFields(item, item.type === "check" ? checkItem : check, options) });
-    groups.push({ label: "SW25.Item.Power", fields: prepareFields(item, item.type === "check" ? power.filter(([name]) => !["system.usepower", "system.powerskill", "system.powerabi", "system.powermod"].includes(name)) : power, options) });
+    if (item.type === "monsterability") {
+      for (const slot of [1, 2, 3]) {
+        groups.push({ label: "SW25.Item.Monsterability.Check" + slot, fields: prepareFields(item, monsterCheck(slot), options) });
+      }
+    } else groups.push({ label: "SW25.Check", fields: prepareFields(item, item.type === "check" ? checkItem : check, options) });
+    const excludedPowerFields = item.type === "monsterability" ? ["system.powerskill", "system.powerabi"]
+      : item.type === "check" ? ["system.usepower", "system.powerskill", "system.powerabi", "system.powermod"] : [];
+    groups.push({ label: "SW25.Item.Power", fields: prepareFields(item, power.filter(([name]) => !excludedPowerFields.includes(name)), options) });
     groups.push({ label: "SW25.Item.Powertable", fields: prepareFields(item, Array.from({ length: 10 }, (_, index) => ["system.pt" + (index + 3), String(index + 3), "number"])) });
   }
   if (item.type === "magicalsong") {
@@ -41,6 +53,22 @@ export function prepareItemV2FieldGroups(item, context) {
     }
   }
   return groups;
+}
+
+function monsterCheck(slot) {
+  return [
+    ["system.usedice" + slot, "SW25.Item.Usedice", "checkbox"],
+    ["system.label" + slot, "SW25.Item.Monsterability.Label"],
+    ["system.checkbasemod" + slot, "SW25.Basenumber", "number"],
+    ["system.usefix" + slot, "SW25.Item.Monsterability.Usefix", "checkbox"],
+    ["system.checkmod" + slot, "SW25.Modifier", "number"],
+    ["system.applycheck" + slot, "SW25.Item.applyon", "select", "applyOptions"],
+    ["system.customdice" + slot, "SW25.Item.Customdice", "checkbox"],
+    ["system.customformula" + slot, "SW25.Item.Formula"],
+    ["system.dice" + slot + ".resist.type", "SW25.Item.Resisttype", "select", "resistCheck"],
+    ["system.dice" + slot + ".resist.input", "SW25.Item.Resisttype"],
+    ["system.dice" + slot + ".resist.result", "SW25.Item.Resist", "select", "resistResult"],
+  ];
 }
 
 function prepareFields(item, definitions, context = {}) {
@@ -53,7 +81,7 @@ function prepareFields(item, definitions, context = {}) {
   }));
 }
 
-export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics", "infusion", "barbarousskill", "essenceweave", "otherfeature", "session", "action"];
+export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics", "infusion", "barbarousskill", "essenceweave", "otherfeature", "session", "action", "monsterability"];
 
 const common = [["name", "Name"], ["system.overview", "SW25.Item.Overview"]];
 const skill = [
@@ -279,7 +307,13 @@ const action = [
   ["system.actioneffect", "SW25.Item.Action.ActionEffect", "textarea"],
 ];
 const actionResults = { f1: [7, 6], f3: [8, 5], f5: [9, 4], f6: [10, 3], d1: [8], d2: [8], d4: [9], d6: [10] };
-const fieldsByType = { action, skill, resource, armor, weapon, accessory, item, spell, combatability, raceability, language, enhancearts, ridingtrick, alchemytech, magicalsong, phasearea, tactics, infusion, barbarousskill, essenceweave, otherfeature };
+const monsterability = [
+  ...technique.filter(([name]) => !name.startsWith("system.resistinfo.") && name !== "system.level"),
+  ["system.remark", "SW25.Item.Monsterability.Remark"],
+  ["system.clickitem", "SW25.Item.Clickitem", "select", "monsterClickOptions"],
+  ["system.labelmonpow", "SW25.Item.Monsterability.Label"],
+];
+const fieldsByType = { monsterability, action, skill, resource, armor, weapon, accessory, item, spell, combatability, raceability, language, enhancearts, ridingtrick, alchemytech, magicalsong, phasearea, tactics, infusion, barbarousskill, essenceweave, otherfeature };
 
 const check = [
   ["system.clickitem", "SW25.Item.Clickitem", "select", "clickitemOptions"],

@@ -22,8 +22,9 @@ import { supportedItemTypesV2 } from "../sheet-context/item-v2-fields.mjs";
 import { editItemField, prepareItemFieldAdjustment, saveItemFieldAdjustment } from "../../use-cases/edit-item-field.mjs";
 import { prepareActorSheetContext } from "../sheet-context/actor-context.mjs";
 
-/** PC sheet using the shared presentation and use-cases with native V2 events. */
-export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
+/** Shared native V2 Actor operations with the default PC presentation. */
+// V12 has no document sheet V2; use its ApplicationV2 only to load this unregistered class.
+export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets?.ActorSheetV2 ?? foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     classes: ["sw25", "sheet", "actor", "sw25-actor-v2"],
     tag: "form",
@@ -116,7 +117,7 @@ export class SW25ActorSheetV2 extends foundry.applications.api.HandlebarsApplica
 
   async _onRender(context, options) {
     await super._onRender(context, options);
-    for (const element of this.element.querySelectorAll(".character [data-action]")) {
+    for (const element of this.element.querySelectorAll(".character [data-action], .actor-sheet-content [data-action]")) {
       if (["tab", "toggleSidebar", "toggleDetails", "scrollBookmarks", "editItem"].includes(element.dataset.action)) {
         if (element instanceof HTMLButtonElement) element.disabled = false;
         continue;
@@ -360,7 +361,7 @@ const inlineItemFields = {
   checkmod: { property: "system.checkmod", numeric: true, zeroAsNull: true, types: ["check"] },
   conversation: { property: "system.conversation", editMode: true, types: ["language"] },
   reading: { property: "system.reading", editMode: true, types: ["language"] },
-  equip: { property: "system.equip", types: ["weapon", "armor", "accessory", "spell", ...featureItemTypes] },
+  equip: { property: "system.equip", types: ["weapon", "armor", "accessory", "spell", "monsterability", ...featureItemTypes] },
 };
 
 const actorPartials = [

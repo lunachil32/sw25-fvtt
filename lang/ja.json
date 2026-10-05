@@ -1,6 +1,8 @@
 {
   "SW25": {
     "V2": {
+      "MonsterLabel": "魔物シート V2（試作）",
+      "NpcLabel": "NPCシート V2（試作）",
       "Image": "画像",
       "CreateEffect": "バフ・デバフを作成",
       "Overview": "概要",
