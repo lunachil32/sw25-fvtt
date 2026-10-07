@@ -1,23 +1,3 @@
-.sw25-item-v2 .window-content {
-  overflow-y: auto;
-}
-
-.sw25-item-v2 .v2-item-fields {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.sw25-item-v2 .v2-item-fields label {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.sw25-item-v2 .v2-description prose-mirror {
-  min-height: 160px;
-}
-
 /* The PC body uses the existing .sw25/.sw25pc layout. Only bridge the V2 frame here. */
 .sw25-actor-v2 .window-content {
   display: block;
@@ -249,8 +229,8 @@
   white-space: pre-wrap;
 }
 
-/* Preserve the V1 item layout inside the native V2 weapon window. */
-.sw25.sw25-weapon-v2 .window-content {
+/* Preserve the V1 item layouts inside the native V2 window. */
+.sw25.sw25-item-v2 .window-content {
   display: block;
   padding: 8px;
   overflow: hidden;
@@ -259,25 +239,25 @@
   font: 14px Roboto, sans-serif;
 }
 
-.sw25-weapon-v2 .sw25item .main {
+.sw25-item-v2 .sw25item .main {
   min-height: 0;
 }
 
-.sw25-weapon-v2 .sw25item .sheet-body {
+.sw25-item-v2 .sw25item .sheet-body {
   overflow-y: auto;
 }
 
-.sw25-weapon-v2 .tab:not(.active) {
+.sw25-item-v2 .tab:not(.active) {
   display: none;
 }
 
-.sw25-weapon-v2 nav.tabs {
+.sw25-item-v2 nav.tabs {
   gap: 0;
   line-height: normal;
   justify-content: space-around;
 }
 
-.sw25-weapon-v2 .sw25item :is(h1, h2, h3, h4) {
+.sw25-item-v2 .window-content :is(h1, h2, h3, h4) {
   font-family: Signika, sans-serif;
   color: inherit;
   line-height: normal;
@@ -286,11 +266,11 @@
   padding: 0;
 }
 
-.sw25-weapon-v2 .sw25item h1 {
+.sw25-item-v2 .window-content h1 {
   font-size: 2em;
 }
 
-.sw25-weapon-v2 :is(input, select, textarea) {
+.sw25-item-v2 :is(input, select, textarea) {
   --input-background-color: rgba(0, 0, 0, 0.05);
   --input-text-color: #191813;
   --input-border-color: #7a7971;
@@ -298,26 +278,66 @@
   font: inherit;
 }
 
-.sw25-weapon-v2 input[type="checkbox"] {
+.sw25-item-v2 input[type="checkbox"] {
   appearance: auto;
 }
 
-.sw25-weapon-v2 input[type="checkbox"]::before,
-.sw25-weapon-v2 input[type="checkbox"]::after {
+.sw25-item-v2 input[type="checkbox"]::before,
+.sw25-item-v2 input[type="checkbox"]::after {
   display: none;
 }
 
-.sw25-weapon-v2 a {
+.sw25-item-v2 a {
   color: inherit;
 }
 
-.sw25-weapon-v2 prose-mirror {
+.sw25-item-v2 prose-mirror {
   display: flex;
   flex-direction: column;
   height: auto;
   min-height: 180px;
 }
 
-.sw25-weapon-v2 prose-mirror .editor-content {
+.sw25-item-v2 prose-mirror .editor-content {
   min-height: 140px;
+}
+
+.sw25-item-v2 .item-classic-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.sw25-item-v2 .item-classic-layout > .sheet-header,
+.sw25-item-v2 .item-classic-layout > .sheet-tabs {
+  flex: 0 0 auto;
+}
+
+.sw25-item-v2 .item-classic-layout > .sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.sw25-item-v2 [aria-disabled="true"] {
+  cursor: default;
+}
+
+/* V1 core supplied these header rules through .sheet.app. */
+.sw25-item-v2 .item-classic-layout > .sheet-header {
+  display: flex;
+  align-items: center;
+}
+
+.sw25-item-v2 .item-classic-layout > .sheet-header .profile-img {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  margin-right: 6px;
+}
+
+.sw25-item-v2 .item-classic-layout .header-fields {
+  flex: 1;
+  min-width: 0;
 }

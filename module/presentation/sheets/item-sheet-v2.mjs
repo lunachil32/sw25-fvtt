@@ -4,57 +4,49 @@ import { resolveSessionResult } from "../../use-cases/session-results.mjs";
 import { postSessionResult } from "../chat/session-messages.mjs";
 import { manageEffectV2 } from "./effect-controls-v2.mjs";
 import { prepareItemSheetContext } from "../sheet-context/item-context.mjs";
-import { prepareItemV2FieldGroups } from "../sheet-context/item-v2-fields.mjs";
 
 // V12 has no document sheet V2; use its ApplicationV2 only to load this unregistered class.
 export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets?.ItemSheetV2 ?? foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     actions: { customField: SW25ItemSheetV2._onCustomField, sessionResult: SW25ItemSheetV2._onSessionResult, create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2 },
-    classes: ["sw25-item-v2"],
-    position: { width: 580, height: 620 },
+    classes: ["sw25", "sheet", "item", "sw25-item-v2"],
+    position: { width: 620, height: 480 },
     window: { resizable: true },
     form: { submitOnChange: true, closeOnSubmit: false },
     viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
   };
 
   static PARTS = {
-    weapon: {
+    content: {
       template: "systems/sw25-lunachil-maintained/templates/item/v2/weapon.hbs",
       scrollable: [".sheet-body"],
-      templates: ["elements", "usedice", "usepower", "effects"].map(name =>
-        `systems/sw25-lunachil-maintained/templates/item/parts/item-${name}.hbs`),
+      templates: [
+        ...["elements", "usedice", "usepower", "effects"].map(name =>
+          `systems/sw25-lunachil-maintained/templates/item/parts/item-${name}.hbs`),
+        "systems/sw25-lunachil-maintained/templates/item/v2/customs.hbs",
+      ],
     },
-    effects: { template: "systems/sw25-lunachil-maintained/templates/shared/v2/effects.hbs" },
-    details: { template: "systems/sw25-lunachil-maintained/templates/item/v2/details.hbs" },
   };
-
-  constructor(options = {}) {
-    if (options.document?.type === "weapon") {
-      options = foundry.utils.mergeObject({
-        classes: ["sw25", "sheet", "item", "sw25-weapon-v2"],
-        position: { width: 620, height: 480 },
-      }, options, { inplace: false });
-    }
-    super(options);
-  }
 
   _configureRenderParts(options) {
     const parts = super._configureRenderParts(options);
-    if (this.item.type === "weapon") return { weapon: parts.weapon };
-    delete parts.weapon;
+    if (parts.content) {
+      parts.content.template = `systems/sw25-lunachil-maintained/templates/item/v2/${this.item.type}.hbs`;
+    }
     return parts;
   }
 
   _getTabsConfig(group) {
-    if (this.item.type !== "weapon" || group !== "primary") return super._getTabsConfig(group);
-    return {
-      initial: "description",
-      tabs: [
-        { id: "description", label: "SW25.Description" },
-        { id: "details", label: "SW25.Details" },
-        { id: "effects", label: "SW25.Effects" },
-      ],
-    };
+    if (group !== "primary") return super._getTabsConfig(group);
+    const tabs = [{ id: "description", label: "SW25.Description" }];
+    if (this.item.type !== "language") {
+      tabs.push({ id: "details", label: "SW25.Details" });
+      if (this.item.type !== "session") tabs.push({ id: "effects", label: "SW25.Effects" });
+      if (["session", "otherfeature"].includes(this.item.type)) {
+        tabs.push({ id: "customs", label: "SW25.Customs" });
+      }
+    }
+    return { initial: "description", tabs };
   }
 
   async _prepareContext(options) {
@@ -65,16 +57,13 @@ export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicat
     prepared.descriptionHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(this.item.system.description ?? "", {
       secrets: this.item.isOwner, rollData: prepared.rollData, relativeTo: this.item,
     });
-    prepared.isSession = this.item.type === "session";
-    if (this.item.type === "weapon") prepared.tabs = this._prepareTabs("primary");
-    else prepared.itemFieldGroups = prepareItemV2FieldGroups(this.item, prepared);
+    prepared.tabs = this._prepareTabs("primary");
     return prepared;
   }
 
   async _onRender(context, options) {
     await super._onRender(context, options);
-    if (this.item.type !== "weapon") return;
-    for (const action of this.element.querySelectorAll(".sw25item [data-action]:not([data-action='tab'])")) {
+    for (const action of this.element.querySelectorAll(".window-content [data-action]:not([data-action='tab'])")) {
       action.setAttribute("aria-disabled", String(!this.isEditable));
     }
   }
@@ -108,8 +97,10 @@ export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicat
     }
     if (name) {
       const updates = { [name]: formData.object[name] };
-      if (this.item.type === "weapon" && name === "system.type") {
-        for (const [key, value] of Object.entries(getWeaponTypeElements(updates[name]) ?? {})) {
+      const elements = this.item.type === "weapon" && name === "system.type"
+        ? getWeaponTypeElements(updates[name]) : null;
+      if (elements) {
+        for (const [key, value] of Object.entries(elements)) {
           updates[`system.elements.${key}`] = value;
         }
       }
