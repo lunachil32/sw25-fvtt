@@ -1,65 +1,250 @@
-.sw25-item-v2 .window-content { overflow-y: auto; }
-.sw25-item-v2 .v2-item-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.sw25-item-v2 .v2-item-fields label { display: flex; flex-direction: column; gap: 4px; }
-.sw25-item-v2 .v2-description prose-mirror { min-height: 160px; }
+.sw25-item-v2 .window-content {
+  overflow-y: auto;
+}
+
+.sw25-item-v2 .v2-item-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.sw25-item-v2 .v2-item-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sw25-item-v2 .v2-description prose-mirror {
+  min-height: 160px;
+}
 
 /* The PC body uses the existing .sw25/.sw25pc layout. Only bridge the V2 frame here. */
-.sw25-actor-v2 .window-content { display: block; padding: 0; overflow: visible; border-radius: 0 0 5px 5px; }
-.sw25-actor-v2 .character { min-height: 0; }
-.sw25-actor-v2 .sw25pc { min-height: 0; }
-.sw25-actor-v2 .tab:not(.active) { display: none; }
-.sw25-actor-v2 .bookmark-container { overflow-x: auto; scrollbar-width: none; }
-.sw25-actor-v2 prose-mirror { min-height: 160px; }
-.sw25-actor-v2 [aria-disabled="true"] { cursor: default; }
+.sw25-actor-v2 .window-content {
+  display: block;
+  padding: 0;
+  overflow: visible;
+  border-radius: 0 0 5px 5px;
+}
+
+.sw25-actor-v2 .character {
+  min-height: 0;
+}
+
+.sw25-actor-v2 .sw25pc {
+  min-height: 0;
+}
+
+.sw25-actor-v2 .tab:not(.active) {
+  display: none;
+}
+
+.sw25-actor-v2 .bookmark-container {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.sw25-actor-v2 prose-mirror {
+  min-height: 160px;
+}
+
+.sw25-actor-v2 [aria-disabled="true"] {
+  cursor: default;
+}
 
 /* V1 typography and controls within the V2 frame, without changing other sheets. */
-.sw25-actor-v2 { overflow: visible; }
-.sw25-actor-v2 .character { font: 14px Roboto, sans-serif; color: #191813; }
-.sw25-actor-v2 .character :is(h1, h2, h3, h4) { font-family: Signika, sans-serif; color: inherit; line-height: normal; font-weight: normal; margin: 0 0 0.5rem; padding: 0; }
-.sw25-actor-v2 .character h1 { font-size: 2em; }
-.sw25-actor-v2 .character h2 { font-size: 1.5em; }
-.sw25-actor-v2 .character h3 { font-size: 1.25em; }
-.sw25-actor-v2 .character h4 { font-size: inherit; }
-.sw25-actor-v2 .character :is(input, select, textarea) { --input-background-color: rgba(0, 0, 0, 0.05); --input-text-color: #191813; --input-border-color: #7a7971; --input-height: 26px; font-family: inherit; font-size: inherit; }
-.sw25-actor-v2 .character :is(input, select):disabled { color: #777; background: rgba(0, 0, 0, 0.05); border-color: transparent; }
-.sw25-actor-v2 .character a { color: inherit; }
-.sw25-actor-v2 .header__title .header__title--name { font-weight: bold; color: rgba(var(--main-text-color), 1); padding-left: 20px; margin: 5px 0; }
-.sw25-actor-v2 [data-action="tab"] > * { pointer-events: none; }
+.sw25-actor-v2 {
+  overflow: visible;
+}
+
+.sw25-actor-v2 .character {
+  font: 14px Roboto, sans-serif;
+  color: #191813;
+}
+
+.sw25-actor-v2 .character :is(h1, h2, h3, h4) {
+  font-family: Signika, sans-serif;
+  color: inherit;
+  line-height: normal;
+  font-weight: normal;
+  margin: 0 0 0.5rem;
+  padding: 0;
+}
+
+.sw25-actor-v2 .character h1 {
+  font-size: 2em;
+}
+
+.sw25-actor-v2 .character h2 {
+  font-size: 1.5em;
+}
+
+.sw25-actor-v2 .character h3 {
+  font-size: 1.25em;
+}
+
+.sw25-actor-v2 .character h4 {
+  font-size: inherit;
+}
+
+.sw25-actor-v2 .character :is(input, select, textarea) {
+  --input-background-color: rgba(0, 0, 0, 0.05);
+  --input-text-color: #191813;
+  --input-border-color: #7a7971;
+  --input-height: 26px;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.sw25-actor-v2 .character :is(input, select):disabled {
+  color: #777;
+  background: rgba(0, 0, 0, 0.05);
+  border-color: transparent;
+}
+
+.sw25-actor-v2 .character a {
+  color: inherit;
+}
+
+.sw25-actor-v2 .header__title .header__title--name {
+  font-weight: bold;
+  color: rgba(var(--main-text-color), 1);
+  padding-left: 20px;
+  margin: 5px 0;
+}
+
+.sw25-actor-v2 [data-action="tab"] > * {
+  pointer-events: none;
+}
+
 .sw25-actor-v2 [data-sidebar-toggle]:checked ~ .sw25pc .sidebar-hidden {
   display:block;
 }
+
 .sw25-actor-v2 [data-sidebar-toggle]:checked ~ .sw25pc {
   grid-template-columns: 0px 1fr !important;
 }
+
 .sw25-actor-v2 [data-sidebar-toggle]:checked ~ .sw25pc .sidebar .sidebar__contents {
   display: none;
 }
+
 .sw25-actor-v2 [data-sidebar-toggle]:checked ~ .sw25pc .sidebar__toggle::before {
   content: "▶";
   color:#4bd865;
 }
-.sw25-actor-v2 .character input[type="checkbox"] { appearance: auto; width: 20px; height: 20px; background: none; }
-.sw25-actor-v2 .character input[type="checkbox"]::before,
-.sw25-actor-v2 .character input[type="checkbox"]::after { display: none; }
-.sw25-actor-v2 .character .togglearea__btn input { width: 0; height: 0; }
-.sw25-actor-v2 .character .common-toggle input { appearance: none; }
 
-.sw25-actor-v2 .character nav.tabs { gap: 0; line-height: normal; justify-content: space-around; }
+.sw25-actor-v2 .character input[type="checkbox"] {
+  appearance: auto;
+  width: 20px;
+  height: 20px;
+  background: none;
+}
+
+.sw25-actor-v2 .character input[type="checkbox"]::before,
+.sw25-actor-v2 .character input[type="checkbox"]::after {
+  display: none;
+}
+
+.sw25-actor-v2 .character .togglearea__btn input {
+  width: 0;
+  height: 0;
+}
+
+.sw25-actor-v2 .character .common-toggle input {
+  appearance: none;
+}
+
+.sw25-actor-v2 .character nav.tabs {
+  gap: 0;
+  line-height: normal;
+  justify-content: space-around;
+}
 
 /* NPC and monster bodies retain their V1 flow layout inside the native V2 frame. */
-.sw25.sw25-npc-v2 .window-content { display: flex; padding: 0; overflow: hidden; background: #dad8cc; }
-.sw25-npc-v2 .actor-sheet-content { flex: 1; min-height: 0; font: 14px Roboto, sans-serif; color: #191813; }
-.sw25-npc-v2 .sheet-body { flex: 1; min-height: 0; overflow-y: auto; }
-.sw25.sw25-npc-v2 .sheet-header { display: flex; flex: 0 0 auto; position: static; }
-.sw25-npc-v2 nav.tabs { flex: 0 0 32px; gap: 0; line-height: normal; }
-.sw25-npc-v2 .actor-sheet-content :is(input, select, textarea) { --input-background-color: rgba(0, 0, 0, 0.05); --input-text-color: #191813; --input-border-color: #7a7971; --input-height: 26px; font: inherit; }
-.sw25-npc-v2 .actor-sheet-content a { color: inherit; }
-.sw25-npc-v2 .actor-sheet-content input[type="checkbox"] { appearance: auto; width: 20px; height: 20px; }
+.sw25.sw25-npc-v2 .window-content {
+  display: flex;
+  padding: 0;
+  overflow: hidden;
+  background: #dad8cc;
+}
+
+.sw25-npc-v2 .actor-sheet-content {
+  flex: 1;
+  min-height: 0;
+  font: 14px Roboto, sans-serif;
+  color: #191813;
+}
+
+.sw25-npc-v2 .sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.sw25.sw25-npc-v2 .sheet-header {
+  display: flex;
+  flex: 0 0 auto;
+  position: static;
+}
+
+.sw25-npc-v2 nav.tabs {
+  flex: 0 0 32px;
+  gap: 0;
+  line-height: normal;
+}
+
+.sw25-npc-v2 .actor-sheet-content :is(input, select, textarea) {
+  --input-background-color: rgba(0, 0, 0, 0.05);
+  --input-text-color: #191813;
+  --input-border-color: #7a7971;
+  --input-height: 26px;
+  font: inherit;
+}
+
+.sw25-npc-v2 .actor-sheet-content a {
+  color: inherit;
+}
+
+.sw25-npc-v2 .actor-sheet-content input[type="checkbox"] {
+  appearance: auto;
+  width: 20px;
+  height: 20px;
+}
+
 .sw25-npc-v2 .actor-sheet-content input[type="checkbox"]::before,
-.sw25-npc-v2 .actor-sheet-content input[type="checkbox"]::after { display: none; }
-.sw25-npc-v2 .actor-sheet-content :is(h1, h2, h3, h4) { font-family: Signika, sans-serif; color: inherit; line-height: normal; font-weight: normal; margin: 0 0 0.5rem; padding: 0; }
-.sw25-npc-v2 .actor-sheet-content h4 { font-size: inherit; }
-.sw25-npc-v2 .sheet-body { padding: 8px; }
-.sw25.sw25-npc-v2 prose-mirror { display: flex; flex-direction: column; height: auto; min-height: 200px; }
-.sw25.sw25-npc-v2 prose-mirror .editor-content { flex: 1; min-height: 140px; }
-.sw25-npc-v2 .overview-text { white-space: pre-wrap; }
+.sw25-npc-v2 .actor-sheet-content input[type="checkbox"]::after {
+  display: none;
+}
+
+.sw25-npc-v2 .actor-sheet-content :is(h1, h2, h3, h4) {
+  font-family: Signika, sans-serif;
+  color: inherit;
+  line-height: normal;
+  font-weight: normal;
+  margin: 0 0 0.5rem;
+  padding: 0;
+}
+
+.sw25-npc-v2 .actor-sheet-content h4 {
+  font-size: inherit;
+}
+
+.sw25-npc-v2 .sheet-body {
+  padding: 8px;
+}
+
+.sw25.sw25-npc-v2 prose-mirror {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  min-height: 200px;
+}
+
+.sw25.sw25-npc-v2 prose-mirror .editor-content {
+  flex: 1;
+  min-height: 140px;
+}
+
+.sw25-npc-v2 .overview-text {
+  white-space: pre-wrap;
+}
