@@ -1,4 +1,4 @@
-import { getWeaponTypeElements } from "../../rules/elements.mjs";
+import { getPropertyElements, getWeaponTypeElements } from "../../rules/elements.mjs";
 import { addCustomField, removeCustomField, moveCustomFieldUp, moveCustomFieldDown } from "../../use-cases/item-custom-fields.mjs";
 import { resolveSessionResult } from "../../use-cases/session-results.mjs";
 import { postSessionResult } from "../chat/session-messages.mjs";
@@ -97,8 +97,8 @@ export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicat
     }
     if (name) {
       const updates = { [name]: formData.object[name] };
-      const elements = this.item.type === "weapon" && name === "system.type"
-        ? getWeaponTypeElements(updates[name]) : null;
+      const elements = name === "system.prop" ? getPropertyElements(updates[name])
+        : this.item.type === "weapon" && name === "system.type" ? getWeaponTypeElements(updates[name]) : null;
       if (elements) {
         for (const [key, value] of Object.entries(elements)) {
           updates[`system.elements.${key}`] = value;
