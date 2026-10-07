@@ -18,7 +18,7 @@ import { payItemVitalCost } from "../../use-cases/item-vital-cost.mjs";
 import { Util } from "../../helpers/utils.mjs";
 import { createActorItem, deleteActorItem } from "../../use-cases/actor-items.mjs";
 import { openItemSheetV2 } from "./item-sheet-v2.mjs";
-import { supportedItemTypesV2 } from "../sheet-context/item-v2-fields.mjs";
+import { supportedItemTypesV2 } from "./item-sheet-types-v2.mjs";
 import { editItemField, prepareItemFieldAdjustment, saveItemFieldAdjustment } from "../../use-cases/edit-item-field.mjs";
 import { prepareActorSheetContext } from "../sheet-context/actor-context.mjs";
 
