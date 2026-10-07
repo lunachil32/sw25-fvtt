@@ -248,3 +248,76 @@
 .sw25-npc-v2 .overview-text {
   white-space: pre-wrap;
 }
+
+/* Preserve the V1 item layout inside the native V2 weapon window. */
+.sw25.sw25-weapon-v2 .window-content {
+  display: block;
+  padding: 8px;
+  overflow: hidden;
+  background: #dad8cc;
+  color: #191813;
+  font: 14px Roboto, sans-serif;
+}
+
+.sw25-weapon-v2 .sw25item .main {
+  min-height: 0;
+}
+
+.sw25-weapon-v2 .sw25item .sheet-body {
+  overflow-y: auto;
+}
+
+.sw25-weapon-v2 .tab:not(.active) {
+  display: none;
+}
+
+.sw25-weapon-v2 nav.tabs {
+  gap: 0;
+  line-height: normal;
+  justify-content: space-around;
+}
+
+.sw25-weapon-v2 .sw25item :is(h1, h2, h3, h4) {
+  font-family: Signika, sans-serif;
+  color: inherit;
+  line-height: normal;
+  font-weight: normal;
+  margin: 0 0 0.5rem;
+  padding: 0;
+}
+
+.sw25-weapon-v2 .sw25item h1 {
+  font-size: 2em;
+}
+
+.sw25-weapon-v2 :is(input, select, textarea) {
+  --input-background-color: rgba(0, 0, 0, 0.05);
+  --input-text-color: #191813;
+  --input-border-color: #7a7971;
+  --input-height: 26px;
+  font: inherit;
+}
+
+.sw25-weapon-v2 input[type="checkbox"] {
+  appearance: auto;
+}
+
+.sw25-weapon-v2 input[type="checkbox"]::before,
+.sw25-weapon-v2 input[type="checkbox"]::after {
+  display: none;
+}
+
+.sw25-weapon-v2 a {
+  color: inherit;
+}
+
+.sw25-weapon-v2 prose-mirror {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  min-height: 180px;
+}
+
+.sw25-weapon-v2 prose-mirror .editor-content {
+  min-height: 140px;
+}
