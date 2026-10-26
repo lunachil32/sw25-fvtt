@@ -8,7 +8,7 @@ import { SW25ActorSheetV2 } from "./presentation/sheets/actor-sheet-v2.mjs";
 import { SW25NpcSheetV2 } from "./presentation/sheets/npc-sheet-v2.mjs";
 import { SW25MonsterSheetV2 } from "./presentation/sheets/monster-sheet-v2.mjs";
 import { SW25ItemSheetV2 } from "./presentation/sheets/item-sheet-v2.mjs";
-import { supportedItemTypesV2 } from "./presentation/sheet-context/item-v2-fields.mjs";
+import { supportedItemTypesV2 } from "./presentation/sheets/item-sheet-types-v2.mjs";
 import { SW25ActorSheet } from "./presentation/sheets/actor-sheet.mjs";
 import { SW25ItemSheet } from "./presentation/sheets/item-sheet.mjs";
 import { SW25ActiveEffectConfigV1 } from "./presentation/sheets/active-effect-config-V1.mjs";

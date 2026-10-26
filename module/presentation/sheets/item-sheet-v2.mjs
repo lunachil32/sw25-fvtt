@@ -1,25 +1,53 @@
+import { getPropertyElements, getWeaponTypeElements } from "../../rules/elements.mjs";
 import { addCustomField, removeCustomField, moveCustomFieldUp, moveCustomFieldDown } from "../../use-cases/item-custom-fields.mjs";
 import { resolveSessionResult } from "../../use-cases/session-results.mjs";
 import { postSessionResult } from "../chat/session-messages.mjs";
 import { manageEffectV2 } from "./effect-controls-v2.mjs";
 import { prepareItemSheetContext } from "../sheet-context/item-context.mjs";
-import { prepareItemV2FieldGroups } from "../sheet-context/item-v2-fields.mjs";
 
 // V12 has no document sheet V2; use its ApplicationV2 only to load this unregistered class.
 export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets?.ItemSheetV2 ?? foundry.applications.api.ApplicationV2) {
   static DEFAULT_OPTIONS = {
     actions: { customField: SW25ItemSheetV2._onCustomField, sessionResult: SW25ItemSheetV2._onSessionResult, create: manageEffectV2, edit: manageEffectV2, toggle: manageEffectV2, delete: manageEffectV2 },
-    classes: ["sw25-item-v2"],
-    position: { width: 580, height: 620 },
+    classes: ["sw25", "sheet", "item", "sw25-item-v2"],
+    position: { width: 620, height: 480 },
     window: { resizable: true },
     form: { submitOnChange: true, closeOnSubmit: false },
     viewPermission: CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,
   };
 
   static PARTS = {
-    effects: { template: "systems/sw25-lunachil-maintained/templates/shared/v2/effects.hbs" },
-    details: { template: "systems/sw25-lunachil-maintained/templates/item/v2/details.hbs" },
+    content: {
+      template: "systems/sw25-lunachil-maintained/templates/item/v2/weapon.hbs",
+      scrollable: [".sheet-body"],
+      templates: [
+        ...["elements", "usedice", "usepower", "effects"].map(name =>
+          `systems/sw25-lunachil-maintained/templates/item/parts/item-${name}.hbs`),
+        "systems/sw25-lunachil-maintained/templates/item/v2/customs.hbs",
+      ],
+    },
   };
+
+  _configureRenderParts(options) {
+    const parts = super._configureRenderParts(options);
+    if (parts.content) {
+      parts.content.template = `systems/sw25-lunachil-maintained/templates/item/v2/${this.item.type}.hbs`;
+    }
+    return parts;
+  }
+
+  _getTabsConfig(group) {
+    if (group !== "primary") return super._getTabsConfig(group);
+    const tabs = [{ id: "description", label: "SW25.Description" }];
+    if (this.item.type !== "language") {
+      tabs.push({ id: "details", label: "SW25.Details" });
+      if (this.item.type !== "session") tabs.push({ id: "effects", label: "SW25.Effects" });
+      if (["session", "otherfeature"].includes(this.item.type)) {
+        tabs.push({ id: "customs", label: "SW25.Customs" });
+      }
+    }
+    return { initial: "description", tabs };
+  }
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
@@ -29,9 +57,15 @@ export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicat
     prepared.descriptionHTML = await foundry.applications.ux.TextEditor.implementation.enrichHTML(this.item.system.description ?? "", {
       secrets: this.item.isOwner, rollData: prepared.rollData, relativeTo: this.item,
     });
-    prepared.isSession = this.item.type === "session";
-    prepared.itemFieldGroups = prepareItemV2FieldGroups(this.item, prepared);
+    prepared.tabs = this._prepareTabs("primary");
     return prepared;
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    for (const action of this.element.querySelectorAll(".window-content [data-action]:not([data-action='tab'])")) {
+      action.setAttribute("aria-disabled", String(!this.isEditable));
+    }
   }
 
   static async _onCustomField(event, button) {
@@ -61,7 +95,17 @@ export class SW25ItemSheetV2 extends foundry.applications.api.HandlebarsApplicat
       fields[index][property] = formData.object[name];
       return { system: { customFields: fields } };
     }
-    if (name) return foundry.utils.expandObject({ [name]: formData.object[name] });
+    if (name) {
+      const updates = { [name]: formData.object[name] };
+      const elements = name === "system.prop" ? getPropertyElements(updates[name])
+        : this.item.type === "weapon" && name === "system.type" ? getWeaponTypeElements(updates[name]) : null;
+      if (elements) {
+        for (const [key, value] of Object.entries(elements)) {
+          updates[`system.elements.${key}`] = value;
+        }
+      }
+      return foundry.utils.expandObject(updates);
+    }
     return super._processFormData(event, form, formData);
   }
 }

@@ -1,0 +1,2 @@
+/** Item types supported by the native V2 sheets and Actor item controls. */
+export const supportedItemTypesV2 = ["skill", "resource", "armor", "weapon", "accessory", "item", "spell", "combatability", "raceability", "language", "check", "enhancearts", "ridingtrick", "alchemytech", "magicalsong", "phasearea", "tactics", "infusion", "barbarousskill", "essenceweave", "otherfeature", "session", "action", "monsterability"];
